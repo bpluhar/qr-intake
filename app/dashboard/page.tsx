@@ -7,6 +7,7 @@ import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useAuthActions } from '@convex-dev/auth/react';
 import SignIn from '@/app/SignIn';
+import DashboardSkeleton from '@/app/dashboard/DashboardSkeleton';
 
 export default function DashboardPage() {
   // Sidebar can be made collapsible later if you want; keeping it fixed per request.
@@ -15,14 +16,7 @@ export default function DashboardPage() {
 
   // Avoid jarring shift: show a themed splash while auth state is loading
   if (signedIn === undefined) {
-    return (
-      <div className="min-h-screen bg-[#0b1217] text-slate-200 flex items-center justify-center p-6">
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 shadow-xl backdrop-blur inline-flex items-center gap-3">
-          <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-slate-600 border-t-transparent" aria-hidden="true" />
-          <span className="text-sm text-slate-400">Loading your session…</span>
-        </div>
-      </div>
-    );
+        return <DashboardSkeleton />;
   }
 
   if (!signedIn) {
