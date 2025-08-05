@@ -1,7 +1,11 @@
 'use client';
 
+import React from 'react';
 import { useAuthActions } from '@convex-dev/auth/react';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useQuery } from 'convex/react';
+import { api } from '@/convex/_generated/api';
 
 type Flow = 'signIn' | 'signUp';
 
@@ -9,6 +13,16 @@ export function SignIn() {
   const { signIn } = useAuthActions();
   const [step, setStep] = useState<Flow>('signIn');
   const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+  const signedIn = useQuery(api.users.isSignedIn);
+
+  // Redirect automatically once auth state flips true
+  React.useEffect(() => {
+    if (signedIn) {
+      router.replace('/dashboard');
+    }
+  }, [signedIn, router]);
 
   return (
     <main className="min-h-screen bg-[#0b1217] text-slate-200 flex items-center justify-center p-6">
@@ -50,8 +64,12 @@ export function SignIn() {
               event.preventDefault();
               const formData = new FormData(event.currentTarget);
               setPending(true);
+              setError(null);
               try {
                 await signIn('password', formData);
+                // Navigation handled by the signedIn effect above
+              } catch (err: any) {
+                setError(err?.message ?? 'Sign in failed');
               } finally {
                 setPending(false);
               }
@@ -118,6 +136,9 @@ export function SignIn() {
                 {step === 'signIn' ? 'Sign up instead' : 'Sign in instead'}
               </button>
             </div>
+            {error && (
+              <p className="text-xs text-red-400" role="alert">{error}</p>
+            )}
           </form>
         </div>
 

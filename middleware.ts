@@ -1,4 +1,4 @@
-// middleware.ts at project root
+// middleware.ts
 import {
   convexAuthNextjsMiddleware,
   createRouteMatcher,
@@ -9,6 +9,7 @@ const isProtected = createRouteMatcher(["/dashboard(.*)"]);
 const isSignIn = createRouteMatcher(["/signin"]);
 
 export default convexAuthNextjsMiddleware(async (request, { convexAuth }) => {
+
   if (isProtected(request) && !(await convexAuth.isAuthenticated())) {
     return nextjsMiddlewareRedirect(request, "/signin");
   }
