@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import { useEffect } from 'react';
+import Link from 'next/link';
 import { useAuthActions } from '@convex-dev/auth/react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -18,7 +19,7 @@ export default function SignIn() {
   const signedIn = useQuery(api.users.isSignedIn);
 
   // Redirect automatically once auth state flips true
-  React.useEffect(() => {
+  useEffect(() => {
     if (signedIn) {
       router.replace('/dashboard');
     }
@@ -27,12 +28,12 @@ export default function SignIn() {
   return (
     <main className="min-h-screen bg-[#0b1217] text-slate-200 flex items-center justify-center p-6">
       <div className="absolute top-6 left-6">
-        <a
+        <Link
           href="/"
           className="inline-flex items-center text-sm font-medium text-[#3ECF8E] hover:underline"
         >
           <span>{'< Back to Home'}</span>
-        </a>
+        </Link>
       </div>
       <div className="w-full max-w-md">
         {/* Card */}
