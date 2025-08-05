@@ -1,17 +1,4 @@
-'use client';
-
-import Link from 'next/link';
-import { JSX, useEffect, useState } from 'react';
-import { useAuthActions } from '@convex-dev/auth/react';
-import { usePathname } from 'next/navigation';
-
-function isActivePath(pathname: string, href: string) {
-  if (!pathname) return false;
-  if (href === '/') return pathname === '/';
-  return pathname === href || pathname.startsWith(href + '/');
-}
-
-export default function DashboardSkeleton({ initialEmail }: { initialEmail?: string | null }) {
+export default function DashboardSkeleton() {
   return (
     <div className="min-h-screen bg-[#0b1217] text-slate-200 flex">
       {/* <SkeletonSidebar initialEmail={initialEmail ?? null} /> */}
@@ -126,16 +113,6 @@ function Card({ children }: { children: React.ReactNode }) {
   );
 }
 
-function getCookie(name: string): string | null {
-  if (typeof document === 'undefined') return null;
-  const pair = document.cookie.split('; ').find((row) => row.startsWith(name + '='));
-  return pair ? decodeURIComponent(pair.split('=')[1]) : null;
-}
-
-function deleteCookie(name: string) {
-  if (typeof document === 'undefined') return;
-  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax`;
-}
 
 function SkeletonLine({ className = "" }: { className?: string }) {
   return <div className={`animate-pulse rounded bg-slate-700/50 ${className}`} />;

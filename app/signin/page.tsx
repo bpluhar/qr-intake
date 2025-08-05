@@ -9,7 +9,7 @@ import { api } from '@/convex/_generated/api';
 
 type Flow = 'signIn' | 'signUp';
 
-export function SignIn() {
+export default function SignIn() {
   const { signIn } = useAuthActions();
   const [step, setStep] = useState<Flow>('signIn');
   const [pending, setPending] = useState(false);
@@ -68,8 +68,12 @@ export function SignIn() {
               try {
                 await signIn('password', formData);
                 // Navigation handled by the signedIn effect above
-              } catch (err: any) {
-                setError(err?.message ?? 'Sign in failed');
+              } catch (err: unknown) {
+                if (err instanceof Error) {
+                  setError(err.message);
+                } else {
+                  setError('Sign in failed');
+                }
               } finally {
                 setPending(false);
               }
@@ -150,5 +154,3 @@ export function SignIn() {
     </main>
   );
 }
-
-export default SignIn;
