@@ -5,15 +5,15 @@ export default function DashboardClient() {
       {/* <Sidebar pathname={pathname} initialEmail={initialEmail} /> */}
       <main className="flex-1">
         {/* Page content */}
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-0 lg:py-8">
           {/* Breadcrumb / Page title */}
           <div className="mb-6">
             <h1 className="text-xl font-semibold">Dashboard</h1>
-            <p className="mt-1 text-sm text-slate-400">Quick glance at your product health and recent activity.</p>
+            {/* <p className="mt-1 text-sm text-slate-400">Quick glance at your product health and recent activity.</p> */}
           </div>
 
           {/* KPI cards */}
-          <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             <StatCard label="Open tickets" value="128" delta="+6.7%" />
             <StatCard label="Avg response" value="72h 48m" delta="+512%" positive={false} />
             <StatCard label="SLA breaches" value="3" delta="-25%" positive={true} />

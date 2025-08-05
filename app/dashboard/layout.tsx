@@ -31,10 +31,10 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   }
 
   return (
-    <div className="min-h-dvh md:min-h-screen bg-[#0b1217] text-slate-200 flex overflow-x-hidden">
+    <div className="min-h-dvh md:min-h-screen bg-[#0b1217] text-slate-200 flex flex-col md:flex-row overflow-x-hidden">
       {/* Client sidebar reads pathname, handles sign out, and shows the SSR-provided email */}
       <SidebarClient initialEmail={initialEmail} />
-      <div className="flex-1 w-full min-w-0">{children}</div>
+      <div className="w-full flex-1 min-w-0">{children}</div>
     </div>
   );
 }

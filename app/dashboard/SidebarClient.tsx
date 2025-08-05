@@ -48,69 +48,168 @@ export default function SidebarClient({ initialEmail }: { initialEmail: string |
     { href: "/dashboard/testing", label: "Testing", icon: IconTesting },
   ];
 
+  // Mobile sidebar state
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+
   return (
-    <aside className="hidden md:flex w-64 flex-col justify-between border-r border-slate-800/80 bg-slate-900/60 backdrop-blur sticky top-0 h-[100dvh] shrink-0 overflow-hidden">
-      <div className="px-4 py-4">
-        <div className="flex items-center gap-2 px-2 py-2">
-          <span className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-slate-800/70 ring-1 ring-slate-700">
-            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" aria-hidden="true">
-              <path d="M12 3l7 5-7 5-7-5 7-5Zm0 8v10" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </span>
-          <span className="font-semibold tracking-tight">Triage</span>
-        </div>
+    <>
+      {/* Hamburger button for mobile */}
+      <button
+        onClick={() => setIsMobileOpen(true)}
+        className="md:hidden p-4 text-slate-300 w-fit"
+        aria-label="Open menu"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className="h-6 w-6">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
 
-        <nav className="mt-4 space-y-1">
-          {nav.map((item) => {
-            const active = mounted && isActivePath(pathname, item.href);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`group flex items-center gap-3 rounded-md px-3 py-2 text-sm border border-transparent hover:bg-slate-800/70 ${
-                  active ? "bg-slate-800/70 border-slate-700 text-emerald-400" : "text-slate-300"
-                }`}
-                aria-current={active ? "page" : undefined}
-              >
-                <item.icon className={`h-4 w-4 ${active ? "text-emerald-400" : "text-slate-400 group-hover:text-slate-300"}`} />
-                <span>{item.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
-      </div>
-
-      <div className="p-4 border-t border-slate-800/80">
-        <div className="flex items-center gap-3">
-          <div className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-700 bg-slate-800/60">
-            <span className="text-sm font-medium">{initial}</span>
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm text-slate-200">{email}</p>
-            <div className="mt-2">
+      {/* Mobile sidebar drawer with transition */}
+      <div
+        className={`fixed inset-0 z-50 flex transition-transform duration-300 ${
+          isMobileOpen ? "translate-x-0" : "-translate-x-full"
+        } md:hidden`}
+        style={{ pointerEvents: isMobileOpen ? "auto" : "none" }}
+      >
+        {/* Sidebar */}
+        <div className="w-64 bg-slate-900 border-r border-slate-800/80 p-4 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <span className="font-semibold tracking-tight text-white">Triage</span>
               <button
-                onClick={async () => {
-                  setPending(true);
-                  try {
-                    await signOut();
-                    // Clean up cookies
-                    if (typeof document !== "undefined") {
-                      document.cookie = "triage_user=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax";
-                      document.cookie = "triage_email=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax";
-                    }
-                  } finally {
-                    setPending(false);
-                  }
-                }}
-                className="inline-flex items-center justify-center rounded-md px-3 py-1.5 text-xs font-medium text-slate-200 bg-slate-800/70 hover:bg-slate-800 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-700"
+                onClick={() => setIsMobileOpen(false)}
+                className="text-slate-300"
+                aria-label="Close menu"
               >
-                {pending ? "Signing out…" : "Sign out"}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className="h-5 w-5">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
+            </div>
+            <nav className="space-y-1">
+              {nav.map((item) => {
+                const active = mounted && isActivePath(pathname, item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setIsMobileOpen(false)}
+                    className={`group flex items-center gap-3 rounded-md px-3 py-2 text-sm border border-transparent hover:bg-slate-800/70 ${
+                      active ? "bg-slate-800/70 border-slate-700 text-emerald-400" : "text-slate-300"
+                    }`}
+                    aria-current={active ? "page" : undefined}
+                  >
+                    <item.icon className={`h-4 w-4 ${active ? "text-emerald-400" : "text-slate-400 group-hover:text-slate-300"}`} />
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+
+          <div className="border-t border-slate-800/80 pt-4">
+            <div className="flex items-center gap-3">
+              <div className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-700 bg-slate-800/60">
+                <span className="text-sm font-medium">{initial}</span>
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm text-slate-200">{email}</p>
+                <div className="mt-2">
+                  <button
+                    onClick={async () => {
+                      setPending(true);
+                      try {
+                        await signOut();
+                        if (typeof document !== "undefined") {
+                          document.cookie = "triage_user=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax";
+                          document.cookie = "triage_email=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax";
+                        }
+                      } finally {
+                        setPending(false);
+                      }
+                    }}
+                    className="inline-flex items-center justify-center rounded-md px-3 py-1.5 text-xs font-medium text-slate-200 bg-slate-800/70 hover:bg-slate-800 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-700"
+                  >
+                    {pending ? "Signing out…" : "Sign out"}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
+        {/* Backdrop overlay */}
+        <div
+          className={`flex-1 bg-black/40 transition-opacity duration-300 ${
+            isMobileOpen ? "opacity-100" : "opacity-0"
+          }`}
+          onClick={() => setIsMobileOpen(false)}
+        />
       </div>
-    </aside>
+
+      {/* Desktop sidebar */}
+      <aside className="hidden md:flex w-64 flex-col justify-between border-r border-slate-800/80 bg-slate-900/60 backdrop-blur sticky top-0 h-[100dvh] shrink-0 overflow-hidden">
+        <div className="px-4 py-4">
+          <div className="flex items-center gap-2 px-2 py-2">
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-slate-800/70 ring-1 ring-slate-700">
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M12 3l7 5-7 5-7-5 7-5Zm0 8v10" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+            <span className="font-semibold tracking-tight">Triage</span>
+          </div>
+
+          <nav className="mt-4 space-y-1">
+            {nav.map((item) => {
+              const active = mounted && isActivePath(pathname, item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`group flex items-center gap-3 rounded-md px-3 py-2 text-sm border border-transparent hover:bg-slate-800/70 ${
+                    active ? "bg-slate-800/70 border-slate-700 text-emerald-400" : "text-slate-300"
+                  }`}
+                  aria-current={active ? "page" : undefined}
+                >
+                  <item.icon className={`h-4 w-4 ${active ? "text-emerald-400" : "text-slate-400 group-hover:text-slate-300"}`} />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+
+        <div className="p-4 border-t border-slate-800/80">
+          <div className="flex items-center gap-3">
+            <div className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-700 bg-slate-800/60">
+              <span className="text-sm font-medium">{initial}</span>
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm text-slate-200">{email}</p>
+              <div className="mt-2">
+                <button
+                  onClick={async () => {
+                    setPending(true);
+                    try {
+                      await signOut();
+                      // Clean up cookies
+                      if (typeof document !== "undefined") {
+                        document.cookie = "triage_user=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax";
+                        document.cookie = "triage_email=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax";
+                      }
+                    } finally {
+                      setPending(false);
+                    }
+                  }}
+                  className="inline-flex items-center justify-center rounded-md px-3 py-1.5 text-xs font-medium text-slate-200 bg-slate-800/70 hover:bg-slate-800 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-700"
+                >
+                  {pending ? "Signing out…" : "Sign out"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </>
   );
 }
 

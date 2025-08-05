@@ -26,6 +26,14 @@ export default function SignIn() {
 
   return (
     <main className="min-h-screen bg-[#0b1217] text-slate-200 flex items-center justify-center p-6">
+      <div className="absolute top-6 left-6">
+        <a
+          href="/"
+          className="inline-flex items-center text-sm font-medium text-[#3ECF8E] hover:underline"
+        >
+          <span>{'< Back to Home'}</span>
+        </a>
+      </div>
       <div className="w-full max-w-md">
         {/* Card */}
         <div className="rounded-2xl border border-slate-800 bg-slate-900/60 shadow-xl backdrop-blur">
