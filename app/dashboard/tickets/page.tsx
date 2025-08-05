@@ -61,7 +61,7 @@ export default function TicketsPage() {
       </div>
 
       {/* KPI cards */}
-      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {kpis.map((k) => (
           <Card key={k.label}>
             <div className="flex items-start justify-between">
@@ -90,37 +90,40 @@ export default function TicketsPage() {
             </div>
           </div>
 
-          <div className="mt-4 overflow-hidden rounded-md border border-slate-800">
+          <div className="mt-4 overflow-x-auto md:overflow-visible rounded-md border border-slate-800">
             <table className="w-full text-sm">
               <thead className="bg-slate-900/60 text-slate-400">
                 <tr>
                   <Th>ID</Th>
                   <Th>Title</Th>
-                  <Th>Customer</Th>
-                  <Th>Severity</Th>
-                  <Th>Priority</Th>
+                  <Th className="hidden md:table-cell">Customer</Th>
+                  <Th className="hidden md:table-cell">Severity</Th>
+                  <Th className="hidden md:table-cell">Assignees</Th>
+                  <Th className="hidden md:table-cell">Created</Th>
                   <Th>Status</Th>
-                  <Th>Assignees</Th>
-                  <Th>Created</Th>
+                  <Th>Priority</Th>
                   <Th className="text-right">Actions</Th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800">
                 {rows.map((r) => (
                   <tr key={r.id} className="hover:bg-slate-900/30">
-                    <Td className="font-medium text-slate-200">{r.id}</Td>
-                    <Td className="max-w-[28rem] truncate text-slate-200">{r.title}</Td>
-                    <Td>{r.customer}</Td>
-                    <Td><SeverityBadge severity={r.severity} /></Td>
-                    <Td><PriorityBadge priority={r.priority} /></Td>
+                    <Td className="font-medium text-slate-200 whitespace-nowrap">{r.id}</Td>
+                    <Td className="max-w-[14rem] md:max-w-[28rem] truncate text-slate-200">{r.title}</Td>
+                    <Td className="hidden md:table-cell">{r.customer}</Td>
+                    <Td className="hidden md:table-cell"><SeverityBadge severity={r.severity} /></Td>
+                    <Td className="hidden md:table-cell"><Assignees names={r.assignees} /></Td>
+                    <Td className="hidden md:table-cell text-slate-400 whitespace-nowrap">{r.created}</Td>
                     <Td><StatusBadge status={r.status} /></Td>
-                    <Td><Assignees names={r.assignees} /></Td>
-                    <Td className="text-slate-400 whitespace-nowrap">{r.created}</Td>
+                    <Td><PriorityBadge priority={r.priority} /></Td>
                     <Td className="text-right">
-                      <div className="inline-flex items-center gap-2">
-                        <Link href="#" className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700">Open</Link>
-                        <Link href="#" className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700">Close</Link>
-                      </div>
+                      <button
+                        type="button"
+                        aria-label={`Edit ${r.id}`}
+                        className="inline-flex items-center justify-center rounded-md p-1.5 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700"
+                      >
+                        <IconEdit className="h-4 w-4 text-slate-300" />
+                      </button>
                     </Td>
                   </tr>
                 ))}
@@ -224,4 +227,22 @@ function initials(name: string) {
   const first = parts[0]?.[0] ?? "";
   const last = parts[1]?.[0] ?? "";
   return (first + last).toUpperCase();
+}
+
+function IconEdit(props: React.SVGProps<SVGSVGElement>) {
+  const { className, ...rest } = props;
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      className={`size-5 ${className ?? ''}`}
+      {...rest}
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.17a4.5 4.5 0 01-1.897 1.13L6 18l.7-2.685a4.5 4.5 0 011.13-1.897l9.032-8.931z" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 7.125L17.25 4.875" />
+    </svg>
+  );
 }
