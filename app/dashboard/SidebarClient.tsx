@@ -9,6 +9,11 @@ import { useAuthActions } from "@convex-dev/auth/react";
 function isActivePath(pathname: string, href: string) {
   if (!pathname) return false;
   if (href === "/") return pathname === "/";
+  // For the section root (/dashboard), only highlight on exact match
+  if (href === "/dashboard") {
+    return pathname === "/dashboard" || pathname === "/dashboard/";
+  }
+  // For sub-routes, allow exact match or nested paths
   return pathname === href || pathname.startsWith(href + "/");
 }
 
