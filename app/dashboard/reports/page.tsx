@@ -87,7 +87,7 @@ export default function ReportsPage() {
       </div>
 
       {/* KPI cards */}
-      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {kpis.map((k) => (
           <Card key={k.label}>
             <div className="flex items-start justify-between">
