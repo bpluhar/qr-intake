@@ -22,6 +22,12 @@ export default function SidebarClient({ initialEmail }: { initialEmail: string |
   const pathname = usePathname();
   const [pending, setPending] = useState(false);
 
+  // Avoid hydration mismatch: only compute "active" after mount
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Seed from SSR, fallback to cookie on mount (no hydration mismatch)
   const [email, setEmail] = useState<string>(initialEmail ?? "");
   useEffect(() => {
@@ -56,17 +62,17 @@ export default function SidebarClient({ initialEmail }: { initialEmail: string |
 
         <nav className="mt-4 space-y-1">
           {nav.map((item) => {
-            const active = isActivePath(pathname, item.href);
+            const active = mounted && isActivePath(pathname, item.href);
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 className={`group flex items-center gap-3 rounded-md px-3 py-2 text-sm border border-transparent hover:bg-slate-800/70 ${
-                  active ? "bg-slate-800/70 border-slate-700 text-white" : "text-slate-300"
+                  active ? "bg-slate-800/70 border-slate-700 text-emerald-400" : "text-slate-300"
                 }`}
                 aria-current={active ? "page" : undefined}
               >
-                <item.icon className={`h-4 w-4 ${active ? "text-slate-300" : "text-slate-400 group-hover:text-slate-300"}`} />
+                <item.icon className={`h-4 w-4 ${active ? "text-emerald-400" : "text-slate-400 group-hover:text-slate-300"}`} />
                 <span>{item.label}</span>
               </Link>
             );
