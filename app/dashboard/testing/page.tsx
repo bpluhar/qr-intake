@@ -11,7 +11,7 @@ if (result === undefined) return "Loading…";
 if (result === null) return "Unexpected null"; // shouldn't happen in this query
 
 return (
-  <pre className="whitespace-pre-wrap break-all text-sm">
+  <pre className="whitespace-pre-wrap break-all text-sm p-8">
     {JSON.stringify(result, null, 2)}
   </pre>
 );

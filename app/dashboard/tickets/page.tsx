@@ -1,8 +1,3 @@
-
-
-// app/dashboard/tickets/page.tsx
-// Server Component – matches the dark, Supabase-like theme used in /dashboard
-
 import Link from "next/link";
 
 export default function TicketsPage() {

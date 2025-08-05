@@ -49,7 +49,7 @@ export default function SidebarClient({ initialEmail }: { initialEmail: string |
   ];
 
   return (
-    <aside className="hidden md:flex w-64 flex-col justify-between border-r border-slate-800/80 bg-slate-900/60 backdrop-blur">
+    <aside className="hidden md:flex w-64 flex-col justify-between border-r border-slate-800/80 bg-slate-900/60 backdrop-blur sticky top-0 h-[100dvh] shrink-0 overflow-hidden">
       <div className="px-4 py-4">
         <div className="flex items-center gap-2 px-2 py-2">
           <span className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-slate-800/70 ring-1 ring-slate-700">

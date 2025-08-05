@@ -1,6 +1,5 @@
 import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
 
-
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -20,8 +19,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Triager - Automated Patient Intake",
   description: "Automated patient intake for healthcare teams and practices.",
-  themeColor: "#0b1217",
 };
+
+export const viewport = {
+  themeColor: "#0b1217",
+}
 
 export default function RootLayout({
   children,
