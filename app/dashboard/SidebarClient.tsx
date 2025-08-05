@@ -72,7 +72,7 @@ export default function SidebarClient({ initialEmail }: { initialEmail: string |
         style={{ pointerEvents: isMobileOpen ? "auto" : "none" }}
       >
         {/* Sidebar */}
-        <div className="w-64 bg-slate-900 border-r border-slate-800/80 p-4 flex flex-col justify-between">
+        <div className="w-64 bg-slate-900 border-r border-slate-800/80 p-4 flex flex-col justify-between ">
           <div>
             <div className="flex items-center justify-between mb-4">
               <span className="font-semibold tracking-tight text-white">Triage</span>
@@ -147,7 +147,7 @@ export default function SidebarClient({ initialEmail }: { initialEmail: string |
       </div>
 
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex w-64 flex-col justify-between border-r border-slate-800/80 bg-slate-900/60 backdrop-blur sticky top-0 h-[100dvh] shrink-0 overflow-hidden">
+      <aside className="hidden md:flex md:h-full md:w-64 md:flex-col md:justify-between border-r border-slate-800/80 bg-slate-900/60 backdrop-blur shrink-0 md:overflow-y-auto">
         <div className="px-4 py-4">
           <div className="flex items-center gap-2 px-2 py-2">
             <span className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-slate-800/70 ring-1 ring-slate-700">
