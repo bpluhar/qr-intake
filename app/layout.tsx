@@ -1,6 +1,6 @@
 import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
 
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ConvexClientProvider } from "./ConvexClientProvider";
@@ -21,8 +21,11 @@ export const metadata: Metadata = {
   description: "Automated patient intake for healthcare teams and practices.",
 };
 
-export const viewport = {
-  themeColor: "#0b1217",
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#0b1217' },
+    { media: '(prefers-color-scheme: dark)', color: '#0b1217' },
+  ],
 }
 
 export default function RootLayout({
@@ -34,7 +37,7 @@ export default function RootLayout({
     <ConvexAuthNextjsServerProvider>
       <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0b1217]`}
         >
           <ConvexClientProvider>{children}</ConvexClientProvider>
         </body>
