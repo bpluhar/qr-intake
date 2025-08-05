@@ -49,7 +49,7 @@ export default function CustomersPage() {
       </div>
 
       {/* KPI cards */}
-      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map((k) => (
           <Card key={k.label}>
             <div className="flex items-start justify-between">
@@ -83,8 +83,8 @@ export default function CustomersPage() {
               <thead className="bg-slate-900/60 text-slate-400">
                 <tr>
                   <Th>Customer</Th>
-                  <Th>Email</Th>
-                  <Th>Company</Th>
+                  <Th className="hidden md:table-cell">Email</Th>
+                  <Th className="hidden md:table-cell">Company</Th>
                   <Th>Plan</Th>
                   <Th>MRR</Th>
                   <Th>Status</Th>
@@ -96,12 +96,19 @@ export default function CustomersPage() {
               <tbody className="divide-y divide-slate-800">
                 {rows.map((r) => (
                   <tr key={r.email} className="hover:bg-slate-900/30">
-                    <Td className="font-medium text-slate-200 flex items-center gap-2">
-                      <Avatar name={r.name} />
-                      {r.name}
+                    <Td className="font-medium text-slate-200">
+                      <div className="flex items-start gap-2 md:items-center md:gap-3">
+                        <Avatar name={r.name} />
+                        <div className="flex flex-col md:flex-row md:items-center md:gap-2">
+                          <span className="text-slate-300 text-sm leading-tight md:hidden">{r.company}</span>
+                          <span className="text-slate-100 font-medium leading-tight md:hidden">{r.name}</span>
+                          <span className="text-slate-400 text-sm leading-tight md:hidden">{r.email}</span>
+                          <span className="hidden md:inline">{r.name}</span>
+                        </div>
+                      </div>
                     </Td>
-                    <Td className="truncate max-w-[16rem]">{r.email}</Td>
-                    <Td>{r.company}</Td>
+                    <Td className="truncate max-w-[16rem] hidden md:table-cell">{r.email}</Td>
+                    <Td className="hidden md:table-cell">{r.company}</Td>
                     <Td><PlanBadge plan={r.plan} /></Td>
                     <Td className="whitespace-nowrap">{formatUsd(r.mrr)}</Td>
                     <Td><StatusBadge status={r.status} /></Td>
@@ -154,7 +161,11 @@ function Th({ children, className = "" }: { children: React.ReactNode; className
 }
 
 function Td({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <td className={`px-3 py-2 text-sm ${className}`}>{children}</td>;
+  return (
+    <td className={`px-3 py-3 md:py-2 align-top md:align-middle text-sm ${className}`}>
+      {children}
+    </td>
+  );
 }
 
 function StatusBadge({ status }: { status: CustomerRow["status"] }) {

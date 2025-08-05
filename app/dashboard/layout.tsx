@@ -2,7 +2,7 @@
 // Dynamic SSR Layout: fetch user via Convex and render sidebar with initial email.
 // Note: Making the layout dynamic means child routes fetch a fresh RSC payload on navigation.
 
-export const dynamic = "force-dynamic";
+// export const dynamic = "force-dynamic";
 
 import { ReactNode } from "react";
 import SidebarClient from "./SidebarClient"; // client component (see file next to this one)
