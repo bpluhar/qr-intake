@@ -36,7 +36,7 @@ export default function HomePage() {
         {/* subtle background tint */}
         <div className="absolute inset-0 bg-[radial-gradient(80%_50%_at_50%_0%,rgba(62,207,142,0.08),transparent)] pointer-events-none" />
 
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-28">
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-28 lg:flex lg:items-center lg:gap-12 lg:min-h-[28rem]">
           <div className="max-w-3xl">
             <p className="text-sm text-slate-400">Smart support, faster teams</p>
 
@@ -81,7 +81,7 @@ export default function HomePage() {
           </div>
 
           {/* Right-side illustration / preview */}
-          <div className="mt-12 lg:mt-0 lg:absolute lg:inset-y-0 lg:right-8 lg:w-[44rem]">
+          <div className="mt-12 lg:mt-0 lg:ml-auto lg:w-[44rem]">
             <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-3 shadow-xl backdrop-blur">
               <div className="h-72 sm:h-96 rounded-xl border border-dashed border-slate-700/70 bg-slate-900/30 grid place-content-center">
                 <div className="text-center">
