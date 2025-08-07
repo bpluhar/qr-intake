@@ -1,3 +1,5 @@
+import Breadcrumbs from "./helpers/Breadcrumbs";
+
 export default function DashboardClient() {
 
   return (
@@ -8,7 +10,8 @@ export default function DashboardClient() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-0 lg:py-8">
           {/* Breadcrumb / Page title */}
           <div className="mb-8">
-            <h1 className="text-xl font-semibold">Dashboard</h1>
+            {/* <h1 className="text-xl font-semibold">Dashboard</h1> */}
+            <Breadcrumbs />
             {/* <p className="mt-1 text-sm text-slate-400">Quick glance at your product health and recent activity.</p> */}
           </div>
 

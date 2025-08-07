@@ -2,6 +2,7 @@
 // Server Component – uses the same dark theme tokens you’ve been using in /dashboard
 
 import Link from "next/link";
+import Breadcrumbs from "../helpers/Breadcrumbs";
 
 export default function ReportsPage() {
   const kpis = [
@@ -67,7 +68,8 @@ export default function ReportsPage() {
       {/* Title & actions */}
       <div className="mb-6 flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold">Reports</h1>
+          <Breadcrumbs />
+          {/* <h1 className="text-xl font-semibold">Reports</h1> */}
           {/* <p className="mt-1 text-sm text-slate-400">Analyze performance with prebuilt and custom reports.</p> */}
         </div>
         <div className="flex items-center gap-2">

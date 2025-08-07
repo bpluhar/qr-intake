@@ -2,6 +2,7 @@
 // Server Component – matches the dark, Supabase-like theme used across /dashboard
 
 import Link from "next/link";
+import Breadcrumbs from "../helpers/Breadcrumbs";
 
 export default function CustomersPage() {
   const kpis = [
@@ -39,7 +40,8 @@ export default function CustomersPage() {
       {/* Title & actions */}
       <div className="mb-6 flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold">Customers</h1>
+          <Breadcrumbs />
+          {/* <h1 className="text-xl font-semibold">Customers</h1> */}
           {/* <p className="mt-1 text-sm text-slate-400">Manage accounts, monitor activity and track revenue.</p> */}
         </div>
         <div className="flex items-center gap-2">
@@ -127,7 +129,7 @@ export default function CustomersPage() {
                     <Td className="text-right">
                       <div className="inline-flex items-center gap-2">
                         <Link href={`/dashboard/customers/${r.id}`} className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700">View</Link>
-                        <Link href="#" className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700">Message</Link>
+                        {/* <Link href="#" className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700">Message</Link> */}
                       </div>
                     </Td>
                   </tr>

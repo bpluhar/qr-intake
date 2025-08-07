@@ -2,6 +2,7 @@
 // Server Component – Settings UI only (no functionality). Matches dark theme used across /dashboard.
 
 import Link from "next/link";
+import Breadcrumbs from "../helpers/Breadcrumbs";
 
 export default function SettingsPage() {
   return (
@@ -9,7 +10,8 @@ export default function SettingsPage() {
       {/* Title & actions */}
       <div className="mb-6 flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold">Settings</h1>
+          <Breadcrumbs />
+          {/* <h1 className="text-xl font-semibold">Settings</h1> */}
           {/* <p className="mt-1 text-sm text-slate-400">These controls are UI-only for now. Hook them up to Convex whenever you’re ready.</p> */}
         </div>
         <div className="flex items-center gap-2">

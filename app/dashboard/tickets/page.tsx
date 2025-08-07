@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Breadcrumbs from "@/app/dashboard/helpers/Breadcrumbs";
 
 export default function TicketsPage() {
   const kpis = [
@@ -91,7 +92,7 @@ export default function TicketsPage() {
       {/* Title & actions */}
       <div className="mb-6 flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold">Tickets</h1>
+          <Breadcrumbs />
           {/* <p className="mt-1 text-sm text-slate-400">Track, prioritize and resolve customer issues quickly.</p> */}
         </div>
         <div className="flex items-center gap-2">
@@ -167,13 +168,10 @@ export default function TicketsPage() {
                     <Td><StatusBadge status={r.status} /></Td>
                     <Td><PriorityBadge priority={r.priority} /></Td>
                     <Td className="text-right">
-                      <button
-                        type="button"
-                        aria-label={`Edit ${r.id}`}
-                        className="inline-flex items-center justify-center rounded-md p-1.5 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700"
-                      >
-                        <IconEdit className="h-4 w-4 text-slate-300" />
-                      </button>
+                      <div className="inline-flex items-center gap-2">
+                        <Link href={`/dashboard/tickets/${r.id}`} className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700">View</Link>
+                        {/* <Link href="#" className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700">Message</Link> */}
+                      </div>
                     </Td>
                   </tr>
                 ))}

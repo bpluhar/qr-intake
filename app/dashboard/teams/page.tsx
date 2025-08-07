@@ -2,6 +2,7 @@
 // Server Component – matches the dark, Supabase‑like theme used across /dashboard
 
 import Link from "next/link";
+import Breadcrumbs from "../helpers/Breadcrumbs";
 
 /* --------------------------------- Data --------------------------------- */
 
@@ -39,7 +40,8 @@ export default async function TeamsPage() {
       {/* Title & actions */}
       <div className="mb-6 flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold">Teams</h1>
+          <Breadcrumbs />
+          {/* <h1 className="text-xl font-semibold">Teams</h1> */}
           {/* <p className="mt-1 text-sm text-slate-400">Organize users into functional groups.</p> */}
         </div>
         <div className="flex items-center gap-2">
@@ -109,7 +111,7 @@ export default async function TeamsPage() {
                     <Td className="text-right">
                       <div className="inline-flex items-center gap-2">
                         <Link href="#" className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700">View</Link>
-                        <Link href="#" className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700">Message</Link>
+                        {/* <Link href="#" className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700">Message</Link> */}
                       </div>
                     </Td>
                   </tr>
