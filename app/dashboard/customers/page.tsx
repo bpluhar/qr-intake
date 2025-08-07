@@ -22,16 +22,16 @@ export default function CustomersPage() {
     { id: 7, name: "Peter Parker", email: "peter@oscorp.com", company: "Oscorp", plan: "Pro", mrr: 149, status: "Trial", created: "Jul 27, 2025", lastSeen: "Sun 13:44" },
     { id: 8, name: "Ellen Ripley", email: "ellen@weyland.com", company: "Weyland-Yutani", plan: "Pro", mrr: 149, status: "Churn risk", created: "Jul 26, 2025", lastSeen: "Sat 21:08" },
     { id: 9, name: "Michael Scott", email: "michael@dundermifflin.com", company: "Dunder Mifflin", plan: "Free", mrr: 0, status: "Active", created: "Jul 25, 2025", lastSeen: "Sat 09:55" },
-    { id: 10, name: "Sarah Connor", email: "sarah@resistance.org", company: "Resistance", plan: "Pro", mrr: 249, status: "Active", created: "Jul 24, 2025", lastSeen: "Today 14:22" },
-    { id: 11, name: "Rick Sanchez", email: "rick@rickandmorty.com", company: "Interdimensional Cable", plan: "Business", mrr: 2499, status: "Active", created: "Jul 23, 2025", lastSeen: "Today 02:15" },
-    { id: 12, name: "Dana Scully", email: "scully@fbi.gov", company: "FBI X-Files", plan: "Enterprise", mrr: 4999, status: "Active", created: "Jul 22, 2025", lastSeen: "Yesterday 16:45" },
-    { id: 13, name: "Neo Anderson", email: "neo@matrix.net", company: "Zion", plan: "Pro", mrr: 199, status: "Trial", created: "Jul 21, 2025", lastSeen: "Today 23:59" },
-    { id: 14, name: "Lara Croft", email: "lara@croftmanor.co.uk", company: "Croft Enterprises", plan: "Business", mrr: 899, status: "Active", created: "Jul 20, 2025", lastSeen: "Yesterday 12:30" },
-    { id: 15, name: "Gordon Freeman", email: "gordon@blackmesa.gov", company: "Black Mesa Research", plan: "Enterprise", mrr: 3499, status: "Churn risk", created: "Jul 19, 2025", lastSeen: "Mon 08:17" },
-    { id: 16, name: "Solid Snake", email: "snake@foxhound.mil", company: "FOXHOUND", plan: "Pro", mrr: 299, status: "Active", created: "Jul 18, 2025", lastSeen: "Today 06:00" },
-    { id: 17, name: "Samus Aran", email: "samus@galacticfed.gov", company: "Galactic Federation", plan: "Enterprise", mrr: 5999, status: "Active", created: "Jul 17, 2025", lastSeen: "Yesterday 20:14" },
-    { id: 18, name: "Master Chief", email: "chief@unsc.mil", company: "UNSC", plan: "Enterprise", mrr: 7499, status: "Active", created: "Jul 16, 2025", lastSeen: "Today 05:45" },
-    { id: 19, name: "Commander Shepard", email: "shepard@alliance.mil", company: "Systems Alliance", plan: "Business", mrr: 1899, status: "Trial", created: "Jul 15, 2025", lastSeen: "Yesterday 22:33" }
+    // { id: 10, name: "Sarah Connor", email: "sarah@resistance.org", company: "Resistance", plan: "Pro", mrr: 249, status: "Active", created: "Jul 24, 2025", lastSeen: "Today 14:22" },
+    // { id: 11, name: "Rick Sanchez", email: "rick@rickandmorty.com", company: "Interdimensional Cable", plan: "Business", mrr: 2499, status: "Active", created: "Jul 23, 2025", lastSeen: "Today 02:15" },
+    // { id: 12, name: "Dana Scully", email: "scully@fbi.gov", company: "FBI X-Files", plan: "Enterprise", mrr: 4999, status: "Active", created: "Jul 22, 2025", lastSeen: "Yesterday 16:45" },
+    // { id: 13, name: "Neo Anderson", email: "neo@matrix.net", company: "Zion", plan: "Pro", mrr: 199, status: "Trial", created: "Jul 21, 2025", lastSeen: "Today 23:59" },
+    // { id: 14, name: "Lara Croft", email: "lara@croftmanor.co.uk", company: "Croft Enterprises", plan: "Business", mrr: 899, status: "Active", created: "Jul 20, 2025", lastSeen: "Yesterday 12:30" },
+    // { id: 15, name: "Gordon Freeman", email: "gordon@blackmesa.gov", company: "Black Mesa Research", plan: "Enterprise", mrr: 3499, status: "Churn risk", created: "Jul 19, 2025", lastSeen: "Mon 08:17" },
+    // { id: 16, name: "Solid Snake", email: "snake@foxhound.mil", company: "FOXHOUND", plan: "Pro", mrr: 299, status: "Active", created: "Jul 18, 2025", lastSeen: "Today 06:00" },
+    // { id: 17, name: "Samus Aran", email: "samus@galacticfed.gov", company: "Galactic Federation", plan: "Enterprise", mrr: 5999, status: "Active", created: "Jul 17, 2025", lastSeen: "Yesterday 20:14" },
+    // { id: 18, name: "Master Chief", email: "chief@unsc.mil", company: "UNSC", plan: "Enterprise", mrr: 7499, status: "Active", created: "Jul 16, 2025", lastSeen: "Today 05:45" },
+    // { id: 19, name: "Commander Shepard", email: "shepard@alliance.mil", company: "Systems Alliance", plan: "Business", mrr: 1899, status: "Trial", created: "Jul 15, 2025", lastSeen: "Yesterday 22:33" }
   ];
 
   return (
