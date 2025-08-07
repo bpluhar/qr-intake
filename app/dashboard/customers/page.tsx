@@ -11,17 +11,27 @@ export default function CustomersPage() {
     { label: "Avg MRR / customer", value: "$72" },
   ];
 
-  const rows: CustomerRow[] = [
-    { name: "Acme Admin", email: "admin@acme.io", company: "Acme Inc.", plan: "Business", mrr: 899, status: "Active", created: "Aug 01, 2025", lastSeen: "Today 09:18" },
-    { name: "Jane Smith", email: "jane@globex.com", company: "Globex", plan: "Pro", mrr: 149, status: "Active", created: "Aug 01, 2025", lastSeen: "Today 08:41" },
-    { name: "Alex Lee", email: "alex@initech.co", company: "Initech", plan: "Pro", mrr: 149, status: "Trial", created: "Jul 31, 2025", lastSeen: "Today 07:03" },
-    { name: "Priya Patel", email: "priya@umbrella.com", company: "Umbrella", plan: "Business", mrr: 699, status: "Churn risk", created: "Jul 31, 2025", lastSeen: "Yesterday 18:27" },
-    { name: "Diego Ramos", email: "diego@soylent.org", company: "Soylent", plan: "Free", mrr: 0, status: "Invited", created: "Jul 30, 2025", lastSeen: "—" },
-    { name: "Bruce Wayne", email: "bruce@wayneenterprises.com", company: "Wayne Enterprises", plan: "Business", mrr: 1299, status: "Active", created: "Jul 29, 2025", lastSeen: "Yesterday 11:10" },
-    { name: "Tony Stark", email: "tony@starkindustries.com", company: "Stark Industries", plan: "Business", mrr: 1599, status: "Active", created: "Jul 28, 2025", lastSeen: "Sun 16:02" },
-    { name: "Peter Parker", email: "peter@oscorp.com", company: "Oscorp", plan: "Pro", mrr: 149, status: "Trial", created: "Jul 27, 2025", lastSeen: "Sun 13:44" },
-    { name: "Ellen Ripley", email: "ellen@weyland.com", company: "Weyland-Yutani", plan: "Pro", mrr: 149, status: "Churn risk", created: "Jul 26, 2025", lastSeen: "Sat 21:08" },
-    { name: "Michael Scott", email: "michael@dundermifflin.com", company: "Dunder Mifflin", plan: "Free", mrr: 0, status: "Active", created: "Jul 25, 2025", lastSeen: "Sat 09:55" },
+  const customerRows: CustomerRow[] = [
+    { id: 0, name: "Acme Admin", email: "admin@acme.io", company: "Acme Inc.", plan: "Business", mrr: 899, status: "Active", created: "Aug 01, 2025", lastSeen: "Today 09:18" },
+    { id: 1, name: "Jane Smith", email: "jane@globex.com", company: "Globex", plan: "Pro", mrr: 149, status: "Active", created: "Aug 01, 2025", lastSeen: "Today 08:41" },
+    { id: 2, name: "Alex Lee", email: "alex@initech.co", company: "Initech", plan: "Pro", mrr: 149, status: "Trial", created: "Jul 31, 2025", lastSeen: "Today 07:03" },
+    { id: 3, name: "Priya Patel", email: "priya@umbrella.com", company: "Umbrella", plan: "Business", mrr: 699, status: "Churn risk", created: "Jul 31, 2025", lastSeen: "Yesterday 18:27" },
+    { id: 4, name: "Diego Ramos", email: "diego@soylent.org", company: "Soylent", plan: "Free", mrr: 0, status: "Invited", created: "Jul 30, 2025", lastSeen: "—" },
+    { id: 5, name: "Bruce Wayne", email: "bruce@wayneenterprises.com", company: "Wayne Enterprises", plan: "Business", mrr: 1299, status: "Active", created: "Jul 29, 2025", lastSeen: "Yesterday 11:10" },
+    { id: 6, name: "Tony Stark", email: "tony@starkindustries.com", company: "Stark Industries", plan: "Business", mrr: 1599, status: "Active", created: "Jul 28, 2025", lastSeen: "Sun 16:02" },
+    { id: 7, name: "Peter Parker", email: "peter@oscorp.com", company: "Oscorp", plan: "Pro", mrr: 149, status: "Trial", created: "Jul 27, 2025", lastSeen: "Sun 13:44" },
+    { id: 8, name: "Ellen Ripley", email: "ellen@weyland.com", company: "Weyland-Yutani", plan: "Pro", mrr: 149, status: "Churn risk", created: "Jul 26, 2025", lastSeen: "Sat 21:08" },
+    { id: 9, name: "Michael Scott", email: "michael@dundermifflin.com", company: "Dunder Mifflin", plan: "Free", mrr: 0, status: "Active", created: "Jul 25, 2025", lastSeen: "Sat 09:55" },
+    { id: 10, name: "Sarah Connor", email: "sarah@resistance.org", company: "Resistance", plan: "Pro", mrr: 249, status: "Active", created: "Jul 24, 2025", lastSeen: "Today 14:22" },
+    { id: 11, name: "Rick Sanchez", email: "rick@rickandmorty.com", company: "Interdimensional Cable", plan: "Business", mrr: 2499, status: "Active", created: "Jul 23, 2025", lastSeen: "Today 02:15" },
+    { id: 12, name: "Dana Scully", email: "scully@fbi.gov", company: "FBI X-Files", plan: "Enterprise", mrr: 4999, status: "Active", created: "Jul 22, 2025", lastSeen: "Yesterday 16:45" },
+    { id: 13, name: "Neo Anderson", email: "neo@matrix.net", company: "Zion", plan: "Pro", mrr: 199, status: "Trial", created: "Jul 21, 2025", lastSeen: "Today 23:59" },
+    { id: 14, name: "Lara Croft", email: "lara@croftmanor.co.uk", company: "Croft Enterprises", plan: "Business", mrr: 899, status: "Active", created: "Jul 20, 2025", lastSeen: "Yesterday 12:30" },
+    { id: 15, name: "Gordon Freeman", email: "gordon@blackmesa.gov", company: "Black Mesa Research", plan: "Enterprise", mrr: 3499, status: "Churn risk", created: "Jul 19, 2025", lastSeen: "Mon 08:17" },
+    { id: 16, name: "Solid Snake", email: "snake@foxhound.mil", company: "FOXHOUND", plan: "Pro", mrr: 299, status: "Active", created: "Jul 18, 2025", lastSeen: "Today 06:00" },
+    { id: 17, name: "Samus Aran", email: "samus@galacticfed.gov", company: "Galactic Federation", plan: "Enterprise", mrr: 5999, status: "Active", created: "Jul 17, 2025", lastSeen: "Yesterday 20:14" },
+    { id: 18, name: "Master Chief", email: "chief@unsc.mil", company: "UNSC", plan: "Enterprise", mrr: 7499, status: "Active", created: "Jul 16, 2025", lastSeen: "Today 05:45" },
+    { id: 19, name: "Commander Shepard", email: "shepard@alliance.mil", company: "Systems Alliance", plan: "Business", mrr: 1899, status: "Trial", created: "Jul 15, 2025", lastSeen: "Yesterday 22:33" }
   ];
 
   return (
@@ -94,7 +104,7 @@ export default function CustomersPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800">
-                {rows.map((r) => (
+                {customerRows.map((r) => (
                   <tr key={r.email} className="hover:bg-slate-900/30">
                     <Td className="font-medium text-slate-200">
                       <div className="flex items-start gap-2 md:items-center md:gap-3">
@@ -116,7 +126,7 @@ export default function CustomersPage() {
                     <Td className="text-slate-400 whitespace-nowrap">{r.lastSeen}</Td>
                     <Td className="text-right">
                       <div className="inline-flex items-center gap-2">
-                        <Link href="#" className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700">View</Link>
+                        <Link href={`/dashboard/customers/${r.id}`} className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700">View</Link>
                         <Link href="#" className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700">Message</Link>
                       </div>
                     </Td>
@@ -134,10 +144,11 @@ export default function CustomersPage() {
 /* --------------------------------- Types -------------------------------- */
 
 type CustomerRow = {
+  id: number; // unique identifier for the customer
   name: string;
   email: string;
   company: string;
-  plan: "Free" | "Pro" | "Business";
+  plan: "Free" | "Pro" | "Business" | "Enterprise";
   mrr: number; // monthly recurring revenue in USD
   status: "Active" | "Trial" | "Churn risk" | "Invited";
   created: string; // formatted date string
