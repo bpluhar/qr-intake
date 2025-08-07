@@ -253,7 +253,11 @@ export default async function Page({
                 <tbody className="divide-y divide-slate-800">
                   {tickets.map(t => (
                     <tr key={t.id} className="hover:bg-slate-900/30">
-                      <Td className="whitespace-nowrap">#{t.id}</Td>
+                      <Td className="whitespace-nowrap">
+                        <div className="inline-flex items-center gap-2">
+                          <Link href={`/dashboard/tickets/${t.id}`} className="text-[#249F73]">#{t.id}</Link>
+                        </div>
+                      </Td>
                       <Td className="max-w-[20rem] truncate">{t.title}</Td>
                       <Td className="hidden md:table-cell"><Severity severity={t.severity} /></Td>
                       <Td className="hidden md:table-cell">{t.priority}</Td>
