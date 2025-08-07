@@ -1,7 +1,7 @@
 // app/dashboard/SidebarClient.tsx
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuthActions } from "@convex-dev/auth/react";
 
@@ -28,14 +28,21 @@ export default function SidebarClient({ initialEmail }: { initialEmail: string |
     setMounted(true);
   }, []);
 
+  const router = useRouter();
+  useEffect(() => {
+    ["/dashboard", "/dashboard/reports", "/dashboard/tickets", "/dashboard/customers", "/dashboard/settings"].forEach((p) => {
+      router.prefetch(p);
+    });
+  }, []);
+
   // Seed from SSR, fallback to cookie on mount (no hydration mismatch)
   const [email, setEmail] = useState<string>(initialEmail ?? "");
-  useEffect(() => {
-    if (!email && typeof document !== "undefined") {
-      const pair = document.cookie.split("; ").find((row) => row.startsWith("triage_email="));
-      setEmail(pair ? decodeURIComponent(pair.split("=")[1]) : "");
-    }
-  }, [email]);
+  // useEffect(() => {
+  //   if (!email && typeof document !== "undefined") {
+  //     const pair = document.cookie.split("; ").find((row) => row.startsWith("triage_email="));
+  //     setEmail(pair ? decodeURIComponent(pair.split("=")[1]) : "");
+  //   }
+  // }, [email]);
 
   const initial = (email.trim()[0] ?? "U").toUpperCase();
 
@@ -43,6 +50,7 @@ export default function SidebarClient({ initialEmail }: { initialEmail: string |
     { href: "/dashboard", label: "Overview", icon: IconHome },
     { href: "/dashboard/tickets", label: "Tickets", icon: IconTicket },
     { href: "/dashboard/customers", label: "Customers", icon: IconUsers },
+    { href: "/dashboard/teams", label: "Teams", icon: IconUsers },
     { href: "/dashboard/reports", label: "Reports", icon: IconChart },
     { href: "/dashboard/settings", label: "Settings", icon: IconSettings },
     { href: "/dashboard/testing", label: "Testing", icon: IconTesting },
