@@ -36,7 +36,7 @@ export default function SidebarClient({ initialEmail }: { initialEmail: string |
   }, []);
 
   // Seed from SSR, fallback to cookie on mount (no hydration mismatch)
-  const [email, setEmail] = useState<string>(initialEmail ?? "");
+  const [email] = useState<string>(initialEmail ?? "");
   // useEffect(() => {
   //   if (!email && typeof document !== "undefined") {
   //     const pair = document.cookie.split("; ").find((row) => row.startsWith("triage_email="));

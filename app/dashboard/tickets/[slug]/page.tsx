@@ -84,8 +84,8 @@ export default async function Page({
           <Card>
             <h2 className="text-sm font-medium text-slate-300 mb-3">Quick Actions</h2>
             <div className="flex flex-col gap-2">
-              <button className="rounded-md bg-slate-800/60 px-3 py-2 text-xs font-medium ring-1 ring-slate-700 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-600">
-                Change Status
+              <button className="mt-2 w-full rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 focus:ring-offset-[#0b1217]">
+                Delete Ticket
               </button>
               <button className="rounded-md bg-slate-800/60 px-3 py-2 text-xs font-medium ring-1 ring-slate-700 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-600">
                 Assign

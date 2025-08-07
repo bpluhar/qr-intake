@@ -2,9 +2,9 @@ import { TicketRow } from "./tickets";
 
 export function NuetralBadge({ text }: { text: string }) {
   return (
-    <button type="button" className={`inline-flex cursor-pointer items-center rounded-md px-2 py-0.5 text-xs bg-slate-700/40 text-slate-300 ring-1 ring-slate-600/40 focus:outline-none focus:ring-2 focus:ring-current`}>
+    <span  className={`inline-flex cursor-pointer items-center rounded-md px-2 py-0.5 text-xs bg-slate-700/40 text-slate-300 ring-1 ring-slate-600/40 focus:outline-none focus:ring-2 focus:ring-current`}>
       {text}
-    </button>
+    </span>
   );
 }
 
@@ -15,9 +15,9 @@ export function StatusBadge({ status }: { status: TicketRow["status"] }) {
     Resolved: "bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30",
   };
   return (
-    <button type="button" className={`inline-flex cursor-pointer items-center rounded-md px-2 py-0.5 text-xs ${map[status] ?? "bg-slate-700/40 text-slate-300 ring-1 ring-slate-600/40"} focus:outline-none focus:ring-2 focus:ring-current`}>
+    <span  className={`inline-flex cursor-pointer items-center rounded-md px-2 py-0.5 text-xs ${map[status] ?? "bg-slate-700/40 text-slate-300 ring-1 ring-slate-600/40"} focus:outline-none focus:ring-2 focus:ring-current`}>
       {status}
-    </button>
+    </span>
   );
 }
 
@@ -29,7 +29,7 @@ export function SeverityBadge({ severity }: { severity: TicketRow["severity"] })
     Critical: "bg-red-500/10 text-red-400 ring-1 ring-red-500/30",
   };
   return (
-    <button type="button" className={`inline-flex cursor-pointer items-center rounded-md px-2 py-0.5 text-xs ${map[severity]} focus:outline-none focus:ring-2 focus:ring-current`}>{severity}</button>
+    <span  className={`inline-flex cursor-pointer items-center rounded-md px-2 py-0.5 text-xs ${map[severity]} focus:outline-none focus:ring-2 focus:ring-current`}>{severity}</span>
   );
 }
 
@@ -41,6 +41,6 @@ export function PriorityBadge({ priority }: { priority: TicketRow["priority"] })
     P4: "bg-slate-700/40 text-slate-300 ring-1 ring-slate-600/40",
   };
   return (
-    <button type="button" className={`inline-flex cursor-pointer items-center rounded-md px-2 py-0.5 text-xs ${map[priority]} focus:outline-none focus:ring-2 focus:ring-current`}>{priority}</button>
+    <span  className={`inline-flex cursor-pointer items-center rounded-md px-2 py-0.5 text-xs ${map[priority]} focus:outline-none focus:ring-2 focus:ring-current`}>{priority}</span>
   );
 }
