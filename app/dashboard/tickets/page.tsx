@@ -8,13 +8,6 @@ import { TicketsPageSkeleton } from "./ticketsTableSkeleton"; // Composite skele
 
 export default function TicketsPage() {
 
-  const kpis = [
-    { label: "Open tickets", value: "128" },
-    { label: "New this week", value: "42" },
-    { label: "Avg response", value: "2h 14m" },
-    { label: "SLA breaches (7d)", value: "5" },
-  ];
-
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-0 lg:py-8 text-slate-200">
       {/* Title & actions */}
@@ -43,21 +36,5 @@ export default function TicketsPage() {
       </Suspense>
       
     </div>
-  );
-}
-
-/* ------------------------------ UI Helpers ------------------------------ */
-
-function Card({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 shadow-xl backdrop-blur">
-      {children}
-    </div>
-  );
-}
-
-function Th({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return (
-    <th className={`px-3 py-2 text-left text-xs font-medium uppercase tracking-wide ${className}`}>{children}</th>
   );
 }
