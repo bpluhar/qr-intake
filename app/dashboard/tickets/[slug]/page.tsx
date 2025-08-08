@@ -1,26 +1,17 @@
 // app/dashboard/tickets/[slug]/page.tsx
 // Ticket detail page — mirrors the customer detail layout
 import "server-only";
-import { unstable_cache, revalidateTag } from "next/cache";
-import { fetchQuery, fetchMutation } from "convex/nextjs";
+import { unstable_cache } from "next/cache";
+import { fetchQuery } from "convex/nextjs";
 import { api } from "@/convex/_generated/api";
 import React from "react";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import Link from "next/link";
 import Breadcrumbs from "../../helpers/Breadcrumbs";
 import type { TicketRow } from "../../tickets";
 import { PriorityBadge, SeverityBadge, StatusBadge, NuetralBadge } from "../../badges";
-import { revalidateTickets } from "../ticketsTableServer";
-import { Id } from "@/convex/_generated/dataModel";
-
-// Server Action to delete a ticket by numeric id, then refresh caches & redirect
-export async function deleteTicketAction(_id: Id<"tickets">) {
-  "use server";
-  await fetchMutation(api.tickets.deleteByDocId, { _id });
-  await revalidateTickets();      // bust list cache
-  revalidateTag(`ticket:${_id}`);  // bust detail cache
-  redirect("/dashboard/tickets");
-}
+import type { Id, Doc } from "@/convex/_generated/dataModel";
+import { deleteTicketAction } from "./actions";
 
 /* -------------------------------------------------------------------- */
 export default async function Page({ params,}: { params: Promise<{ slug: string }>; }) {
@@ -32,7 +23,7 @@ export default async function Page({ params,}: { params: Promise<{ slug: string 
   const getTicketCached = (ticketId: Id<"tickets">) =>
     unstable_cache(
       async () => {
-        const d: any | null = await fetchQuery(api.tickets.getByDocId, { _id: ticketId });
+        const d: Doc<"tickets"> | null = await fetchQuery(api.tickets.getByDocId, { _id: ticketId });
         if (!d) return undefined;
         const row: TicketRow = {
           _id: d._id,

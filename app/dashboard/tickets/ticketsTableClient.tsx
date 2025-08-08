@@ -1,34 +1,107 @@
 "use client";
 import Link from "next/link";
-// import { useEffect } from "react";
 import { TicketRow } from "../tickets";
-
 
 type Props = { initialData: TicketRow[] };
 
 export default function TicketsTableClient({ initialData }: Props) {
   const rows = initialData ?? [];
 
+  const openTicketsCount = rows.filter(r => r.status === "Open").length;
+
+  const kpis = [
+    { label: "Open tickets", value: openTicketsCount },
+    { label: "New this week", value: "42" },
+    { label: "Avg response", value: "2h 14m" },
+    { label: "SLA breaches (7d)", value: "5" },
+  ];
+
   return (
     <>
-      {rows.map((r: TicketRow) => (
-        <tr key={r._id} className="hover:bg-slate-900/30">
-          <td className="px-3 py-2 text-sm font-medium text-slate-200 whitespace-nowrap">#{r.id}</td>
-          <td className="px-3 py-2 text-sm max-w-[14rem] md:max-w-[28rem] truncate text-slate-200">{r.title}</td>
-          <td className="px-3 py-2 text-sm hidden md:table-cell">{r.customer}</td>
-          <td className="px-3 py-2 text-sm hidden md:table-cell"><SeverityBadge severity={r.severity} /></td>
-          <td className="px-3 py-2 text-sm hidden md:table-cell"><Assignees names={r.assignees} /></td>
-          <td className="px-3 py-2 text-sm hidden md:table-cell text-slate-400 whitespace-nowrap">{r.created}</td>
-          <td className="px-3 py-2 text-sm"><StatusBadge status={r.status} /></td>
-          <td className="px-3 py-2 text-sm"><PriorityBadge priority={r.priority} /></td>
-          <td className="px-3 py-2 text-sm text-right">
-            <div className="inline-flex items-center gap-2">
-              <Link href={`/dashboard/tickets/${r._id}`} className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700">View</Link>
+      {/* KPI cards */}
+      <section className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {kpis.map((k) => (
+          <Card key={k.label}>
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-wide text-slate-400">{k.label}</p>
+                <p className="mt-2 text-2xl font-semibold text-slate-100">{k.value}</p>
+              </div>
+              <span className="mt-1 inline-flex items-center rounded-md px-2 py-1 text-xs bg-slate-700/30 text-slate-300 ring-1 ring-slate-600/40">—</span>
             </div>
-          </td>
-        </tr>
-      ))}
+          </Card>
+        ))}
+      </section>
+
+      {/* Tickets table */}
+      <section className="mt-6">
+        <Card>
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-medium text-slate-300">All tickets</h2>
+            <div className="flex items-center gap-2">
+              <Link href="#" className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E]">
+                Filters
+              </Link>
+              <Link href="#" className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E]">
+                Columns
+              </Link>
+            </div>
+          </div>
+
+          <div className="mt-4 overflow-x-auto md:overflow-visible rounded-md border border-slate-800">
+            <table className="w-full text-sm">
+              <thead className="bg-slate-900/60 text-slate-400">
+                <tr>
+                  <Th>ID</Th>
+                  <Th>Title</Th>
+                  <Th className="hidden md:table-cell">Customer</Th>
+                  <Th className="hidden md:table-cell">Severity</Th>
+                  <Th className="hidden md:table-cell">Assignees</Th>
+                  <Th className="hidden md:table-cell">Created</Th>
+                  <Th>Status</Th>
+                  <Th>Priority</Th>
+                  <Th className="text-right">Actions</Th>
+                </tr>
+              </thead>
+
+              <tbody className="divide-y divide-slate-800">
+                {rows.map((r: TicketRow) => (
+                  <tr key={r._id} className="hover:bg-slate-900/30">
+                    <td className="px-3 py-2 text-sm font-medium text-slate-200 whitespace-nowrap">#{r.id}</td>
+                    <td className="px-3 py-2 text-sm max-w-[14rem] md:max-w-[28rem] truncate text-slate-200">{r.title}</td>
+                    <td className="px-3 py-2 text-sm hidden md:table-cell">{r.customer}</td>
+                    <td className="px-3 py-2 text-sm hidden md:table-cell"><SeverityBadge severity={r.severity} /></td>
+                    <td className="px-3 py-2 text-sm hidden md:table-cell"><Assignees names={r.assignees} /></td>
+                    <td className="px-3 py-2 text-sm hidden md:table-cell text-slate-400 whitespace-nowrap">{r.created}</td>
+                    <td className="px-3 py-2 text-sm"><StatusBadge status={r.status} /></td>
+                    <td className="px-3 py-2 text-sm"><PriorityBadge priority={r.priority} /></td>
+                    <td className="px-3 py-2 text-sm text-right">
+                      <div className="inline-flex items-center gap-2">
+                        <Link href={`/dashboard/tickets/${r._id}`} className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700">View</Link>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      </section>
     </>
+  );
+}
+
+function Card({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 shadow-xl backdrop-blur">
+      {children}
+    </div>
+  );
+}
+
+function Th({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <th className={`px-3 py-2 text-left text-xs font-medium uppercase tracking-wide ${className}`}>{children}</th>
   );
 }
 

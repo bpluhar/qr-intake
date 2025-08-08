@@ -4,10 +4,9 @@ import Breadcrumbs from "@/app/dashboard/helpers/Breadcrumbs";
 import { Suspense } from "react";
 
 import { TicketsTableShell } from "./ticketsTableServer"; // Server Component
-import TicketsTableSkeleton from "./ticketsTableSkeleton"; // Server or Client, lightweight
+import { TicketsPageSkeleton } from "./ticketsTableSkeleton"; // Composite skeleton (KPIs + table chrome)
 
 export default function TicketsPage() {
-
 
   const kpis = [
     { label: "Open tickets", value: "128" },
@@ -39,62 +38,10 @@ export default function TicketsPage() {
         </div>
       </div>
 
-      {/* KPI cards */}
-      <section className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {kpis.map((k) => (
-          <Card key={k.label}>
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-xs uppercase tracking-wide text-slate-400">{k.label}</p>
-                <p className="mt-2 text-2xl font-semibold text-slate-100">{k.value}</p>
-              </div>
-              <span className="mt-1 inline-flex items-center rounded-md px-2 py-1 text-xs bg-slate-700/30 text-slate-300 ring-1 ring-slate-600/40">—</span>
-            </div>
-          </Card>
-        ))}
-      </section>
-
-      {/* Tickets table */}
-      <section className="mt-6">
-        <Card>
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-medium text-slate-300">All tickets</h2>
-            <div className="flex items-center gap-2">
-              <Link href="#" className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E]">
-                Filters
-              </Link>
-              <Link href="#" className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E]">
-                Columns
-              </Link>
-            </div>
-          </div>
-
-          <div className="mt-4 overflow-x-auto md:overflow-visible rounded-md border border-slate-800">
-            <table className="w-full text-sm">
-              <thead className="bg-slate-900/60 text-slate-400">
-                <tr>
-                  <Th>ID</Th>
-                  <Th>Title</Th>
-                  <Th className="hidden md:table-cell">Customer</Th>
-                  <Th className="hidden md:table-cell">Severity</Th>
-                  <Th className="hidden md:table-cell">Assignees</Th>
-                  <Th className="hidden md:table-cell">Created</Th>
-                  <Th>Status</Th>
-                  <Th>Priority</Th>
-                  <Th className="text-right">Actions</Th>
-                </tr>
-              </thead>
-
-              {/* 🔽 replaced the map with the client component */}
-              <tbody className="divide-y divide-slate-800">
-                <Suspense fallback={<TicketsTableSkeleton />}>
-                  <TicketsTableShell />
-                </Suspense>
-              </tbody>
-            </table>
-          </div>
-        </Card>
-      </section>
+      <Suspense fallback={<TicketsPageSkeleton />}>
+        <TicketsTableShell />
+      </Suspense>
+      
     </div>
   );
 }

@@ -40,7 +40,7 @@ export default function CustomersPage() {
       {/* Title & actions */}
       <div className="mb-6 flex items-start justify-between gap-3">
         <div>
-          <Breadcrumbs />
+          <Breadcrumbs/>
           {/* <h1 className="text-xl font-semibold">Customers</h1> */}
           {/* <p className="mt-1 text-sm text-slate-400">Manage accounts, monitor activity and track revenue.</p> */}
         </div>

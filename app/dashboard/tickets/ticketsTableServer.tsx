@@ -7,7 +7,7 @@ import { TicketRow } from "../tickets";
 
 async function _getTicketsFromConvex(): Promise<TicketRow[]> {
   const docs = await fetchQuery(api.tickets.getAll, {});
-  const rows = (docs as any[]).map((d) => ({
+  const rows = (docs as TicketRow[]).map((d) => ({
     _id: d._id,
     _creationTime: d._creationTime,
     id: d.id,

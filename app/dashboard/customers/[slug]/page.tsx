@@ -206,7 +206,7 @@ export default async function Page({
       {/* ---- header ---- */}
       <div className="mb-6 flex items-start justify-between gap-3">
         <div>
-          <Breadcrumbs />
+          <Breadcrumbs currentTicket={id}/>
           {/* <h1 className="text-xl font-semibold">{customer.name}</h1> */}
           {/* <p className="mt-1 text-sm text-slate-400">{customer.company}</p> */}
         </div>
