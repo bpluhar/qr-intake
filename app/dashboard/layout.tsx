@@ -21,7 +21,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   try {
     const token = await convexAuthNextjsToken();
     const result: unknown = token
-      ? await fetchQuery(api.users.getCurrent, {}, { token })
+      ? await fetchQuery(api.functions.users.getCurrent, {}, { token })
       : null;
     if (isCurrentUser(result)) {
       initialEmail = result.email ?? null;

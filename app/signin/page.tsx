@@ -16,7 +16,7 @@ export default function SignIn() {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const signedIn = useQuery(api.users.isSignedIn);
+  const signedIn = useQuery(api.functions.users.isSignedIn);
 
   // Redirect automatically once auth state flips true
   useEffect(() => {

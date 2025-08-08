@@ -1,3 +1,5 @@
+// "use client";
+
 import Breadcrumbs from "./helpers/Breadcrumbs";
 
 export default function DashboardClient() {

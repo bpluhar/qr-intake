@@ -38,12 +38,6 @@ export default function SidebarClient({ initialEmail }: { initialEmail: string |
 
   // Seed from SSR, fallback to cookie on mount (no hydration mismatch)
   const [email] = useState<string>(initialEmail ?? "");
-  // useEffect(() => {
-  //   if (!email && typeof document !== "undefined") {
-  //     const pair = document.cookie.split("; ").find((row) => row.startsWith("triage_email="));
-  //     setEmail(pair ? decodeURIComponent(pair.split("=")[1]) : "");
-  //   }
-  // }, [email]);
 
   const initial = (email.trim()[0] ?? "U").toUpperCase();
 
@@ -51,7 +45,7 @@ export default function SidebarClient({ initialEmail }: { initialEmail: string |
     { href: "/dashboard", label: "Overview", icon: IconHome },
     { href: "/dashboard/tickets", label: "Tickets", icon: IconTicket },
     { href: "/dashboard/customers", label: "Customers", icon: IconUsers },
-    { href: "/dashboard/teams", label: "Teams", icon: IconTeams },
+    { href: "/dashboard/companies", label: "Companies", icon: IconTeams },
     { href: "/dashboard/reports", label: "Reports", icon: IconChart },
     { href: "/dashboard/settings", label: "Settings", icon: IconSettings },
     { href: "/dashboard/testing", label: "Testing", icon: IconTesting },
