@@ -2,7 +2,8 @@
 "use client";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
+import type { SVGProps } from "react";
 import { useAuthActions } from "@convex-dev/auth/react";
 
 // same isActivePath helper you’re using now
@@ -33,7 +34,7 @@ export default function SidebarClient({ initialEmail }: { initialEmail: string |
     ["/dashboard", "/dashboard/reports", "/dashboard/tickets", "/dashboard/customers", "/dashboard/settings"].forEach((p) => {
       router.prefetch(p);
     });
-  }, []);
+  });
 
   // Seed from SSR, fallback to cookie on mount (no hydration mismatch)
   const [email] = useState<string>(initialEmail ?? "");
@@ -59,29 +60,6 @@ export default function SidebarClient({ initialEmail }: { initialEmail: string |
 
   // Mobile sidebar state
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-
-  // Navigate on mouse down (left click only, no modifiers). Prevent double navigation by suppressing click if we already navigated.
-  const navigatedRef = useRef(false);
-  const handleNavMouseDown = (href: string, after?: () => void) => (e: React.MouseEvent) => {
-    // Only left button, no modifiers
-    if (e.button !== 0) return;
-    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-    e.preventDefault();
-    e.stopPropagation();
-    navigatedRef.current = true;
-    after?.();
-    router.push(href);
-    // Reset the flag on the next tick so keyboard clicks remain accessible
-    setTimeout(() => {
-      navigatedRef.current = false;
-    }, 0);
-  };
-  const suppressClickIfNavigated = (e: React.MouseEvent) => {
-    if (navigatedRef.current) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-  };
 
   return (
     <>
@@ -125,8 +103,7 @@ export default function SidebarClient({ initialEmail }: { initialEmail: string |
                   <Link
                     key={item.href}
                     href={item.href}
-                    onMouseDown={handleNavMouseDown(item.href, () => setIsMobileOpen(false))}
-                    onClick={suppressClickIfNavigated}
+                    onClick={() => setIsMobileOpen(false)}
                     className={`group flex items-center gap-3 rounded-md px-3 py-2 text-sm border border-transparent hover:bg-slate-800/70 ${
                       active ? "bg-slate-800/70 border-slate-700 text-emerald-400" : "text-slate-300"
                     }`}
@@ -198,8 +175,6 @@ export default function SidebarClient({ initialEmail }: { initialEmail: string |
                 <Link
                   key={item.href}
                   href={item.href}
-                  onMouseDown={handleNavMouseDown(item.href)}
-                  onClick={suppressClickIfNavigated}
                   className={`group flex items-center gap-3 rounded-md px-3 py-2 text-sm border border-transparent hover:bg-slate-800/70 ${
                     active ? "bg-slate-800/70 border-slate-700 text-emerald-400" : "text-slate-300"
                   }`}
@@ -249,10 +224,9 @@ export default function SidebarClient({ initialEmail }: { initialEmail: string |
 }
 
 
-function IconHome(props: React.SVGProps<SVGSVGElement>) {
-  const { className, ...rest } = props;
+function IconHome(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-4">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props} className={["size-4", props.className].filter(Boolean).join(" ")}>{/* size-4 fallback */}
       <path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.061l-8.689-8.69a2.25 2.25 0 0 0-3.182 0l-8.69 8.69a.75.75 0 1 0 1.061 1.06l8.69-8.689Z" />
       <path d="m12 5.432 8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75V21a.75.75 0 0 1-.75.75H5.625a1.875 1.875 0 0 1-1.875-1.875v-6.198a2.29 2.29 0 0 0 .091-.086L12 5.432Z" />
     </svg>
@@ -262,28 +236,25 @@ function IconHome(props: React.SVGProps<SVGSVGElement>) {
 
 
 
-function IconTicket(props: React.SVGProps<SVGSVGElement>) {
-  const { className, ...rest } = props;
+function IconTicket(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-4">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props} className={["size-4", props.className].filter(Boolean).join(" ")}>{/* size-4 fallback */}
       <path fillRule="evenodd" d="M1.5 6.375c0-1.036.84-1.875 1.875-1.875h17.25c1.035 0 1.875.84 1.875 1.875v3.026a.75.75 0 0 1-.375.65 2.249 2.249 0 0 0 0 3.898.75.75 0 0 1 .375.65v3.026c0 1.035-.84 1.875-1.875 1.875H3.375A1.875 1.875 0 0 1 1.5 17.625v-3.026a.75.75 0 0 1 .374-.65 2.249 2.249 0 0 0 0-3.898.75.75 0 0 1-.374-.65V6.375Zm15-1.125a.75.75 0 0 1 .75.75v.75a.75.75 0 0 1-1.5 0V6a.75.75 0 0 1 .75-.75Zm.75 4.5a.75.75 0 0 0-1.5 0v.75a.75.75 0 0 0 1.5 0v-.75Zm-.75 3a.75.75 0 0 1 .75.75v.75a.75.75 0 0 1-1.5 0v-.75a.75.75 0 0 1 .75-.75Zm.75 4.5a.75.75 0 0 0-1.5 0V18a.75.75 0 0 0 1.5 0v-.75ZM6 12a.75.75 0 0 1 .75-.75H12a.75.75 0 0 1 0 1.5H6.75A.75.75 0 0 1 6 12Zm.75 2.25a.75.75 0 0 0 0 1.5h3a.75.75 0 0 0 0-1.5h-3Z" clipRule="evenodd" />
     </svg>
   );
 }
 
-function IconUsers(props: React.SVGProps<SVGSVGElement>) {
-  const { className, ...rest } = props;
+function IconUsers(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-4">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props} className={["size-4", props.className].filter(Boolean).join(" ")}>{/* size-4 fallback */}
       <path fillRule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z" clipRule="evenodd" />
     </svg>
   );
 }
 
-function IconTeams(props: React.SVGProps<SVGSVGElement>) {
-  const { className, ...rest } = props;
+function IconTeams(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-4">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props} className={["size-4", props.className].filter(Boolean).join(" ")}>{/* size-4 fallback */}
       <path fillRule="evenodd" d="M8.25 6.75a3.75 3.75 0 1 1 7.5 0 3.75 3.75 0 0 1-7.5 0ZM15.75 9.75a3 3 0 1 1 6 0 3 3 0 0 1-6 0ZM2.25 9.75a3 3 0 1 1 6 0 3 3 0 0 1-6 0ZM6.31 15.117A6.745 6.745 0 0 1 12 12a6.745 6.745 0 0 1 6.709 7.498.75.75 0 0 1-.372.568A12.696 12.696 0 0 1 12 21.75c-2.305 0-4.47-.612-6.337-1.684a.75.75 0 0 1-.372-.568 6.787 6.787 0 0 1 1.019-4.38Z" clipRule="evenodd" />
       <path d="M5.082 14.254a8.287 8.287 0 0 0-1.308 5.135 9.687 9.687 0 0 1-1.764-.44l-.115-.04a.563.563 0 0 1-.373-.487l-.01-.121a3.75 3.75 0 0 1 3.57-4.047ZM20.226 19.389a8.287 8.287 0 0 0-1.308-5.135 3.75 3.75 0 0 1 3.57 4.047l-.01.121a.563.563 0 0 1-.373.486l-.115.04c-.567.2-1.156.349-1.764.441Z" />
     </svg>
@@ -292,29 +263,26 @@ function IconTeams(props: React.SVGProps<SVGSVGElement>) {
 
 
 
-function IconChart(props: React.SVGProps<SVGSVGElement>) {
-  const { className, ...rest } = props;
+function IconChart(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-4">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props} className={["size-4", props.className].filter(Boolean).join(" ")}>{/* size-4 fallback */}
       <path fillRule="evenodd" d="M2.25 13.5a8.25 8.25 0 0 1 8.25-8.25.75.75 0 0 1 .75.75v6.75H18a.75.75 0 0 1 .75.75 8.25 8.25 0 0 1-16.5 0Z" clipRule="evenodd" />
       <path fillRule="evenodd" d="M12.75 3a.75.75 0 0 1 .75-.75 8.25 8.25 0 0 1 8.25 8.25.75.75 0 0 1-.75.75h-7.5a.75.75 0 0 1-.75-.75V3Z" clipRule="evenodd" />
     </svg>
   );
 }
 
-function IconSettings(props: React.SVGProps<SVGSVGElement>) {
-  const { className, ...rest } = props;
+function IconSettings(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-4">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props} className={["size-4", props.className].filter(Boolean).join(" ")}>{/* size-4 fallback */}
       <path fillRule="evenodd" d="M11.828 2.25c-.916 0-1.699.663-1.85 1.567l-.091.549a.798.798 0 0 1-.517.608 7.45 7.45 0 0 0-.478.198.798.798 0 0 1-.796-.064l-.453-.324a1.875 1.875 0 0 0-2.416.2l-.243.243a1.875 1.875 0 0 0-.2 2.416l.324.453a.798.798 0 0 1 .064.796 7.448 7.448 0 0 0-.198.478.798.798 0 0 1-.608.517l-.55.092a1.875 1.875 0 0 0-1.566 1.849v.344c0 .916.663 1.699 1.567 1.85l.549.091c.281.047.508.25.608.517.06.162.127.321.198.478a.798.798 0 0 1-.064.796l-.324.453a1.875 1.875 0 0 0 .2 2.416l.243.243c.648.648 1.67.733 2.416.2l.453-.324a.798.798 0 0 1 .796-.064c.157.071.316.137.478.198.267.1.47.327.517.608l.092.55c.15.903.932 1.566 1.849 1.566h.344c.916 0 1.699-.663 1.85-1.567l.091-.549a.798.798 0 0 1 .517-.608 7.52 7.52 0 0 0 .478-.198.798.798 0 0 1 .796.064l.453.324a1.875 1.875 0 0 0 2.416-.2l.243-.243c.648-.648.733-1.67.2-2.416l-.324-.453a.798.798 0 0 1-.064-.796c.071-.157.137-.316.198-.478.1-.267.327-.47.608-.517l.55-.091a1.875 1.875 0 0 0 1.566-1.85v-.344c0-.916-.663-1.699-1.567-1.85l-.549-.091a.798.798 0 0 1-.608-.517 7.507 7.507 0 0 0-.198-.478.798.798 0 0 1 .064-.796l.324-.453a1.875 1.875 0 0 0-.2-2.416l-.243-.243a1.875 1.875 0 0 0-2.416-.2l-.453.324a.798.798 0 0 1-.796.064 7.462 7.462 0 0 0-.478-.198.798.798 0 0 1-.517-.608l-.091-.55a1.875 1.875 0 0 0-1.85-1.566h-.344ZM12 15.75a3.75 3.75 0 1 0 0-7.5 3.75 3.75 0 0 0 0 7.5Z" clipRule="evenodd" />
     </svg>
   );
 }
 
-function IconTesting(props: React.SVGProps<SVGSVGElement>) {
-  const { className, ...rest } = props;
+function IconTesting(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-4">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props} className={["size-4", props.className].filter(Boolean).join(" ")}>{/* size-4 fallback */}
       <path fillRule="evenodd" d="M2.25 6a3 3 0 0 1 3-3h13.5a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V6Zm3.97.97a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06l-2.25 2.25a.75.75 0 0 1-1.06-1.06l1.72-1.72-1.72-1.72a.75.75 0 0 1 0-1.06Zm4.28 4.28a.75.75 0 0 0 0 1.5h3a.75.75 0 0 0 0-1.5h-3Z" clipRule="evenodd" />
     </svg>
   );

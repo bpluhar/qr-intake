@@ -1,20 +1,17 @@
 "use client";
-
 import Link from "next/link";
+// import { useEffect } from "react";
 import { TicketRow } from "../tickets";
-import { useEffect } from "react";
 
-export default function TicketsTableClient({ rows }: { rows: TicketRow[] }) {
 
-      
-  useEffect(() => {
-    // Simulate a delay for demonstration purposes
-    setTimeout(() => {}, 2500);
-  }, []);
+type Props = { initialData: TicketRow[] };
+
+export default function TicketsTableClient({ initialData }: Props) {
+  const rows = initialData ?? [];
 
   return (
     <>
-      {rows.map((r) => (
+      {rows.map((r: TicketRow) => (
         <tr key={r.id} className="hover:bg-slate-900/30">
           <td className="px-3 py-2 text-sm font-medium text-slate-200 whitespace-nowrap">#{r.id}</td>
           <td className="px-3 py-2 text-sm max-w-[14rem] md:max-w-[28rem] truncate text-slate-200">{r.title}</td>

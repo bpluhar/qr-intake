@@ -1,9 +1,10 @@
 import Link from "next/link";
 import Breadcrumbs from "@/app/dashboard/helpers/Breadcrumbs";
 // import dynamic from "next/dynamic";
-import { TicketRow, ticketRows } from "../tickets";
 import { Suspense } from "react";
-import TicketsTableClient from "./ticketsTableClient";
+
+import { TicketsTableShell } from "./ticketsTableServer"; // Server Component
+import TicketsTableSkeleton from "./ticketsTableSkeleton"; // Server or Client, lightweight
 
 export default function TicketsPage() {
 
@@ -86,8 +87,8 @@ export default function TicketsPage() {
 
               {/* 🔽 replaced the map with the client component */}
               <tbody className="divide-y divide-slate-800">
-                <Suspense fallback={<TicketsTableSkeleton rows={12} />}>
-                  <TicketsTableClient rows={ticketRows} />
+                <Suspense fallback={<TicketsTableSkeleton />}>
+                  <TicketsTableShell />
                 </Suspense>
               </tbody>
             </table>
@@ -95,45 +96,6 @@ export default function TicketsPage() {
         </Card>
       </section>
     </div>
-  );
-}
-
-/* ---- Loading skeleton for the client component ---- */
-function TicketsTableSkeleton({ rows = 12 }: { rows?: number }) {
-  return (
-    <>
-      {Array.from({ length: rows }).map((_, i) => (
-        <tr key={i} className="animate-pulse">
-          <td className="px-3 py-2 overflow-hidden">
-            <div className="h-4 w-12 rounded bg-slate-700/40" />
-          </td>
-          <td className="px-3 py-2 overflow-hidden">
-            <div className="h-4 w-full max-w-[14rem] md:max-w-[28rem] rounded bg-slate-700/40" />
-          </td>
-          <td className="px-3 py-2 hidden md:table-cell overflow-hidden">
-            <div className="h-4 w-full max-w-28 rounded bg-slate-700/40" />
-          </td>
-          <td className="px-3 py-2 hidden md:table-cell overflow-hidden">
-            <div className="h-5 w-full max-w-20 rounded bg-slate-700/40" />
-          </td>
-          <td className="px-3 py-2 hidden md:table-cell overflow-hidden">
-            <div className="h-7 w-full max-w-24 rounded bg-slate-700/40" />
-          </td>
-          <td className="px-3 py-2 hidden md:table-cell overflow-hidden">
-            <div className="h-4 w-full max-w-24 rounded bg-slate-700/40" />
-          </td>
-          <td className="px-3 py-2 overflow-hidden">
-            <div className="h-5 w-full max-w-16 rounded bg-slate-700/40" />
-          </td>
-          <td className="px-3 py-2 overflow-hidden">
-            <div className="h-5 w-full max-w-12 rounded bg-slate-700/40" />
-          </td>
-          <td className="px-3 py-2 overflow-hidden text-right">
-            <div className="ml-auto h-6 w-full max-w-16 rounded bg-slate-700/40" />
-          </td>
-        </tr>
-      ))}
-    </>
   );
 }
 
@@ -151,68 +113,4 @@ function Th({ children, className = "" }: { children: React.ReactNode; className
   return (
     <th className={`px-3 py-2 text-left text-xs font-medium uppercase tracking-wide ${className}`}>{children}</th>
   );
-}
-
-function Td({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <td className={`px-3 py-2 text-sm ${className}`}>{children}</td>;
-}
-
-function StatusBadge({ status }: { status: TicketRow["status"] }) {
-  const map: Record<string, string> = {
-    Open: "bg-blue-500/10 text-blue-400 ring-1 ring-blue-500/30",
-    Pending: "bg-yellow-500/10 text-yellow-400 ring-1 ring-yellow-500/30",
-    Resolved: "bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30",
-  };
-  return (
-    <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs ${map[status] ?? "bg-slate-700/40 text-slate-300 ring-1 ring-slate-600/40"}`}>
-      {status}
-    </span>
-  );
-}
-
-function SeverityBadge({ severity }: { severity: TicketRow["severity"] }) {
-  const map: Record<string, string> = {
-    Low: "bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30",
-    Medium: "bg-sky-500/10 text-sky-400 ring-1 ring-sky-500/30",
-    High: "bg-yellow-500/10 text-yellow-400 ring-1 ring-yellow-500/30",
-    Critical: "bg-red-500/10 text-red-400 ring-1 ring-red-500/30",
-  };
-  return (
-    <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs ${map[severity]}`}>{severity}</span>
-  );
-}
-
-function PriorityBadge({ priority }: { priority: TicketRow["priority"] }) {
-  const map: Record<string, string> = {
-    P1: "bg-red-500/10 text-red-400 ring-1 ring-red-500/30",
-    P2: "bg-yellow-500/10 text-yellow-400 ring-1 ring-yellow-500/30",
-    P3: "bg-sky-500/10 text-sky-400 ring-1 ring-sky-500/30",
-    P4: "bg-slate-700/40 text-slate-300 ring-1 ring-slate-600/40",
-  };
-  return (
-    <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs ${map[priority]}`}>{priority}</span>
-  );
-}
-
-function Assignees({ names }: { names: string[] }) {
-  return (
-    <div className="flex -space-x-2">
-      {names.map((n) => (
-        <div
-          key={n}
-          title={n}
-          className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-slate-700 bg-slate-800/60 text-[10px] font-medium"
-        >
-          {initials(n)}
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function initials(name: string) {
-  const parts = name.trim().split(/\s+/);
-  const first = parts[0]?.[0] ?? "";
-  const last = parts[1]?.[0] ?? "";
-  return (first + last).toUpperCase();
 }

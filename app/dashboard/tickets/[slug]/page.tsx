@@ -1,27 +1,56 @@
 // app/dashboard/tickets/[slug]/page.tsx
 // Ticket detail page — mirrors the customer detail layout
+import "server-only";
+import { unstable_cache, revalidateTag } from "next/cache";
+import { fetchQuery, fetchMutation } from "convex/nextjs";
+import { api } from "@/convex/_generated/api";
 import React from "react";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import Breadcrumbs from "../../helpers/Breadcrumbs";
-import { TicketRow, ticketRows } from "../../tickets";
+import type { TicketRow } from "../../tickets";
 import { PriorityBadge, SeverityBadge, StatusBadge, NuetralBadge } from "../../badges";
+import { revalidateTickets } from "../ticketsTableServer";
 
+// Server Action to delete a ticket by numeric id, then refresh caches & redirect
+export async function deleteTicketAction(id: number) {
+  "use server";
+  await fetchMutation(api.tickets.deleteById, { id });
+  await revalidateTickets();      // bust list cache
+  revalidateTag(`ticket:${id}`);  // bust detail cache
+  redirect("/dashboard/tickets");
+}
 
 /* -------------------------------------------------------------------- */
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
-  const id = Number(slug);
+export default async function Page({ params,}: { params: Promise<{ slug: string }>; }) {
+  const param = await params;
+  const id = Number(param.slug);
+  if (!Number.isFinite(id)) notFound();
 
-  // ticketRows should be defined/imported in the same module scope
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
+  // Fetch a single ticket from Convex (cached)
+  const getTicketCached = (ticketId: number) =>
+    unstable_cache(
+      async () => {
+        const d: any | null = await fetchQuery(api.tickets.getById, { id: ticketId });
+        if (!d) return undefined;
+        const row: TicketRow = {
+          id: d.id,
+          customer_id: d.customer_id,
+          customer: d.customer,
+          title: d.title,
+          severity: d.severity as TicketRow["severity"],
+          priority: d.priority as TicketRow["priority"],
+          status: d.status as TicketRow["status"],
+          created: d.created,
+          assignees: d.assignees,
+        };
+        return row;
+      },
+      ["ticket:detail", String(ticketId)],
+      { revalidate: 60, tags: ["tickets", `ticket:${ticketId}`] }
+    )();
 
-  const ticket: TicketRow | undefined = ticketRows.find((t) => t.id === id);
+  const ticket = await getTicketCached(id);
 
   if (!ticket) notFound();
 
@@ -84,9 +113,11 @@ export default async function Page({
           <Card>
             <h2 className="text-sm font-medium text-slate-300 mb-3">Quick Actions</h2>
             <div className="flex flex-col gap-2">
-              <button className="mt-2 w-full rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 focus:ring-offset-[#0b1217]">
-                Delete Ticket
-              </button>
+              <form action={deleteTicketAction.bind(null, id)}>
+                <button type="submit" className="mt-2 w-full rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 focus:ring-offset-[#0b1217]">
+                  Delete Ticket
+                </button>
+              </form>
               <button className="rounded-md bg-slate-800/60 px-3 py-2 text-xs font-medium ring-1 ring-slate-700 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-600">
                 Assign
               </button>
