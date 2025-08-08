@@ -27,7 +27,7 @@ async function _getTicketsFromConvex(): Promise<TicketRow[]> {
 export const getTicketsFromConvex = unstable_cache(
   _getTicketsFromConvex,
   ["tickets:getAll"],
-  { revalidate: 60, tags: ["tickets"] }
+  { revalidate: 120, tags: ["tickets"] }
 );
 
 // Call this from a Server Action after a Convex mutation to bust the cache
