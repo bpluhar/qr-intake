@@ -25,7 +25,7 @@ async function getTeams(): Promise<TeamRow[]> {
 
 export const revalidate = 60; // ISR: update at most once per minute
 
-export default async function TeamsPage() {
+export default async function CompaniesPage() {
   const rows = await getTeams();
   const teamCount = rows.length;
   const usersCount = rows.reduce((sum, t) => sum + t.members, 0);

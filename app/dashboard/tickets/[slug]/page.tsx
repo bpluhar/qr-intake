@@ -23,7 +23,7 @@ export default async function Page({ params,}: { params: Promise<{ slug: string 
   const getTicketCached = (ticketId: Id<"tickets">) =>
     unstable_cache(
       async () => {
-        const d: Doc<"tickets"> | null = await fetchQuery(api.tickets.getByDocId, { _id: ticketId });
+        const d: Doc<"tickets"> | null = await fetchQuery(api.functions.tickets.getByDocId, { _id: ticketId });
         if (!d) return undefined;
         const row: TicketRow = {
           _id: d._id,

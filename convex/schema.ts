@@ -55,6 +55,30 @@ const schema = defineSchema({
     .index("by_organization", ["organizationId"]) // list within org
     .index("by_name", ["name"]),
 
+  /** Organization-level settings */
+  organizationSettings: defineTable({
+    organizationId: v.id("organizations"), // correlates via organizations._id
+    timezone: v.optional(v.string()),
+    theme: v.optional(v.string()),
+    emailNotifications: v.optional(v.boolean()),
+  }).index("by_organization", ["organizationId"]),
+
+  /** Company-level settings */
+  companySettings: defineTable({
+    companyId: v.id("companies"), // correlates via companies._id
+    slaHours: v.optional(v.number()),
+    autoAssign: v.optional(v.boolean()),
+    note: v.optional(v.string()),
+  }).index("by_company", ["companyId"]),
+
+  /** User-level settings (auth users) */
+  userSettings: defineTable({
+    userId: v.id("users"), // correlates via users._id from authTables
+    theme: v.optional(v.string()),
+    firstDayOfWeek: v.optional(v.number()), // 0-6
+    emailNotifications: v.optional(v.boolean()),
+  }).index("by_user", ["userId"]),
+
   /** Tickets (tenant-scoped) */
   tickets: defineTable({
     // Friendly numeric id you already use in the UI/URLs
@@ -64,7 +88,7 @@ const schema = defineSchema({
     organizationId: v.id("organizations"),
 
     // Relationships
-    customerId: v.id("customers"), // required: ticket belongs to a customer
+    customerId: v.optional(v.id("customers")), // required: ticket belongs to a customer
     companyId: v.optional(v.id("companies")), // optional: ticket may also belong to a company
 
     // Existing fields
