@@ -14,7 +14,7 @@ const schema = defineSchema({
     severity: v.string(),
     status: v.string(),
     title: v.string(),
-  }).index("by_ticket_id", ["id"]),
+  }),
 });
  
 export default schema;

@@ -12,7 +12,7 @@ export default function TicketsTableClient({ initialData }: Props) {
   return (
     <>
       {rows.map((r: TicketRow) => (
-        <tr key={r.id} className="hover:bg-slate-900/30">
+        <tr key={r._id} className="hover:bg-slate-900/30">
           <td className="px-3 py-2 text-sm font-medium text-slate-200 whitespace-nowrap">#{r.id}</td>
           <td className="px-3 py-2 text-sm max-w-[14rem] md:max-w-[28rem] truncate text-slate-200">{r.title}</td>
           <td className="px-3 py-2 text-sm hidden md:table-cell">{r.customer}</td>
@@ -23,7 +23,7 @@ export default function TicketsTableClient({ initialData }: Props) {
           <td className="px-3 py-2 text-sm"><PriorityBadge priority={r.priority} /></td>
           <td className="px-3 py-2 text-sm text-right">
             <div className="inline-flex items-center gap-2">
-              <Link href={`/dashboard/tickets/${r.id}`} className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700">View</Link>
+              <Link href={`/dashboard/tickets/${r._id}`} className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700">View</Link>
             </div>
           </td>
         </tr>

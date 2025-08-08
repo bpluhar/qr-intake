@@ -11,29 +11,32 @@ import Breadcrumbs from "../../helpers/Breadcrumbs";
 import type { TicketRow } from "../../tickets";
 import { PriorityBadge, SeverityBadge, StatusBadge, NuetralBadge } from "../../badges";
 import { revalidateTickets } from "../ticketsTableServer";
+import { Id } from "@/convex/_generated/dataModel";
 
 // Server Action to delete a ticket by numeric id, then refresh caches & redirect
-export async function deleteTicketAction(id: number) {
+export async function deleteTicketAction(_id: Id<"tickets">) {
   "use server";
-  await fetchMutation(api.tickets.deleteById, { id });
+  await fetchMutation(api.tickets.deleteByDocId, { _id });
   await revalidateTickets();      // bust list cache
-  revalidateTag(`ticket:${id}`);  // bust detail cache
+  revalidateTag(`ticket:${_id}`);  // bust detail cache
   redirect("/dashboard/tickets");
 }
 
 /* -------------------------------------------------------------------- */
 export default async function Page({ params,}: { params: Promise<{ slug: string }>; }) {
   const param = await params;
-  const id = Number(param.slug);
-  if (!Number.isFinite(id)) notFound();
+  const _id = param.slug as Id<"tickets">;
+  if (!_id) notFound();
 
   // Fetch a single ticket from Convex (cached)
-  const getTicketCached = (ticketId: number) =>
+  const getTicketCached = (ticketId: Id<"tickets">) =>
     unstable_cache(
       async () => {
-        const d: any | null = await fetchQuery(api.tickets.getById, { id: ticketId });
+        const d: any | null = await fetchQuery(api.tickets.getByDocId, { _id: ticketId });
         if (!d) return undefined;
         const row: TicketRow = {
+          _id: d._id,
+          _creationTime: d._creationTime,
           id: d.id,
           customer_id: d.customer_id,
           customer: d.customer,
@@ -50,7 +53,7 @@ export default async function Page({ params,}: { params: Promise<{ slug: string 
       { revalidate: 60, tags: ["tickets", `ticket:${ticketId}`] }
     )();
 
-  const ticket = await getTicketCached(id);
+  const ticket = await getTicketCached(_id);
 
   if (!ticket) notFound();
 
@@ -65,7 +68,7 @@ export default async function Page({ params,}: { params: Promise<{ slug: string 
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-0 lg:py-8 text-slate-200">
       {/* Header */}
       <div className="mb-6 flex items-start justify-between gap-3">
-        <Breadcrumbs />
+        <Breadcrumbs currentTicket={ticket.id} />
         <Link
           href="#"
           className="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-white bg-[#249F73] hover:bg-[#1E8761] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3ECF8E] focus:ring-offset-[#0b1217]"
@@ -113,7 +116,7 @@ export default async function Page({ params,}: { params: Promise<{ slug: string 
           <Card>
             <h2 className="text-sm font-medium text-slate-300 mb-3">Quick Actions</h2>
             <div className="flex flex-col gap-2">
-              <form action={deleteTicketAction.bind(null, id)}>
+              <form action={deleteTicketAction.bind(null, _id)}>
                 <button type="submit" className="mt-2 w-full rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 focus:ring-offset-[#0b1217]">
                   Delete Ticket
                 </button>

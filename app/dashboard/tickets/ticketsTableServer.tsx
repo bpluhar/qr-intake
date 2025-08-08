@@ -7,7 +7,9 @@ import { TicketRow } from "../tickets";
 
 async function _getTicketsFromConvex(): Promise<TicketRow[]> {
   const docs = await fetchQuery(api.tickets.getAll, {});
-  const rows = (docs as TicketRow[]).map((d) => ({
+  const rows = (docs as any[]).map((d) => ({
+    _id: d._id,
+    _creationTime: d._creationTime,
     id: d.id,
     customer_id: d.customer_id,
     customer: d.customer,
@@ -24,7 +26,7 @@ async function _getTicketsFromConvex(): Promise<TicketRow[]> {
 // Cache the Convex query for 60s and tag it so mutations can invalidate
 export const getTicketsFromConvex = unstable_cache(
   _getTicketsFromConvex,
-  ["tickets:list"],
+  ["tickets:getAll"],
   { revalidate: 60, tags: ["tickets"] }
 );
 

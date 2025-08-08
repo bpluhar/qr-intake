@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export default function Breadcrumbs() {
-  const pathname = usePathname();               // e.g. "/dashboard/tickets/5012"
+export default function Breadcrumbs( { currentTicket }: { currentTicket: number }) {
+  const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
 
   // Helper to prettify each segment
