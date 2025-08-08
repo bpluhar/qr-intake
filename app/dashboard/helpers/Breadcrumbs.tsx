@@ -14,7 +14,11 @@ export default function Breadcrumbs( { currentTicket }: { currentTicket: number 
   // Build cumulative hrefs so each link points upward one level
   const crumbs = segments.map((seg, idx) => {
     const href = "/" + segments.slice(0, idx + 1).join("/");
-    return { label: labelFrom(seg), href, idx };
+    const isLast = idx === segments.length - 1;
+    const label = isLast && Number.isFinite(currentTicket)
+      ? String(currentTicket)
+      : labelFrom(seg);
+    return { label, href, idx };
   });
 
   return (
