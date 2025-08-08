@@ -2,7 +2,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useAuthActions } from "@convex-dev/auth/react";
 
 // same isActivePath helper you’re using now
@@ -60,6 +60,29 @@ export default function SidebarClient({ initialEmail }: { initialEmail: string |
   // Mobile sidebar state
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
+  // Navigate on mouse down (left click only, no modifiers). Prevent double navigation by suppressing click if we already navigated.
+  const navigatedRef = useRef(false);
+  const handleNavMouseDown = (href: string, after?: () => void) => (e: React.MouseEvent) => {
+    // Only left button, no modifiers
+    if (e.button !== 0) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    e.stopPropagation();
+    navigatedRef.current = true;
+    after?.();
+    router.push(href);
+    // Reset the flag on the next tick so keyboard clicks remain accessible
+    setTimeout(() => {
+      navigatedRef.current = false;
+    }, 0);
+  };
+  const suppressClickIfNavigated = (e: React.MouseEvent) => {
+    if (navigatedRef.current) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  };
+
   return (
     <>
       {/* Hamburger button for mobile */}
@@ -102,7 +125,8 @@ export default function SidebarClient({ initialEmail }: { initialEmail: string |
                   <Link
                     key={item.href}
                     href={item.href}
-                    onClick={() => setIsMobileOpen(false)}
+                    onMouseDown={handleNavMouseDown(item.href, () => setIsMobileOpen(false))}
+                    onClick={suppressClickIfNavigated}
                     className={`group flex items-center gap-3 rounded-md px-3 py-2 text-sm border border-transparent hover:bg-slate-800/70 ${
                       active ? "bg-slate-800/70 border-slate-700 text-emerald-400" : "text-slate-300"
                     }`}
@@ -174,6 +198,8 @@ export default function SidebarClient({ initialEmail }: { initialEmail: string |
                 <Link
                   key={item.href}
                   href={item.href}
+                  onMouseDown={handleNavMouseDown(item.href)}
+                  onClick={suppressClickIfNavigated}
                   className={`group flex items-center gap-3 rounded-md px-3 py-2 text-sm border border-transparent hover:bg-slate-800/70 ${
                     active ? "bg-slate-800/70 border-slate-700 text-emerald-400" : "text-slate-300"
                   }`}
