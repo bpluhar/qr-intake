@@ -134,10 +134,15 @@ export const ticketRows: TicketRow[] = [
   // ---- Customer 10: Resistance ----
   { id: 5101,  customer_id: 10, customer: "Resistance",            title: "Database connection pool exhausted",     severity: "Critical",priority: "P1", status: "Open",     created: "Jul 20, 2025", assignees: ["Brian Pluhar","Alex Lee"] },
   { id: 5102,  customer_id: 10, customer: "Resistance",            title: "Stripe webhook secret rotated",          severity: "High",    priority: "P1", status: "Open",     created: "Jul 25, 2025", assignees: ["Brian Pluhar"] },
-  { id: 5103,  customer_id: 10, customer: "Resistance",            title: "Skynet connection timeout",             severity: "Critical",priority: "P1", status: "Open",     created: "Jun 25, 2025", assignees: ["Brian Pluhar"] },
+  { id: 5103,  customer_id: 10, customer: "Resistance",            title: "Skynet connection timeout",              severity: "Critical",priority: "P1", status: "Open",     created: "Jun 25, 2025", assignees: ["Brian Pluhar"] },
   { id: 5104,  customer_id: 10, customer: "Resistance",            title: "Wake‑up alarm inactivity",               severity: "Critical",priority: "P1", status: "Pending",  created: "Jul 04, 2025", assignees: ["Priya Patel","Alex Lee"] },
   { id: 5105,  customer_id: 10, customer: "Resistance",            title: "User preferences reset on logout",       severity: "Medium",  priority: "P2", status: "Pending",  created: "Jul 05, 2025", assignees: ["Alex Lee"] },
   { id: 5106,  customer_id: 10, customer: "Resistance",            title: "Interface lag after deploy",             severity: "Medium",  priority: "P2", status: "Open",     created: "Jul 14, 2025", assignees: ["Priya Patel"] },
-  { id: 5107,  customer_id: 10, customer: "Resistance",            title: "OAuth token refresh loop",              severity: "High",    priority: "P1", status: "Open",     created: "Jul 16, 2025", assignees: ["Diego Ramos"] },
+  { id: 5107,  customer_id: 10, customer: "Resistance",            title: "OAuth token refresh loop",               severity: "High",    priority: "P1", status: "Open",     created: "Jul 16, 2025", assignees: ["Diego Ramos"] },
   { id: 5108,  customer_id: 10, customer: "Resistance",            title: "API latency spikes",                     severity: "High",    priority: "P1", status: "Pending",  created: "Jul 18, 2025", assignees: []},
+
+  { id: 5109,  customer_id: 10, customer: "Resistance",            title: "Webhook retries not firing",             severity: "High",    priority: "P1", status: "Open",     created: "Jul 19, 2025", assignees: ["Priya Patel","Jane Smith"] },
+  { id: 5110,  customer_id: 10, customer: "Resistance",            title: "CSV import fails on emoji",              severity: "High",    priority: "P1", status: "Pending",  created: "Jul 20, 2025", assignees: ["Priya Patel"] },
+  { id: 5111, customer_id: 10, customer: "Resistance",             title: "API rate limiting inconsistent",         severity: "Medium",  priority: "P2", status: "Pending", created: "Jul 21, 2025", assignees: ["Priya Patel"] },
+  { id: 5112, customer_id: 10, customer: "Resistance",             title: "Billing page 400 on card update",        severity: "Medium",  priority: "P2", status: "Open", created: "Jul 22, 2025 ", assignees: ["Diego Ramos"] }, 
 ];

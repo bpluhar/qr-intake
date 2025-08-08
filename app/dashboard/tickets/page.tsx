@@ -1,8 +1,13 @@
 import Link from "next/link";
 import Breadcrumbs from "@/app/dashboard/helpers/Breadcrumbs";
+// import dynamic from "next/dynamic";
 import { TicketRow, ticketRows } from "../tickets";
+import { Suspense } from "react";
+import TicketsTableClient from "./ticketsTableClient";
 
 export default function TicketsPage() {
+
+
   const kpis = [
     { label: "Open tickets", value: "128" },
     { label: "New this week", value: "42" },
@@ -16,7 +21,6 @@ export default function TicketsPage() {
       <div className="mb-6 flex items-start justify-between gap-3">
         <div>
           <Breadcrumbs />
-          {/* <p className="mt-1 text-sm text-slate-400">Track, prioritize and resolve customer issues quickly.</p> */}
         </div>
         <div className="flex items-center gap-2">
           <Link
@@ -79,31 +83,57 @@ export default function TicketsPage() {
                   <Th className="text-right">Actions</Th>
                 </tr>
               </thead>
+
+              {/* 🔽 replaced the map with the client component */}
               <tbody className="divide-y divide-slate-800">
-                {ticketRows.map((r) => (
-                  <tr key={r.id} className="hover:bg-slate-900/30">
-                    <Td className="font-medium text-slate-200 whitespace-nowrap">#{r.id}</Td>
-                    <Td className="max-w-[14rem] md:max-w-[28rem] truncate text-slate-200">{r.title}</Td>
-                    <Td className="hidden md:table-cell">{r.customer}</Td>
-                    <Td className="hidden md:table-cell"><SeverityBadge severity={r.severity} /></Td>
-                    <Td className="hidden md:table-cell"><Assignees names={r.assignees} /></Td>
-                    <Td className="hidden md:table-cell text-slate-400 whitespace-nowrap">{r.created}</Td>
-                    <Td><StatusBadge status={r.status} /></Td>
-                    <Td><PriorityBadge priority={r.priority} /></Td>
-                    <Td className="text-right">
-                      <div className="inline-flex items-center gap-2">
-                        <Link href={`/dashboard/tickets/${r.id}`} className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700">View</Link>
-                        {/* <Link href="#" className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700">Message</Link> */}
-                      </div>
-                    </Td>
-                  </tr>
-                ))}
+                <Suspense fallback={<TicketsTableSkeleton rows={12} />}>
+                  <TicketsTableClient rows={ticketRows} />
+                </Suspense>
               </tbody>
             </table>
           </div>
         </Card>
       </section>
     </div>
+  );
+}
+
+/* ---- Loading skeleton for the client component ---- */
+function TicketsTableSkeleton({ rows = 12 }: { rows?: number }) {
+  return (
+    <>
+      {Array.from({ length: rows }).map((_, i) => (
+        <tr key={i} className="animate-pulse">
+          <td className="px-3 py-2 overflow-hidden">
+            <div className="h-4 w-12 rounded bg-slate-700/40" />
+          </td>
+          <td className="px-3 py-2 overflow-hidden">
+            <div className="h-4 w-full max-w-[14rem] md:max-w-[28rem] rounded bg-slate-700/40" />
+          </td>
+          <td className="px-3 py-2 hidden md:table-cell overflow-hidden">
+            <div className="h-4 w-full max-w-28 rounded bg-slate-700/40" />
+          </td>
+          <td className="px-3 py-2 hidden md:table-cell overflow-hidden">
+            <div className="h-5 w-full max-w-20 rounded bg-slate-700/40" />
+          </td>
+          <td className="px-3 py-2 hidden md:table-cell overflow-hidden">
+            <div className="h-7 w-full max-w-24 rounded bg-slate-700/40" />
+          </td>
+          <td className="px-3 py-2 hidden md:table-cell overflow-hidden">
+            <div className="h-4 w-full max-w-24 rounded bg-slate-700/40" />
+          </td>
+          <td className="px-3 py-2 overflow-hidden">
+            <div className="h-5 w-full max-w-16 rounded bg-slate-700/40" />
+          </td>
+          <td className="px-3 py-2 overflow-hidden">
+            <div className="h-5 w-full max-w-12 rounded bg-slate-700/40" />
+          </td>
+          <td className="px-3 py-2 overflow-hidden text-right">
+            <div className="ml-auto h-6 w-full max-w-16 rounded bg-slate-700/40" />
+          </td>
+        </tr>
+      ))}
+    </>
   );
 }
 
@@ -185,22 +215,4 @@ function initials(name: string) {
   const first = parts[0]?.[0] ?? "";
   const last = parts[1]?.[0] ?? "";
   return (first + last).toUpperCase();
-}
-
-function IconEdit(props: React.SVGProps<SVGSVGElement>) {
-  const { className, ...rest } = props;
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.5}
-      className={`size-5 ${className ?? ''}`}
-      {...rest}
-    >
-      <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.17a4.5 4.5 0 01-1.897 1.13L6 18l.7-2.685a4.5 4.5 0 011.13-1.897l9.032-8.931z" />
-      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 7.125L17.25 4.875" />
-    </svg>
-  );
 }
