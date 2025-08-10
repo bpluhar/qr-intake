@@ -1,11 +1,52 @@
-// "use client";
+"use client";
 
 import Breadcrumbs from "./helpers/Breadcrumbs";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { useEffect, useState } from "react";
 
 export default function DashboardClient() {
 
+  const result = useQuery(api.functions.users.getCurrentWithSource);
+  const profile = useQuery(
+    api.functions.profiles.getProfileByUserId,
+    result?.user?._id ? { userId: result.user._id } : 'skip'
+  );
+
+  const [showProfileModal, setShowProfileModal] = useState(false);
+
+  useEffect(() => {
+    if (profile === null) {
+      setShowProfileModal(true);
+    }
+  }, [profile]);
+
+  if (result === undefined) return "Loading…";
+  if (result === null) return "Unexpected null"; // shouldn't happen in this query
+  if (!result.user) return <div>Loading user data...</div>;
+  if (!result.user._id) return <div>Loading...</div>;
+
+  if (profile === undefined) return "Loading profile…";
+  if (profile === null) {
+    // Toggle Modal to create profile
+  }
+
+  // if (result === undefined) return "Loading…";
+  // if (result === null) return "Unexpected null"; // shouldn't happen in this query
+
   return (
     <div className="min-h-screen bg-[#0b1217] text-slate-200 flex">
+      {showProfileModal && (
+        <ProfileModal
+          email={result.user.email ?? ""}
+          onClose={() => setShowProfileModal(false)}
+          onSave={(data) => {
+            // TODO: Wire this to your Convex mutation (e.g., profiles.create / profiles.upsert)
+            console.log("Profile save payload", data);
+            setShowProfileModal(false);
+          }}
+        />
+      )}
       {/* <Sidebar pathname={pathname} initialEmail={initialEmail} /> */}
       <main className="flex-1">
         {/* Page content */}
@@ -132,6 +173,126 @@ export default function DashboardClient() {
           </section>
         </div>
       </main>
+    </div>
+  );
+}
+
+function ProfileModal({
+  email,
+  onClose,
+  onSave,
+}: {
+  email: string;
+  onClose: () => void;
+  onSave: (data: { firstName: string; lastName: string; orgName: string; email: string; phone: string }) => void;
+}) {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [orgName, setOrgName] = useState("");
+  const [phone, setPhone] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSave({ firstName, lastName, orgName, email, phone });
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
+    >
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"  />
+
+      {/* Panel */}
+      <div className="relative w-full max-w-lg rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-xl">
+        <div className="mb-4">
+          <h2 className="text-lg font-semibold text-slate-100">Complete your profile</h2>
+          <p className="mt-1 text-sm text-slate-400">Just a few details to get you started.</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Name row */}
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div>
+              <label className="mb-1 block text-xs font-medium text-slate-400">First Name</label>
+              <input
+                type="text"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                className="w-full rounded-md border border-slate-700 bg-slate-800/60 px-3 py-2 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E] focus:ring-offset-2 focus:ring-offset-[#0b1217]"
+                placeholder="Jane"
+                required
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-medium text-slate-400">Last Name</label>
+              <input
+                type="text"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                className="w-full rounded-md border border-slate-700 bg-slate-800/60 px-3 py-2 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E] focus:ring-offset-2 focus:ring-offset-[#0b1217]"
+                placeholder="Doe"
+                required
+              />
+            </div>
+          </div>
+
+          {/* Organization */}
+          <div>
+            <label className="mb-1 block text-xs font-medium text-slate-400">Organization Name</label>
+            <input
+              type="text"
+              value={orgName}
+              onChange={(e) => setOrgName(e.target.value)}
+              className="w-full rounded-md border border-slate-700 bg-slate-800/60 px-3 py-2 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E] focus:ring-offset-2 focus:ring-offset-[#0b1217]"
+              placeholder="Acme Inc."
+            />
+          </div>
+
+          {/* Email (disabled) */}
+          <div>
+            <label className="mb-1 block text-xs font-medium text-slate-400">Email</label>
+            <input
+              type="email"
+              value={email}
+              disabled
+              className="w-full rounded-md border border-slate-700 bg-slate-800/60 px-3 py-2 text-slate-400 placeholder-slate-500 opacity-70 cursor-not-allowed focus:outline-none"
+            />
+          </div>
+
+          {/* Phone */}
+          <div>
+            <label className="mb-1 block text-xs font-medium text-slate-400">Phone Number</label>
+            <input
+              type="tel"
+              inputMode="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="w-full rounded-md border border-slate-700 bg-slate-800/60 px-3 py-2 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E] focus:ring-offset-2 focus:ring-offset-[#0b1217]"
+              placeholder="(555) 123-4567"
+            />
+          </div>
+
+          {/* Actions */}
+          <div className="mt-2 flex items-center justify-end gap-3">
+            <button
+              type="button"
+              // onClick={onClose}
+              className="inline-flex items-center justify-center rounded-md border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-medium text-slate-200 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-white bg-[#249F73] hover:bg-[#1E8761] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3ECF8E] focus:ring-offset-[#0b1217]"
+            >
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
