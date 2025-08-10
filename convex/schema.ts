@@ -85,7 +85,7 @@ const schema = defineSchema({
     id: v.number(),
 
     // Tenant ownership
-    organizationId: v.id("organizations"),
+    organizationId: v.optional(v.id("organizations")),
 
     // Relationships
     customerId: v.optional(v.id("customers")), // required: ticket belongs to a customer
