@@ -146,7 +146,7 @@ function PriorityBadge({ priority }: { priority: TicketRow["priority"] }) {
     P1: "bg-red-500/10 text-red-400 ring-1 ring-red-500/30",
     P2: "bg-yellow-500/10 text-yellow-400 ring-1 ring-yellow-500/30",
     P3: "bg-sky-500/10 text-sky-400 ring-1 ring-sky-500/30",
-    P4: "bg-slate-700/40 text-slate-300 ring-1 ring-slate-600/40",
+    P4: "bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30",
   };
   return <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs ${map[priority]}`}>{priority}</span>;
 }

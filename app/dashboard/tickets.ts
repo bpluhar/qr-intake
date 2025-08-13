@@ -7,6 +7,7 @@ export type TicketRow = {
   customer_id: number;
   customer: string;
   title: string;
+  description?: string; // Optional description field
   severity: string;
   organizationId: Id<"organizations">;
   priority: string;

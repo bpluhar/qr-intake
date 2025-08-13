@@ -81,11 +81,12 @@ export const deleteByDocId = mutation({
 export const createTicket = mutation({
   args: {
     title: v.string(),
+    description: v.optional(v.string()),
     priority: v.optional(v.string()),
     severity: v.optional(v.string()),
     status: v.optional(v.string())
   },
-  handler: async (ctx, { title, priority, severity, status }) => {
+  handler: async (ctx, { title, description, priority, severity, status }) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("User not authenticated");
 
@@ -102,10 +103,11 @@ export const createTicket = mutation({
       created: new Date().toISOString(),
       customer: "Unassigned", // placeholder until linked
       customer_id: 0, // placeholder until linked
-      priority: priority ?? "P1",
-      severity: severity ?? "Low Severity",
+      priority: priority ?? "P4",
+      severity: severity ?? "Low",
       status: status ?? "Open",
-      title
+      title,
+      description: description ?? "",
     });
 
     return ticketId;

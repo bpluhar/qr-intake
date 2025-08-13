@@ -3,29 +3,33 @@ import { useState } from "react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { refreshTickets } from "./actions";
-
+import { TicketRow } from "../tickets";
 
 
 export function NewTicketActions() {
     const [showNewTicketModal, setShowNewTicketModal] = useState(false);
     const [title, setTitle] = useState("");
-    const [priority, setPriority] = useState("Medium");
-    const [severity, setSeverity] = useState("Medium");
+    const [description, setDescription] = useState("");
+    const [priority, setPriority] = useState("P4");
+    const [severity, setSeverity] = useState("Low");
     const [status, setStatus] = useState("Open");
 
     const createTicket = useMutation(api.functions.tickets.createTicket);
+    
     async function handleSaveTicket() {
         await createTicket({
         title,
-        priority: priority || undefined,
-        severity: severity || undefined,
-        status: status || undefined,
+        description,
+        priority: priority || "P1",
+        severity: severity || "Low",
+        status: status || "Open",
         });
         setShowNewTicketModal(false);
         setTitle("");
-        setPriority("");
-        setSeverity("");
-        setStatus("");
+        setDescription("");
+        setPriority("P4");
+        setSeverity("Low");
+        setStatus("Open");
         await refreshTickets(); // server action call
 
     }
@@ -46,6 +50,8 @@ export function NewTicketActions() {
             {showNewTicketModal && <TicketModal 
                 title={title} 
                 setTitle={setTitle} 
+                description={description}
+                setDescription={setDescription}
                 severity={severity} 
                 setSeverity={setSeverity} 
                 priority={priority} 
@@ -62,17 +68,19 @@ export function NewTicketActions() {
 export function TicketModal({
   title,
   setTitle,
+  description,
+  setDescription,
   severity,
   setSeverity,
   priority,
   setPriority,
-  status,
-  setStatus,
   onClose,
   handleSaveTicket
 }: {
   title: string;
   setTitle: (val: string) => void;
+  description: string;
+  setDescription: (val: string) => void;
   severity: string;
   setSeverity: (val: string) => void;
   priority: string;
@@ -82,6 +90,9 @@ export function TicketModal({
   onClose: () => void;
   handleSaveTicket: () => Promise<void>;
 }) {
+  const severityOptions = ["Low", "Medium", "High", "Critical"];
+  const priorityOptions = ["P4", "P3", "P2", "P1"];
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -122,36 +133,81 @@ export function TicketModal({
           </div>
           <div>
             <label className="mb-1 block text-xs font-medium text-slate-400">
+              Description
+            </label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={4}
+              className="w-full rounded-md border border-slate-700 bg-slate-800/60 px-3 py-2 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E] focus:ring-offset-2 focus:ring-offset-[#0b1217] resize-y"
+              placeholder="Enter ticket description"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-medium text-slate-400">
               Severity
             </label>
-            <input
-              type="text"
-              value={severity}
-              onChange={(e) => setSeverity(e.target.value)}
-              className="w-full rounded-md border border-slate-700 bg-slate-800/60 px-3 py-2 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E] focus:ring-offset-2 focus:ring-offset-[#0b1217]"
-            />
+            <div className="flex gap-2">
+              {severityOptions.map((option) => {
+                const isSelected = severity === option;
+                const baseClasses = "inline-flex items-center rounded-md px-2 py-0.5 text-xs cursor-pointer select-none";
+                const map: Record<string, string> = {
+                  Low: "bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30",
+                  Medium: "bg-sky-500/10 text-sky-400 ring-1 ring-sky-500/30",
+                  High: "bg-yellow-500/10 text-yellow-400 ring-1 ring-yellow-500/30",
+                  Critical: "bg-red-500/10 text-red-400 ring-1 ring-red-500/30",
+                };
+                const grayStyle = "bg-slate-700/40 text-slate-300 ring-1 ring-slate-600/40";
+                return (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => setSeverity(option)}
+                    className={`${baseClasses} ${isSelected ? map[option] : grayStyle}`}
+                    aria-pressed={isSelected}
+                  >
+                    {option}
+                  </button>
+                );
+              })}
+            </div>
           </div>
           <div>
             <label className="mb-1 block text-xs font-medium text-slate-400">
               Priority
             </label>
-            <input
-              type="text"
-              value={priority}
-              onChange={(e) => setPriority(e.target.value)}
-              className="w-full rounded-md border border-slate-700 bg-slate-800/60 px-3 py-2 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E] focus:ring-offset-2 focus:ring-offset-[#0b1217]"
-            />
+            <div className="flex gap-2">
+              {priorityOptions.map((option) => {
+                const isSelected = priority === option;
+                const baseClasses = "inline-flex items-center rounded-md px-2 py-0.5 text-xs cursor-pointer select-none";
+                const map: Record<string, string> = {
+                  P1: "bg-red-500/10 text-red-400 ring-1 ring-red-500/30",
+                  P2: "bg-yellow-500/10 text-yellow-400 ring-1 ring-yellow-500/30",
+                  P3: "bg-sky-500/10 text-sky-400 ring-1 ring-sky-500/30",
+                  P4: "bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30",
+                };
+                const grayStyle = "bg-slate-700/40 text-slate-300 ring-1 ring-slate-600/40";
+                return (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => setPriority(option)}
+                    className={`${baseClasses} ${isSelected ? map[option] : grayStyle}`}
+                    aria-pressed={isSelected}
+                  >
+                    {option}
+                  </button>
+                );
+              })}
+            </div>
           </div>
           <div>
             <label className="mb-1 block text-xs font-medium text-slate-400">
               Status
             </label>
-            <input
-              type="text"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              className="w-full rounded-md border border-slate-700 bg-slate-800/60 px-3 py-2 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E] focus:ring-offset-2 focus:ring-offset-[#0b1217]"
-            />
+            <div>
+              <StatusBadge status="Open" />
+            </div>
           </div>
           <div className="mt-2 flex items-center justify-end gap-3">
             <button
@@ -172,4 +228,13 @@ export function TicketModal({
       </div>
     </div>
   );
+}
+
+function StatusBadge({ status }: { status: TicketRow["status"] }) {
+  const map: Record<string, string> = {
+    Open: "bg-blue-500/10 text-blue-400 ring-1 ring-blue-500/30",
+    Pending: "bg-yellow-500/10 text-yellow-400 ring-1 ring-yellow-500/30",
+    Resolved: "bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30",
+  };
+  return <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs ${map[status] ?? "bg-slate-700/40 text-slate-300 ring-1 ring-slate-600/40"}`}>{status}</span>;
 }

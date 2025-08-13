@@ -38,6 +38,7 @@ export default async function Page({ params,}: { params: Promise<{ slug: string 
           status: d.status as TicketRow["status"],
           created: d.created,
           assignees: d.assignees,
+          description: d.description,
         };
         return row;
       },
@@ -132,6 +133,15 @@ export default async function Page({ params,}: { params: Promise<{ slug: string 
                   type="text"
                   defaultValue={ticket.title}
                   className="w-full rounded-md bg-slate-800/60 px-3 py-2 text-sm text-slate-100 ring-1 ring-slate-700 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E]"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="block text-xs font-medium text-slate-400">Description</label>
+                <textarea
+                  defaultValue={ticket.description}
+                  rows={4}
+                  className="w-full rounded-md bg-slate-800/60 px-3 py-2 text-sm text-slate-100 ring-1 ring-slate-700 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E] resize-y"
                 />
               </div>
 

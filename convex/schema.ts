@@ -91,6 +91,8 @@ const schema = defineSchema({
     customerId: v.optional(v.id("customers")), // optional: ticket belongs to a customer
     companyId: v.optional(v.id("companies")), // optional: ticket may also belong to a company
 
+    description: v.optional(v.string()), // optional description field
+
     // Existing fields
     assignees: v.array(v.string()),
     created: v.string(),
