@@ -1,9 +1,11 @@
+/* eslint-disable */
 "use client";
 
 import Breadcrumbs from "./helpers/Breadcrumbs";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 
 export default function DashboardClient() {
 
@@ -12,6 +14,8 @@ export default function DashboardClient() {
     api.functions.profiles.getProfileByUserId,
     result?.user?._id ? { userId: result.user._id } : 'skip'
   );
+  const createOrganization = useMutation(api.functions.organizations.createOrganization);
+  const createProfile = useMutation(api.functions.profiles.createProfile);
 
   const [showProfileModal, setShowProfileModal] = useState(false);
 
@@ -40,9 +44,21 @@ export default function DashboardClient() {
         <ProfileModal
           email={result.user.email ?? ""}
           onClose={() => setShowProfileModal(false)}
-          onSave={(data) => {
-            // TODO: Wire this to your Convex mutation (e.g., profiles.create / profiles.upsert)
-            console.log("Profile save payload", data);
+          onSave={async (data) => {
+            // 1. Create organization and get organizationId
+            const organizationId = await createOrganization({ name: data.orgName });
+            // 2. Create profile with userId and organizationId
+            const newProfile = await createProfile({
+              userId: result.user._id,
+              organizationId,
+            });
+
+            // Set profile cookie
+            Cookies.set("profile", (newProfile));
+
+            console.log("Profile created:", newProfile);
+            
+            // 3. Close the modal
             setShowProfileModal(false);
           }}
         />

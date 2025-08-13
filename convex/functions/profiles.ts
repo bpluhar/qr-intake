@@ -16,7 +16,7 @@ export const getProfileOrganization = query({
 
     const profile = await ctx.db
       .query("profiles")
-      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .withIndex("by_userId", (q) => q.eq("userId", userId))
       .first();
 
     return { organizationId: profile?.organizationId ?? null };
@@ -32,7 +32,7 @@ export const getProfileByUserId = query({
   handler: async (ctx, args): Promise<Doc<"profiles"> | null> => {
     const profile = await ctx.db
       .query("profiles")
-      .withIndex("by_user", (q) => q.eq("userId", args.userId))
+      .withIndex("by_userId", (q) => q.eq("userId", args.userId))
       .first();
     return profile ?? null;
   },
@@ -64,7 +64,7 @@ export const createProfile = mutation({
     // Reuse existing profile if present
     const existing = await ctx.db
       .query("profiles")
-      .withIndex("by_user", (q) => q.eq("userId", args.userId))
+      .withIndex("by_userId", (q) => q.eq("userId", args.userId))
       .first();
     if (existing) return existing._id;
 

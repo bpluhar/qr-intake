@@ -31,7 +31,7 @@ const schema = defineSchema({
     email: v.string(), // duplicate of auth user for convenience/lookups
     phone: v.optional(v.string()),
   })
-    .index("by_user", ["userId"]) // quickly find profile by auth user id
+    .index("by_userId", ["userId"]) // quickly find profile by auth user id
     .index("by_organization", ["organizationId"]),
 
   /** Customers (tenant-scoped) */
@@ -85,10 +85,10 @@ const schema = defineSchema({
     id: v.number(),
 
     // Tenant ownership
-    organizationId: v.optional(v.id("organizations")),
+    organizationId: (v.id("organizations")),
 
     // Relationships
-    customerId: v.optional(v.id("customers")), // required: ticket belongs to a customer
+    customerId: v.optional(v.id("customers")), // optional: ticket belongs to a customer
     companyId: v.optional(v.id("companies")), // optional: ticket may also belong to a company
 
     // Existing fields
