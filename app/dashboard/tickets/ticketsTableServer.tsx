@@ -36,6 +36,6 @@ export async function revalidateTickets() {
 }
 
 export async function TicketsTableShell() {
-  const tickets = await getTicketsFromConvex(); // server-only call
-  return <TicketsTableClient initialData={tickets} />;
+  // const tickets = await getTicketsFromConvex(); // server-only call
+  return <TicketsTableClient />;
 }

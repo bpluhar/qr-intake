@@ -1,11 +1,27 @@
 "use client";
 import Link from "next/link";
+import { api } from "@/convex/_generated/api";
 import { TicketRow } from "../tickets";
+import { useQuery } from "convex/react";
 
-type Props = { initialData: TicketRow[] };
+// type Props = { initialData: TicketRow[] };
 
-export default function TicketsTableClient({ initialData }: Props) {
-  const rows = initialData ?? [];
+export default function TicketsTableClient() {
+  const docs = useQuery(api.functions.tickets.getByOrganizationId, {});
+  const rows = (docs as TicketRow[] | undefined)?.map((d) => ({
+        _id: d._id,
+        _creationTime: d._creationTime,
+        organizationId: d.organizationId,
+        id: d.id,
+        customer_id: d.customer_id,
+        customer: d.customer,
+        title: d.title,
+        severity: d.severity as TicketRow["severity"],
+        priority: d.priority as TicketRow["priority"],
+        status: d.status as TicketRow["status"],
+        created: d.created,
+        assignees: d.assignees,
+      })) ?? [];
 
   const openTicketsCount = rows.filter(r => r.status === "Open").length;
 
@@ -65,7 +81,7 @@ export default function TicketsTableClient({ initialData }: Props) {
               </thead>
 
               <tbody className="divide-y divide-slate-800">
-                {rows.map((r: TicketRow) => (
+                {rows?.map((r: TicketRow) => (
                   <tr key={r._id} className="hover:bg-slate-900/30">
                     <td className="px-3 py-2 text-sm font-medium text-slate-200 whitespace-nowrap">#{r.id}</td>
                     <td className="px-3 py-2 text-sm max-w-[14rem] md:max-w-[28rem] truncate text-slate-200">{r.title}</td>

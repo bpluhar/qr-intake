@@ -7,9 +7,10 @@ export type TicketRow = {
   customer_id: number;
   customer: string;
   title: string;
-  severity: "Low" | "Medium" | "High" | "Critical";
-  priority: "P1" | "P2" | "P3" | "P4";
-  status: "Open" | "Pending" | "Resolved";
+  severity: string;
+  organizationId: Id<"organizations">;
+  priority: string;
+  status: string;
   created: string;
   assignees: string[];
 };

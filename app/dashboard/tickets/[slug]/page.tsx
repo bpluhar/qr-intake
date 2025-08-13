@@ -31,6 +31,7 @@ export default async function Page({ params,}: { params: Promise<{ slug: string 
           id: d.id,
           customer_id: d.customer_id,
           customer: d.customer,
+          organizationId: d.organizationId,
           title: d.title,
           severity: d.severity as TicketRow["severity"],
           priority: d.priority as TicketRow["priority"],
