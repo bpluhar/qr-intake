@@ -17,6 +17,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  openGraph: { 
+  title: "Triager - Automated Patient Intake",
+  description: "Automated patient intake for healthcare teams and practices.",
+  url: "https://triager.app",
+  },
   title: "Triager - Automated Patient Intake",
   description: "Automated patient intake for healthcare teams and practices.",
 };
