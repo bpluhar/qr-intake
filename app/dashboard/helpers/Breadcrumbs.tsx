@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { Id } from "@/convex/_generated/dataModel";
 
-export default function Breadcrumbs( { currentTicket }: { currentTicket?: number }) {
+export default function Breadcrumbs( { currentTicket }: { currentTicket?: Id<"tickets"> }) {
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
 
