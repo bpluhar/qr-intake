@@ -63,12 +63,9 @@ export const createTicket = mutation({
     if (!profile) throw new Error("Profile not found");
 
     const ticketId = await ctx.db.insert("tickets", {
-      id: Date.now(), // or your own sequence logic
+      userId: userId, // or your own sequence logic
       organizationId: profile.organizationId,
       assignees: [userId], // string[] per schema, so cast if needed
-      created: new Date().toISOString(),
-      customer: "Unassigned", // placeholder until linked
-      customer_id: 0, // placeholder until linked
       priority: priority ?? "P4",
       severity: severity ?? "Low",
       status: status ?? "Open",

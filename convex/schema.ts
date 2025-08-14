@@ -84,7 +84,7 @@ const schema = defineSchema({
   /** Tickets (tenant-scoped) */
   tickets: defineTable({
     // Friendly numeric id you already use in the UI/URLs
-    id: v.number(),
+    userId: v.id("users"), // auth user that created the ticket
 
     // Tenant ownership
     organizationId: (v.id("organizations")),
@@ -97,9 +97,6 @@ const schema = defineSchema({
 
     // Existing fields
     assignees: v.array(v.string()),
-    created: v.string(),
-    customer: v.string(),
-    customer_id: v.number(),
     priority: v.string(),
     severity: v.string(),
     status: v.string(),
@@ -107,6 +104,7 @@ const schema = defineSchema({
   })
     // Helpful indexes for multi-tenant queries
     // .index("by_id", ["id"]) // your numeric/friendly id
+    .index("by_userId", ["userId"]) // find tickets by creator
     .index("by_organization", ["organizationId"]) // scope all ticket lists by org
     .index("by_customer", ["customerId"]) // look up tickets by customer
     .index("by_company", ["companyId"]), // look up tickets by company
