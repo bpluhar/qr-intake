@@ -5,6 +5,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { SVGProps } from "react";
 import { useAuthActions } from "@convex-dev/auth/react";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 // same isActivePath helper you’re using now
 function isActivePath(pathname: string, href: string) {
@@ -18,10 +20,32 @@ function isActivePath(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(href + "/");
 }
 
-export default function SidebarClient({ initialEmail }: { initialEmail: string | null }) {
+export default function SidebarClient() {
   const { signOut } = useAuthActions();
   const pathname = usePathname();
   const [pending, setPending] = useState(false);
+
+  // Fetch current user using useQuery
+  const user = useQuery(api.functions.users.getCurrent, {});
+  let userProfile: { email?: string; fullName?: string } | null = null;
+  const userHasId = user && user._id;
+  // If user exists and has _id, fetch the profile
+  const profile = useQuery(
+    api.functions.profiles.getProfileByUserId,
+    userHasId ? { userId: user._id } : "skip"
+  );
+
+  if (profile) {
+    userProfile = {
+      email: user?.email ?? undefined,
+      fullName: `${profile.firstName} ${profile.lastName}`.trim(),
+    };
+  } else if (user) {
+    // Fallback to just email if no profile
+    userProfile = { email: user.email ?? undefined };
+  }
+
+  console.log("User Profile in SidebarClient:", userProfile);
 
   // Avoid hydration mismatch: only compute "active" after mount
   const [mounted, setMounted] = useState(false);
@@ -36,10 +60,18 @@ export default function SidebarClient({ initialEmail }: { initialEmail: string |
     });
   });
 
-  // Seed from SSR, fallback to cookie on mount (no hydration mismatch)
-  const [email] = useState<string>(initialEmail ?? "");
-
-  const initial = (email.trim()[0] ?? "U").toUpperCase();
+  const fullName = userProfile?.fullName ?? "";
+  const initial = initials(fullName);
+  // Returns the initials (up to 2 characters) from a full name, or "U" if not available.
+  function initials(fullName: string): string {
+    if (!fullName || !fullName.trim()) return "U";
+    const parts = fullName.trim().split(/\s+/).filter(Boolean);
+    if (parts.length === 1) {
+      return parts[0][0].toUpperCase();
+    }
+  // Take first letter of first and last part
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
 
   const nav = [
     { href: "/dashboard", label: "Overview", icon: IconHome },
@@ -117,27 +149,28 @@ export default function SidebarClient({ initialEmail }: { initialEmail: string |
                 <span className="text-sm font-medium">{initial}</span>
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm text-slate-200">{email}</p>
-                <div className="mt-2">
-                  <button
-                    onClick={async () => {
-                      setPending(true);
-                      try {
-                        await signOut();
-                        if (typeof document !== "undefined") {
-                          document.cookie = "triage_user=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax";
-                          document.cookie = "triage_email=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax";
-                        }
-                      } finally {
-                        setPending(false);
-                      }
-                    }}
-                    className="inline-flex items-center justify-center rounded-md px-3 py-1.5 text-xs font-medium text-slate-200 bg-slate-800/70 hover:bg-slate-800 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-700"
-                  >
-                    {pending ? "Signing out…" : "Sign out"}
-                  </button>
-                </div>
+                <p className="truncate text-sm font-semibold text-slate-200">{fullName}</p>
+                {userProfile?.email && (
+                  <p className="truncate text-xs text-slate-400">{userProfile.email}</p>
+                )}
               </div>
+              <button
+                onClick={async () => {
+                  setPending(true);
+                  try {
+                    await signOut();
+                    if (typeof document !== "undefined") {
+                      document.cookie = "triage_user=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax";
+                      document.cookie = "triage_email=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax";
+                    }
+                  } finally {
+                    setPending(false);
+                  }
+                }}
+                className="inline-flex items-center justify-center rounded-md px-3 py-1.5 text-xs font-medium bg-red-500/10 text-red-400 ring-1 ring-red-500/30 focus:outline-none focus:ring-2 focus:ring-red-500/30"
+              >
+                {pending ? "Signing out…" : <IconSignout className="h-4 w-4" />}
+              </button>
             </div>
           </div>
         </div>
@@ -188,28 +221,29 @@ export default function SidebarClient({ initialEmail }: { initialEmail: string |
               <span className="text-sm font-medium">{initial}</span>
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm text-slate-200">{email}</p>
-              <div className="mt-2">
-                <button
-                  onClick={async () => {
-                    setPending(true);
-                    try {
-                      await signOut();
-                      // Clean up cookies
-                      if (typeof document !== "undefined") {
-                        document.cookie = "triage_user=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax";
-                        document.cookie = "triage_email=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax";
-                      }
-                    } finally {
-                      setPending(false);
-                    }
-                  }}
-                  className="inline-flex items-center justify-center rounded-md px-3 py-1.5 text-xs font-medium text-slate-200 bg-slate-800/70 hover:bg-slate-800 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-700"
-                >
-                  {pending ? "Signing out…" : "Sign out"}
-                </button>
-              </div>
+              <p className="truncate text-sm font-semibold text-slate-200">{fullName}</p>
+              {userProfile?.email && (
+                <p className="truncate text-xs text-slate-400">{userProfile.email}</p>
+              )}
             </div>
+            <button
+              onClick={async () => {
+                setPending(true);
+                try {
+                  await signOut();
+                  // Clean up cookies
+                  if (typeof document !== "undefined") {
+                    document.cookie = "triage_user=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax";
+                    document.cookie = "triage_email=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax";
+                  }
+                } finally {
+                  setPending(false);
+                }
+              }}
+              className="inline-flex items-center justify-center rounded-md px-3 py-1.5 text-xs font-medium bg-red-500/10 text-red-400 ring-1 ring-red-500/30 focus:outline-none focus:ring-2 focus:ring-red-500/30"
+            >
+              <IconSignout className="h-4 w-4" />
+            </button>
           </div>
         </div>
       </aside>
@@ -281,3 +315,12 @@ function IconTesting(props: SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
+function IconSignout(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
+    </svg>
+  );
+}
+
