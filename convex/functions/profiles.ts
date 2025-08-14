@@ -38,6 +38,17 @@ export const getProfileByUserId = query({
   },
 });
 
+export const getProfilesByUserIds = query({
+  args: { userIds: v.array(v.id("users")) },
+  handler: async (ctx, { userIds }) => {
+    return await Promise.all(
+      userIds.map(userId =>
+        ctx.db.query("profiles").withIndex("by_userId", q => q.eq("userId", userId)).unique()
+      )
+    ).then(results => results.filter(Boolean));
+  }
+});
+
 /**
  * Fetch a profile by its document _id (v.id("profiles")).
  * Returns the profile document or null if missing.
@@ -59,6 +70,8 @@ export const createProfile = mutation({
   args: {
     userId: v.id("users"),
     organizationId: v.id("organizations"),
+    firstName: v.optional(v.string()),
+    lastName: v.optional(v.string()),
   },
   handler: async (ctx, args): Promise<Id<"profiles">> => {
     // Reuse existing profile if present
@@ -75,15 +88,17 @@ export const createProfile = mutation({
     if (!email) throw new Error("User is missing an email address");
 
     // Derive names
-    const fullName: string = ((user as any).name ?? "").trim();
-    let firstName = "";
-    let lastName = "";
-    if (fullName) {
-      const parts = fullName.split(/\s+/);
-      firstName = parts[0] ?? "";
-      lastName = parts.slice(1).join(" ");
-    } else {
-      firstName = email.split("@")[0];
+    let firstName = args.firstName ?? "";
+    let lastName = args.lastName ?? "";
+    if (!firstName && !lastName) {
+      const fullName: string = ((user as any).name ?? "").trim();
+      if (fullName) {
+        const parts = fullName.split(/\s+/);
+        firstName = parts[0] ?? "";
+        lastName = parts.slice(1).join(" ");
+      } else {
+        firstName = email.split("@")[0];
+      }
     }
 
     const phone: string | undefined = (user as any).phone ?? undefined;

@@ -47,10 +47,12 @@ export default function DashboardClient() {
           onSave={async (data) => {
             // 1. Create organization and get organizationId
             const organizationId = await createOrganization({ name: data.orgName });
-            // 2. Create profile with userId and organizationId
+            // 2. Create profile with userId, organizationId, firstName, lastName
             const newProfile = await createProfile({
               userId: result.user._id,
               organizationId,
+              firstName: data.firstName,
+              lastName: data.lastName,
             });
 
             // Set profile cookie

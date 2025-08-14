@@ -3,11 +3,33 @@ import Link from "next/link";
 import { api } from "@/convex/_generated/api";
 import { TicketRow } from "../tickets";
 import { useQuery } from "convex/react";
+import { Id } from "@/convex/_generated/dataModel";
+import React from "react";
 
 // type Props = { initialData: TicketRow[] };
 
 export default function TicketsTableClient() {
   const docs = useQuery(api.functions.tickets.getByOrganizationId, {});
+
+  const assigneeIds = React.useMemo(() => (docs ? Array.from(new Set(docs.flatMap(d => d.assignees))) : []), [docs]);
+
+  const profiles = useQuery(api.functions.profiles.getProfilesByUserIds, { userIds: assigneeIds as Id<"users">[] });
+
+  const assignedUsers: Record<string, { firstName: string; lastName: string; fullName: string }> = {};
+  if (profiles) {
+    profiles.forEach(profile => {
+      if (!profile) return;
+      assignedUsers[profile.userId] = {
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+        fullName: `${profile.firstName} ${profile.lastName}`,
+      };
+    });
+  }
+
+
+  console.log("Assigned Users:", assignedUsers);
+
   const rows = (docs as TicketRow[] | undefined)?.map((d) => ({
         _id: d._id,
         _creationTime: d._creationTime,
@@ -87,7 +109,11 @@ export default function TicketsTableClient() {
                     <td className="px-3 py-2 text-sm max-w-[14rem] md:max-w-[28rem] truncate text-slate-200">{r.title}</td>
                     <td className="px-3 py-2 text-sm hidden md:table-cell">{r.customer}</td>
                     <td className="px-3 py-2 text-sm hidden md:table-cell"><SeverityBadge severity={r.severity} /></td>
-                    <td className="px-3 py-2 text-sm hidden md:table-cell"><Assignees names={r.assignees} /></td>
+                    <td className="px-3 py-2 text-sm hidden md:table-cell">
+                      <Assignees
+                        names={r.assignees.map(id => assignedUsers[id]?.fullName ?? id)}
+                      />
+                    </td>
                     <td className="px-3 py-2 text-sm hidden md:table-cell text-slate-400 whitespace-nowrap">{r.created}</td>
                     <td className="px-3 py-2 text-sm"><StatusBadge status={r.status} /></td>
                     <td className="px-3 py-2 text-sm"><PriorityBadge priority={r.priority} /></td>
