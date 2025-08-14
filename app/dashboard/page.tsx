@@ -394,7 +394,7 @@ function WhatsNewModal({ onDismiss }: { onDismiss: () => void }) {
       >
         {/* Tag */}
         <span className="inline-block mb-3 px-3 py-1 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30">
-          New in v0.4.2
+          New in v0.4.3
         </span>
 
         {/* Heading */}
@@ -426,27 +426,15 @@ function WhatsNewModal({ onDismiss }: { onDismiss: () => void }) {
             </p>
           </div>
           <div className="flex items-start gap-3 bg-slate-800/40 p-3 rounded-lg">
-            <span className="text-lg">🔤</span>
-            <p className="text-sm text-slate-200">
-              <b>Initials in profile icon:</b> Profile avatars now show your initials for quick recognition.
-            </p>
-          </div>
-          <div className="flex items-start gap-3 bg-slate-800/40 p-3 rounded-lg">
-            <span className="text-lg">🚪</span>
-            <p className="text-sm text-slate-200">
-              <b>Sign out button icon:</b> Added an icon for easier access to sign out.
-            </p>
-          </div>
-          <div className="flex items-start gap-3 bg-slate-800/40 p-3 rounded-lg">
-            <span className="text-lg">🧑‍🤝‍🧑</span>
-            <p className="text-sm text-slate-200">
-              <b>Assignee initials on tickets:</b> See assignee initials directly on the tickets page.
-            </p>
-          </div>
-          <div className="flex items-start gap-3 bg-slate-800/40 p-3 rounded-lg">
             <span className="text-lg">🆕</span>
             <p className="text-sm text-slate-200">
               <b>What&apos;s New popup:</b> Stay informed about the latest features and changes.
+            </p>
+          </div>
+          <div className="flex items-start gap-3 bg-slate-800/40 p-3 rounded-lg">
+            <span className="text-lg">🗑️</span>
+            <p className="text-sm text-slate-200">
+              <b>Delete User Data:</b> You can now delete your account and all associated data from the settings page.
             </p>
           </div>
         </div>
