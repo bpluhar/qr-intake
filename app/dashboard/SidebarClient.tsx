@@ -45,8 +45,6 @@ export default function SidebarClient() {
     userProfile = { email: user.email ?? undefined };
   }
 
-  console.log("User Profile in SidebarClient:", userProfile);
-
   // Avoid hydration mismatch: only compute "active" after mount
   const [mounted, setMounted] = useState(false);
   useEffect(() => {

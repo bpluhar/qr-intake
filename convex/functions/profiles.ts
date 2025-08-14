@@ -33,7 +33,7 @@ export const getProfileByUserId = query({
     const profile = await ctx.db
       .query("profiles")
       .withIndex("by_userId", (q) => q.eq("userId", args.userId))
-      .first();
+      .unique();
     return profile ?? null;
   },
 });

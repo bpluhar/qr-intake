@@ -73,11 +73,13 @@ const schema = defineSchema({
 
   /** User-level settings (auth users) */
   userSettings: defineTable({
-    userId: v.id("users"), // correlates via users._id from authTables
+    userId: v.id("users"), // link to auth user
     theme: v.optional(v.string()),
     firstDayOfWeek: v.optional(v.number()), // 0-6
     emailNotifications: v.optional(v.boolean()),
-  }).index("by_user", ["userId"]),
+    whatsNewDismissed: v.optional(v.boolean()), // track if user dismissed "What's New" banner
+    welcomeDismissed: v.optional(v.boolean()), // track if user dismissed welcome banner
+  }).index("by_userId", ["userId"]),
 
   /** Tickets (tenant-scoped) */
   tickets: defineTable({

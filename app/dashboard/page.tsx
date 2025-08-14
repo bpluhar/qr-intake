@@ -1,4 +1,3 @@
-/* eslint-disable */
 "use client";
 
 import Breadcrumbs from "./helpers/Breadcrumbs";
@@ -16,24 +15,55 @@ export default function DashboardClient() {
   );
   const createOrganization = useMutation(api.functions.organizations.createOrganization);
   const createProfile = useMutation(api.functions.profiles.createProfile);
+  const createUserSettings = useMutation(api.functions.usersettings.createUserSettings);
+  const dismissWhatsNew = useMutation(api.functions.usersettings.dismissWhatsNew);
 
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [showWhatsNewModal, setShowWhatsNewModal] = useState(false);
+  // const [userSettings, setUserSettings] = useState<any | undefined>(undefined);
+
+  const userSettingsQuery = useQuery(
+    api.functions.usersettings.getUserSettingsByUserId,
+    result?.user?._id ? { userId: result.user._id } : 'skip'
+  );
 
   useEffect(() => {
-    if (profile === null) {
+    
+    if (profile === null && !showWhatsNewModal) {
       setShowProfileModal(true);
     }
-  }, [profile]);
+  }, [profile, showWhatsNewModal]);
+
+  useEffect(() => {
+    if (
+      profile !== null &&
+      userSettingsQuery !== undefined &&
+      (
+        userSettingsQuery === null ||
+        userSettingsQuery.whatsNewDismissed !== true
+      )
+    ) {
+      setShowWhatsNewModal(true);
+    }
+  }, [userSettingsQuery, profile]);
+
+  useEffect(() => {
+    if (showProfileModal || showWhatsNewModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [showProfileModal, showWhatsNewModal]);
+
 
   if (result === undefined) return "Loading…";
   if (result === null) return "Unexpected null"; // shouldn't happen in this query
   if (!result.user) return <div>Loading user data...</div>;
   if (!result.user._id) return <div>Loading...</div>;
 
-  if (profile === undefined) return "Loading profile…";
-  if (profile === null) {
-    // Toggle Modal to create profile
-  }
 
   // if (result === undefined) return "Loading…";
   // if (result === null) return "Unexpected null"; // shouldn't happen in this query
@@ -55,13 +85,36 @@ export default function DashboardClient() {
               lastName: data.lastName,
             });
 
+            // 2.5. Create user settings for this user
+            await createUserSettings({ userId: result.user._id });
+
             // Set profile cookie
             Cookies.set("profile", (newProfile));
 
             console.log("Profile created:", newProfile);
-            
+
             // 3. Close the modal
             setShowProfileModal(false);
+            // 4. After closing, show What's New if userSettingsQuery is defined and not dismissed
+            if (
+              userSettingsQuery !== undefined &&
+              (
+                userSettingsQuery === null ||
+                userSettingsQuery.whatsNewDismissed !== true
+              )
+            ) {
+              setShowWhatsNewModal(true);
+            }
+          }}
+        />
+      )}
+      {showWhatsNewModal && (
+        <WhatsNewModal
+          onDismiss={async () => {
+            if (userSettingsQuery?._id) {
+              await dismissWhatsNew({ id: userSettingsQuery._id });
+            }
+            setShowWhatsNewModal(false);
           }}
         />
       )}
@@ -197,7 +250,7 @@ export default function DashboardClient() {
 
 function ProfileModal({
   email,
-  onClose,
+  // onClose,
   onSave,
 }: {
   email: string;
@@ -208,6 +261,12 @@ function ProfileModal({
   const [lastName, setLastName] = useState("");
   const [orgName, setOrgName] = useState("");
   const [phone, setPhone] = useState("");
+  const [animate, setAnimate] = useState(false);
+
+  useEffect(() => {
+    // Trigger scale-in after mount
+    setTimeout(() => setAnimate(true), 10);
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -216,7 +275,7 @@ function ProfileModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-100 flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
     >
@@ -224,7 +283,11 @@ function ProfileModal({
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"  />
 
       {/* Panel */}
-      <div className="relative w-full max-w-lg rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-xl">
+      <div
+        className={`relative w-full max-w-lg rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-xl transform transition-transform duration-300 ease-out ${
+          animate ? 'scale-100' : 'scale-0'
+        }`}
+      >
         <div className="mb-4">
           <h2 className="text-lg font-semibold text-slate-100">Complete your profile</h2>
           <p className="mt-1 text-sm text-slate-400">Just a few details to get you started.</p>
@@ -296,13 +359,6 @@ function ProfileModal({
           {/* Actions */}
           <div className="mt-2 flex items-center justify-end gap-3">
             <button
-              type="button"
-              // onClick={onClose}
-              className="inline-flex items-center justify-center rounded-md border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-medium text-slate-200 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700"
-            >
-              Cancel
-            </button>
-            <button
               type="submit"
               className="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-white bg-[#249F73] hover:bg-[#1E8761] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3ECF8E] focus:ring-offset-[#0b1217]"
             >
@@ -310,6 +366,101 @@ function ProfileModal({
             </button>
           </div>
         </form>
+      </div>
+    </div>
+  );
+}
+
+// What's New Modal
+function WhatsNewModal({ onDismiss }: { onDismiss: () => void }) {
+  const [animate, setAnimate] = useState(false);
+  useEffect(() => {
+    setTimeout(() => setAnimate(true), 10);
+  }, []);
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
+    >
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-md" />
+
+      {/* Panel */}
+      <div
+        className={`relative w-full max-w-lg rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-900/80 to-slate-800/80 p-8 shadow-xl backdrop-blur-md transform transition-transform duration-300 ease-out ${
+          animate ? 'scale-100' : 'scale-0'
+        }`}
+      >
+        {/* Tag */}
+        <span className="inline-block mb-3 px-3 py-1 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30">
+          New in v0.4.2
+        </span>
+
+        {/* Heading */}
+        <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-sky-400">
+          What&apos;s New
+        </h2>
+        <p className="mt-2 text-sm text-slate-300">
+          Discover the latest updates and improvements in Triage.
+        </p>
+
+        {/* Features */}
+        <div className="mt-6 space-y-4">
+          <div className="flex items-start gap-3 bg-slate-800/40 p-3 rounded-lg">
+            <span className="text-lg">📝</span>
+            <p className="text-sm text-slate-200">
+              <b>Profile creation improved:</b> New users are prompted to complete their profile for a smoother onboarding experience.
+            </p>
+          </div>
+          <div className="flex items-start gap-3 bg-slate-800/40 p-3 rounded-lg">
+            <span className="text-lg">📐</span>
+            <p className="text-sm text-slate-200">
+              <b>Sidebar restructured:</b> Navigation is now simpler with clearer sections.
+            </p>
+          </div>
+          <div className="flex items-start gap-3 bg-slate-800/40 p-3 rounded-lg">
+            <span className="text-lg">👤</span>
+            <p className="text-sm text-slate-200">
+              <b>Names in sidebar:</b> Your full name is now displayed for better identification.
+            </p>
+          </div>
+          <div className="flex items-start gap-3 bg-slate-800/40 p-3 rounded-lg">
+            <span className="text-lg">🔤</span>
+            <p className="text-sm text-slate-200">
+              <b>Initials in profile icon:</b> Profile avatars now show your initials for quick recognition.
+            </p>
+          </div>
+          <div className="flex items-start gap-3 bg-slate-800/40 p-3 rounded-lg">
+            <span className="text-lg">🚪</span>
+            <p className="text-sm text-slate-200">
+              <b>Sign out button icon:</b> Added an icon for easier access to sign out.
+            </p>
+          </div>
+          <div className="flex items-start gap-3 bg-slate-800/40 p-3 rounded-lg">
+            <span className="text-lg">🧑‍🤝‍🧑</span>
+            <p className="text-sm text-slate-200">
+              <b>Assignee initials on tickets:</b> See assignee initials directly on the tickets page.
+            </p>
+          </div>
+          <div className="flex items-start gap-3 bg-slate-800/40 p-3 rounded-lg">
+            <span className="text-lg">🆕</span>
+            <p className="text-sm text-slate-200">
+              <b>What&apos;s New popup:</b> Stay informed about the latest features and changes.
+            </p>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="mt-6 flex justify-end">
+          <button
+            type="button"
+            onClick={onDismiss}
+            className="w-full sm:w-auto inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-emerald-500 to-emerald-600 hover:scale-105 transition-transform focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 focus:ring-offset-[#0b1217]"
+          >
+            Dismiss
+          </button>
+        </div>
       </div>
     </div>
   );
