@@ -33,15 +33,13 @@ export default function TicketsTableClient() {
   const rows = (docs as TicketRow[] | undefined)?.map((d) => ({
         _id: d._id,
         _creationTime: d._creationTime,
+        userId: d.userId,
+        customerId: d.customerId,
         organizationId: d.organizationId,
-        id: d.id,
-        customer_id: d.customer_id,
-        customer: d.customer,
         title: d.title,
         severity: d.severity as TicketRow["severity"],
         priority: d.priority as TicketRow["priority"],
         status: d.status as TicketRow["status"],
-        created: d.created,
         assignees: d.assignees,
       })) ?? [];
 
@@ -105,16 +103,16 @@ export default function TicketsTableClient() {
               <tbody className="divide-y divide-slate-800">
                 {rows?.map((r: TicketRow) => (
                   <tr key={r._id} className="hover:bg-slate-900/30">
-                    <td className="px-3 py-2 text-sm font-medium text-slate-200 whitespace-nowrap">#{r.id}</td>
+                    <td className="px-3 py-2 text-sm font-medium text-slate-200 whitespace-nowrap">#{r._id}</td>
                     <td className="px-3 py-2 text-sm max-w-[14rem] md:max-w-[28rem] truncate text-slate-200">{r.title}</td>
-                    <td className="px-3 py-2 text-sm hidden md:table-cell">{r.customer}</td>
+                    <td className="px-3 py-2 text-sm hidden md:table-cell">{r.customerId}</td>
                     <td className="px-3 py-2 text-sm hidden md:table-cell"><SeverityBadge severity={r.severity} /></td>
                     <td className="px-3 py-2 text-sm hidden md:table-cell">
                       <Assignees
                         names={r.assignees.map(id => assignedUsers[id]?.fullName ?? id)}
                       />
                     </td>
-                    <td className="px-3 py-2 text-sm hidden md:table-cell text-slate-400 whitespace-nowrap">{r.created}</td>
+                    <td className="px-3 py-2 text-sm hidden md:table-cell text-slate-400 whitespace-nowrap">{r._creationTime}</td>
                     <td className="px-3 py-2 text-sm"><StatusBadge status={r.status} /></td>
                     <td className="px-3 py-2 text-sm"><PriorityBadge priority={r.priority} /></td>
                     <td className="px-3 py-2 text-sm text-right">

@@ -10,14 +10,13 @@ async function _getTicketsFromConvex(): Promise<TicketRow[]> {
   const rows = (docs as TicketRow[]).map((d) => ({
     _id: d._id,
     _creationTime: d._creationTime,
-    id: d.id,
-    customer_id: d.customer_id,
-    customer: d.customer,
+    userId: d.userId,
+    customerId: d.customerId,
+    organizationId: d.organizationId,
     title: d.title,
     severity: d.severity as TicketRow["severity"],
     priority: d.priority as TicketRow["priority"],
     status: d.status as TicketRow["status"],
-    created: d.created,
     assignees: d.assignees,
   })) as TicketRow[];
   return rows;

@@ -1,10 +1,17 @@
 // app/dashboard/settings/page.tsx
 // Server Component – Settings UI only (no functionality). Matches dark theme used across /dashboard.
 
+"use client";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Breadcrumbs from "../helpers/Breadcrumbs";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 export default function SettingsPage() {
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const deleteUserDataMutation = useMutation(api.functions.helpers.deleteUserData);
+
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-0 lg:py-8 text-slate-200">
       {/* Title & actions */}
@@ -179,19 +186,67 @@ export default function SettingsPage() {
           <Card>
             <h2 className="text-sm font-medium text-slate-300">Danger zone</h2>
             <div className="mt-4 rounded-md border border-red-900/40 bg-red-900/10 p-4">
-              <p className="text-sm text-slate-300">Delete your workspace and all related data. This action cannot be undone.</p>
+              <p className="text-sm text-slate-300">Delete all associated data linked to your account.</p>
               <div className="mt-3">
                 <button
-                  disabled
+                  onClick={() => setShowDeleteModal(true)}
                   className="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-white bg-red-600/80 border border-red-700 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-700"
                 >
-                  Delete workspace
+                  Delete User Data
                 </button>
               </div>
             </div>
           </Card>
         </div>
       </div>
+
+      {showDeleteModal && (
+        <Modal onClose={() => {
+                const modalElement = document.querySelector('.modal-panel');
+                if (modalElement) {
+                  modalElement.classList.remove('scale-100');
+                  modalElement.classList.add('scale-0');
+                  setTimeout(() => setShowDeleteModal(false), 25);
+                } else {
+                  setShowDeleteModal(false);
+                }
+              }}>
+          <h3 className="text-lg font-semibold text-slate-200">Confirm Deletion</h3>
+          <p className="mt-2 text-sm text-slate-300">
+            Delete all associated data linked to your account, including but not limited to your profile, organization, tickets, and user settings. This action cannot be undone.
+          </p>
+          <div className="mt-4 flex justify-end gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                const modalElement = document.querySelector('.modal-panel');
+                if (modalElement) {
+                  modalElement.classList.remove('scale-100');
+                  modalElement.classList.add('scale-0');
+                  setTimeout(() => setShowDeleteModal(false), 25);
+                } else {
+                  setShowDeleteModal(false);
+                }
+              }}
+              className="rounded-md px-3 py-2 text-sm font-medium bg-[#249F73] hover:bg-[#1E8761] focus:outline-none focus:ring-2 focus:ring-[#3ECF8E]"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={async () => {
+                const result = await deleteUserDataMutation();
+                console.log("Delete user data result:", result);
+                setShowDeleteModal(false);
+                window.location.href = "/dashboard";
+              }}
+              className="rounded-md px-3 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-700"
+            >
+              Delete
+            </button>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }
@@ -287,6 +342,39 @@ function Range({ disabled, defaultValue, min, max, step, suffix }: {
           {suffix ?? ""}
         </span>
       ) : null}
+    </div>
+  );
+}
+
+function Modal({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
+  const [animate, setAnimate] = useState(false);
+  const [closing, setClosing] = useState(false);
+
+  useEffect(() => {
+    setAnimate(true);
+  }, []);
+
+  const handleClose = () => {
+    setClosing(true);
+    setTimeout(() => {
+      onClose();
+    }, 150);
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+      onClick={handleClose}
+    >
+      <div
+        className={`modal-panel rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-xl transform transition-transform w-full max-w-lg ${
+          closing ? "scale-0" : animate ? "scale-100" : "scale-0"
+        }`}
+        onClick={(e) => e.stopPropagation()}
+        style={{ transitionDuration: "150ms", transitionTimingFunction: "ease" }}
+      >
+        {children}
+      </div>
     </div>
   );
 }
