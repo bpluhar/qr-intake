@@ -1,10 +1,28 @@
 "use client";
 
+// Chart.js and chart component imports
+import {
+  Chart as ChartJS,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend,
+  Title,
+  ChartOptions,
+  LineElement,
+  PointElement,
+} from "chart.js";
+import { Line } from "react-chartjs-2";
+
 import Breadcrumbs from "./helpers/Breadcrumbs";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
+
+// Register Chart.js components
+ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend, Title, LineElement, PointElement);
 
 export default function DashboardClient() {
 
@@ -137,10 +155,21 @@ export default function DashboardClient() {
             <StatCard label="Active users" value="2,413" delta="+3.1%" />
           </section>
 
-          {/* Main grid */}
-          <section className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
-            {/* Activity / left column */}
-            <div className="lg:col-span-2 space-y-6">
+          {/* Unified main content grid */}
+          <section className="mt-8 grid grid-cols-1 lg:grid-cols-[65%_35%] gap-6">
+            {/* Left column: Tickets chart, Recent Activity, Workload */}
+            <div className="flex flex-col gap-6">
+              {/* Tickets Bar Chart */}
+              <Card>
+                <h2 className="text-sm font-medium text-slate-300 mb-4">
+                  Tickets Opened vs Closed (Last 30 Days)
+                </h2>
+                <div className="h-64">
+                  <TicketsBarChart />
+                </div>
+              </Card>
+
+              {/* Recent Activity */}
               <Card>
                 <div className="flex items-center justify-between">
                   <h2 className="text-sm font-medium text-slate-300">Recent Activity</h2>
@@ -180,6 +209,7 @@ export default function DashboardClient() {
                 </div>
               </Card>
 
+              {/* Workload */}
               <Card>
                 <div className="flex items-center justify-between">
                   <h2 className="text-sm font-medium text-slate-300">Workload (placeholder)</h2>
@@ -192,9 +222,9 @@ export default function DashboardClient() {
                 </div>
               </Card>
             </div>
-
-            {/* Right column */}
-            <div className="space-y-6">
+            {/* Right column: Quick Actions, System Status */}
+            <div className="flex flex-col gap-6">
+              {/* Quick Actions */}
               <Card>
                 <h2 className="text-sm font-medium text-slate-300">Quick actions</h2>
                 <div className="mt-4 grid gap-3">
@@ -213,28 +243,28 @@ export default function DashboardClient() {
                   </button>
                 </div>
               </Card>
-
+              {/* System Status */}
               <Card>
                 <h2 className="text-sm font-medium text-slate-300">System status</h2>
                 <ul className="mt-4 space-y-3 text-sm">
                   <li className="flex items-center justify-between">
                     <span className="text-slate-400">API</span>
                     <span className="inline-flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                      <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
                       Operational
                     </span>
                   </li>
                   <li className="flex items-center justify-between">
                     <span className="text-slate-400">Database</span>
                     <span className="inline-flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                      <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
                       Operational
                     </span>
                   </li>
                   <li className="flex items-center justify-between">
                     <span className="text-slate-400">Auth</span>
                     <span className="inline-flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full bg-yellow-500" />
+                      <span className="h-2 w-2 rounded-full bg-yellow-500 animate-pulse" />
                       Degraded
                     </span>
                   </li>
@@ -521,5 +551,107 @@ function StatusBadge({ status }: { status: 'Open' | 'Pending' | 'Resolved' | str
     <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs ${map[status] ?? 'bg-slate-700/40 text-slate-300 ring-1 ring-slate-600/40'}`}>
       {status}
     </span>
+  );
+}
+// TicketsBarChart component (mock data, dark theme, now as a line chart)
+function TicketsBarChart() {
+  // Mock data for 30 days
+  const days = Array.from({ length: 30 }, (_, i) => (i + 1).toString());
+  // Generate mock opened and closed data for 30 days
+  const opened = Array.from({ length: 30 }, (_, i) =>
+    10 + Math.round(Math.sin(i / 3) * 4 + Math.random() * 3)
+  );
+  const closed = Array.from({ length: 30 }, (_, i) =>
+    8 + Math.round(Math.cos(i / 2.2) * 3 + Math.random() * 2)
+  );
+
+  const data = {
+    labels: days,
+    datasets: [
+      {
+        label: "Tickets Opened",
+        data: opened,
+        borderColor: "rgba(52, 211, 153, 0.8)", // emerald-400
+        backgroundColor: "rgba(52, 211, 153, 0.2)",
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: "rgba(52, 211, 153, 1)",
+      },
+      {
+        label: "Tickets Closed",
+        data: closed,
+        borderColor: "rgba(59, 130, 246, 0.8)", // blue-500
+        backgroundColor: "rgba(59, 130, 246, 0.2)",
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: "rgba(59, 130, 246, 1)",
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        labels: {
+          color: "#cbd5e1", // slate-300
+          font: { size: 14, family: "inherit" },
+        },
+      },
+      title: {
+        display: false,
+      },
+      tooltip: {
+        backgroundColor: "#1e293b", // slate-800
+        titleColor: "#f1f5f9", // slate-100
+        bodyColor: "#cbd5e1", // slate-300
+        borderColor: "#334155", // slate-700
+        borderWidth: 1,
+      },
+    },
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: "Day of Month",
+          color: "#94a3b8", // slate-400
+          font: { size: 13, weight: "bold", family: "inherit" },
+        },
+        grid: {
+          color: "rgba(30,41,59,0.2)", // subtle grid
+        },
+        ticks: {
+          color: "#cbd5e1", // slate-300
+          font: { size: 13, family: "inherit" },
+        },
+      },
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: "Tickets",
+          color: "#94a3b8", // slate-400
+          font: { size: 13, weight: "bold", family: "inherit" },
+        },
+        grid: {
+          color: "rgba(30,41,59,0.2)",
+        },
+        ticks: {
+          color: "#cbd5e1",
+          font: { size: 13, family: "inherit" },
+        },
+      },
+    },
+    layout: {
+      padding: { top: 10, right: 10, bottom: 10, left: 10 },
+    },
+    backgroundColor: "#0b1217",
+  };
+
+  return (
+    <div style={{ width: "100%", minHeight: 275 }}>
+      <Line data={data} options={options as ChartOptions<"line">} />
+    </div>
   );
 }

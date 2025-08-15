@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Navbar from "./Navbar";
+import Image from "next/image";
 
 export default function HomePage() {
   return (
@@ -12,7 +13,7 @@ export default function HomePage() {
         {/* subtle background tint */}
         <div className="absolute inset-0 bg-[radial-gradient(80%_50%_at_50%_0%,rgba(62,207,142,0.08),transparent)] pointer-events-none" />
 
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-28 lg:flex lg:items-center lg:gap-12 lg:min-h-[28rem]">
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:pt-16 lg:pb-0 flex flex-col items-center text-center">
           <div className="max-w-3xl">
             <p className="text-sm text-slate-400">Smart support, faster teams</p>
 
@@ -25,12 +26,12 @@ export default function HomePage() {
               without the busywork.
             </h1>
 
-            <p className="mt-5 max-w-2xl text-base text-slate-400">
+            <p className="mt-5 max-w-2xl mx-auto text-base text-slate-400">
               Triager is a developer-first dashboard for tickets, customers, and reports—built with Next.js 15,
               Tailwind, and a clean dark theme.
             </p>
 
-            <div className="mt-8 flex flex-col sm:flex-row gap-3">
+            <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
               <Link
                 href="/dashboard"
                 className="inline-flex items-center justify-center rounded-md px-5 py-3 text-sm font-medium text-white
@@ -56,17 +57,14 @@ export default function HomePage() {
             <p className="mt-4 text-xs text-slate-500">No credit card required • Free to start</p>
           </div>
 
-          {/* Right-side illustration / preview */}
-          <div className="mt-12 lg:mt-0 lg:ml-auto lg:w-[44rem]">
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-3 shadow-xl backdrop-blur">
+          {/* Right-side illustration / preview moved below CTAs */}
+          <div className="mt-2">
+            <Image src="/Preview.png" alt="Product Preview" width={4336} height={2562} className="max-w-[100%] mx-auto h-auto" />
+            {/* <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-3 shadow-xl backdrop-blur mx-auto">
               <div className="h-72 sm:h-96 rounded-xl border border-dashed border-slate-700/70 bg-slate-900/30 grid place-content-center">
-                <div className="text-center">
-                  <div className="mx-auto mb-3 h-10 w-10 rounded-full bg-slate-700/50 animate-pulse" />
-                  <p className="text-sm text-slate-400">Product preview</p>
-                  <p className="mt-1 text-xs text-slate-500">Replace with a screenshot of your dashboard</p>
-                </div>
+                
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </section>
