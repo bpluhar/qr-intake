@@ -15,6 +15,7 @@ import type {
 } from "convex/server";
 import type * as auth from "../auth.js";
 import type * as functions_helpers from "../functions/helpers.js";
+import type * as functions_intakeForms from "../functions/intakeForms.js";
 import type * as functions_organizations from "../functions/organizations.js";
 import type * as functions_profiles from "../functions/profiles.js";
 import type * as functions_tickets from "../functions/tickets.js";
@@ -33,6 +34,7 @@ import type * as http from "../http.js";
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   "functions/helpers": typeof functions_helpers;
+  "functions/intakeForms": typeof functions_intakeForms;
   "functions/organizations": typeof functions_organizations;
   "functions/profiles": typeof functions_profiles;
   "functions/tickets": typeof functions_tickets;

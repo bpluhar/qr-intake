@@ -1,0 +1,36 @@
+[
+  {
+    "organizationId": "m17fwe2hzhh5qqptn10v42bsnx7nmpzg",
+    "creatorId": "kd79g2pnespdwxwqk6e6967e1h7n1y43",
+    "formLayout": {
+      "title": "Patient Intake Form",
+      "description": "Please fill out the following information.",
+      "fields": [
+        {
+          "type": "text",
+          "label": "First Name",
+          "name": "firstName",
+          "required": true
+        },
+        {
+          "type": "text",
+          "label": "Last Name",
+          "name": "lastName",
+          "required": true
+        },
+        {
+          "type": "email",
+          "label": "Email Address",
+          "name": "email",
+          "required": true
+        },
+        {
+          "type": "phone",
+          "label": "Phone Number",
+          "name": "phone",
+          "required": false
+        }
+      ]
+    }
+  }
+]
