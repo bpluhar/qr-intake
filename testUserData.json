@@ -2,6 +2,9 @@
   {
     "organizationId": "m17fwe2hzhh5qqptn10v42bsnx7nmpzg",
     "creatorId": "kd79g2pnespdwxwqk6e6967e1h7n1y43",
+    "visible": true,
+    "views": 0,
+    "completions": 0,
     "formLayout": {
       "title": "Patient Intake Form",
       "description": "Please fill out the following information.",

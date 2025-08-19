@@ -1,17 +1,19 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { api } from "@/convex/_generated/api";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { Id } from "@/convex/_generated/dataModel";
 import Breadcrumbs from "../helpers/Breadcrumbs";
 import { Card } from "@/app/components/Card";
 import { TableActions, TableTitle, Th } from "@/app/components/Table";
 import { StatCard } from "@/app/components/StatCard";
+import QRCode from "qrcode";
 
 // Example Intake page component
 export default function IntakePage() {
   const [showNewIntakeModal, setShowNewIntakeModal] = useState(false);
+  const [qrModalId, setQrModalId] = useState<string | null>(null);
 
   // Query for organization
   const org = useQuery(api.functions.organizations.getMyOrganization, {});
@@ -51,6 +53,7 @@ export default function IntakePage() {
             </div>
           </div>
           {showNewIntakeModal && <NewIntakeModal onClose={() => setShowNewIntakeModal(false)} />}
+          {qrModalId && <ViewQRModal id={qrModalId} onClose={() => setQrModalId(null)} />}
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 mb-6">
             <StatCard label="Open intakes" value="12" delta="12" />
             <StatCard label="New this week" value="7" delta="7" />
@@ -59,7 +62,7 @@ export default function IntakePage() {
           </div>
           <Card>
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <TableTitle>Intake Tickets</TableTitle>
+              <TableTitle>Intake Forms</TableTitle>
               <TableActions />
             </div>
             <div className="mt-4 overflow-x-auto md:overflow-visible rounded-md border border-slate-800">
@@ -68,29 +71,46 @@ export default function IntakePage() {
                   <tr>
                     <Th>ID</Th>
                     <Th>Title</Th>
+                    <Th>Views</Th>
+                    <Th>Completions</Th>
+                    <Th>Visible</Th>
                     <Th>Created</Th>
                     <Th className="text-right">Actions</Th>
                   </tr>
                 </thead>
                 <tbody>
-                  {rows.map((r: any) => (
-                    <tr key={r._id} className="hover:bg-slate-900/30">
-                      <td className="px-3 py-2 text-sm text-slate-200 whitespace-nowrap font-medium">#{r._id}</td>
-                      <td className="px-3 py-2 text-sm text-slate-200 max-w-[14rem] md:max-w-[28rem] truncate">{r.formLayout.title}</td>
-                      <td className="px-3 py-2 text-sm text-slate-400 whitespace-nowrap">{new Date(r._creationTime).toLocaleDateString("en-US")}</td>
-                      <td className="px-3 py-2 text-sm text-right">
-                        <div className="inline-flex items-center gap-2">
-                          <Link
-                            href={`/intake/${r._id}`}
-                            target="_blank"
-                            className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 text-slate-300 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
-                          >
-                            View
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                  {docs === undefined ? (
+                    intakeTableSkeleton()
+                  ) : (
+                    rows.map((r: any) => (
+                      <tr key={r._id} className="hover:bg-slate-900/30">
+                        <td className="px-3 py-2 text-sm text-slate-200 whitespace-nowrap font-medium">#{r._id}</td>
+                        <td className="px-3 py-2 text-sm text-slate-200 max-w-[14rem] md:max-w-[28rem] truncate">{r.formLayout.title}</td>
+                        <td className="px-3 py-2 text-sm text-slate-400 whitespace-nowrap">{r.views}</td>
+                        <td className="px-3 py-2 text-sm text-slate-400 whitespace-nowrap">{r.completions}</td>
+                        <td className="px-3 py-2 text-sm text-slate-400 whitespace-nowrap">{r.visible ? "Yes" : "No"}</td>
+                        <td className="px-3 py-2 text-sm text-slate-400 whitespace-nowrap">{new Date(r._creationTime).toLocaleDateString("en-US")}</td>
+                        <td className="px-3 py-2 text-sm text-right">
+                          <div className="inline-flex items-center gap-2">
+                            <Link
+                              href={`/intake/${r._id}`}
+                              target="_blank"
+                              className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 text-slate-300 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                            >
+                              View
+                            </Link>
+                            <button
+                              onClick={() => setQrModalId(r._id)}
+                              className="inline-flex items-center justify-center rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 text-slate-300 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                              aria-label="View QR"
+                            >
+                              <IconQr className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
@@ -101,13 +121,78 @@ export default function IntakePage() {
   );
 }
 
+export function intakeTableSkeleton() {
+  return (
+    <>
+      {Array.from({ length: 6 }).map((_, i) => (
+        <tr key={`skeleton-${i}`} className="hover:bg-slate-900/30">
+          <td className="px-3 py-2">
+            <div className="h-4 w-70 rounded bg-emerald-400/40 animate-pulse" />
+          </td>
+          <td className="px-3 py-2">
+            <div className="h-4 w-15 rounded bg-emerald-400/40 animate-pulse" />
+          </td>
+          <td className="px-3 py-2">
+            <div className="h-4 w-12 rounded bg-emerald-400/40 animate-pulse" />
+          </td>
+          <td className="px-3 py-2">
+            <div className="h-4 w-16 rounded bg-emerald-400/40 animate-pulse" />
+          </td>
+          <td className="px-3 py-2">
+            <div className="h-4 w-10 rounded bg-emerald-400/40 animate-pulse" />
+          </td>
+          <td className="px-3 py-2">
+            <div className="h-4 w-24 rounded bg-emerald-400/40 animate-pulse" />
+          </td>
+          <td className="px-3 py-2 text-right">
+            <div className="ml-auto h-6 w-16 rounded bg-emerald-400/40 animate-pulse" />
+          </td>
+        </tr>
+      ))}
+    </>
+  );
+}
+
 export function NewIntakeModal({ onClose }: { onClose: () => void }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-
+  const org = useQuery(api.functions.organizations.getMyOrganization, {});
+  const createIntakeForm = useMutation(api.functions.intakeForms.createIntakeForm);
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: hook up save logic when backend is ready
+    createIntakeForm({
+      formLayout: {
+        title: title,
+        description: description,
+        fields: [
+        {
+          "type": "text",
+          "label": "First Name",
+          "name": "firstName",
+          "required": true
+        },
+        {
+          "type": "text",
+          "label": "Last Name",
+          "name": "lastName",
+          "required": true
+        },
+        {
+          "type": "email",
+          "label": "Email Address",
+          "name": "email",
+          "required": true
+        },
+        {
+          "type": "phone",
+          "label": "Phone Number",
+          "name": "phone",
+          "required": false
+        }
+      ]
+      },
+      organizationId: org!._id,
+    });
     onClose();
   };
 

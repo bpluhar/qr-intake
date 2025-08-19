@@ -1,6 +1,6 @@
 import { query } from "../_generated/server";
 import type { Id } from "../_generated/dataModel";
-import type { Doc } from "../_generated/dataModel";
+// import type { Doc } from "../_generated/dataModel";
 
 export const getCurrent = query({
   args: {},
