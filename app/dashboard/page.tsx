@@ -164,74 +164,74 @@ export default function DashboardClient() {
           </section>
 
           {/* Unified main content grid */}
-          <section className="mt-6 grid grid-cols-1 lg:grid-cols-[65%_35%] gap-6">
-            {/* Left column: Tickets chart, Recent Activity, Workload */}
-            <div className="flex flex-col gap-6">
-              {/* Tickets Bar Chart */}
-              <Card>
-                <h2 className="text-sm font-medium text-slate-300 mb-4">
-                  Tickets Opened vs Closed (Last 30 Days)
-                </h2>
-                <div className="h-64">
-                  <TicketsBarChart />
-                </div>
-              </Card>
+          <section className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <section className="lg:col-span-2">
+              <div className="flex flex-col gap-6">
+                {/* Tickets Bar Chart */}
+                <Card>
+                  <h2 className="text-sm font-medium text-slate-300 mb-4">
+                    Tickets Opened vs Closed (Last 30 Days)
+                  </h2>
+                  <div className="h-64">
+                    <TicketsBarChart />
+                  </div>
+                </Card>
 
-              {/* Recent Activity */}
-              <Card>
-                <div className="flex items-center justify-between">
-                  <h2 className="text-sm font-medium text-slate-300">Recent Activity</h2>
-                  <button className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E]">
-                    View all
-                  </button>
-                </div>
+                {/* Recent Activity */}
+                <Card>
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-sm font-medium text-slate-300">Recent Activity</h2>
+                    <button className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E]">
+                      View all
+                    </button>
+                  </div>
 
-                <div className="mt-4 overflow-hidden rounded-md border border-slate-800">
-                  <table className="w-full text-sm">
-                    <thead className="bg-slate-900/60 text-slate-400">
-                      <tr>
-                        <Th>Ticket</Th>
-                        <Th>Customer</Th>
-                        <Th>Status</Th>
-                        <Th>Updated</Th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-800">
-                      {[
-                        { id: '#4832', cust: 'Acme Inc.', status: 'Open', time: '3m ago' },
-                        { id: '#4831', cust: 'Globex', status: 'Pending', time: '15m ago' },
-                        { id: '#4829', cust: 'Soylent', status: 'Resolved', time: '1h ago' },
-                        { id: '#4828', cust: 'Initech', status: 'Open', time: '2h ago' },
-                      ].map((r) => (
-                        <tr key={r.id} className="hover:bg-slate-900/30">
-                          <Td className="font-medium text-slate-200">{r.id}</Td>
-                          <Td>{r.cust}</Td>
-                          <Td>
-                            <StatusBadge status={r.status} />
-                          </Td>
-                          <Td className="text-slate-400">{r.time}</Td>
+                  <div className="mt-4 overflow-hidden rounded-md border border-slate-800">
+                    <table className="w-full text-sm">
+                      <thead className="bg-slate-900/60 text-slate-400">
+                        <tr>
+                          <Th>Ticket</Th>
+                          <Th>Customer</Th>
+                          <Th>Status</Th>
+                          <Th>Updated</Th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </Card>
+                      </thead>
+                      <tbody className="divide-y divide-slate-800">
+                        {[
+                          { id: '#4832', cust: 'Acme Inc.', status: 'Open', time: '3m ago' },
+                          { id: '#4831', cust: 'Globex', status: 'Pending', time: '15m ago' },
+                          { id: '#4829', cust: 'Soylent', status: 'Resolved', time: '1h ago' },
+                          { id: '#4828', cust: 'Initech', status: 'Open', time: '2h ago' },
+                        ].map((r) => (
+                          <tr key={r.id} className="hover:bg-slate-900/30">
+                            <Td className="font-medium text-slate-200">{r.id}</Td>
+                            <Td>{r.cust}</Td>
+                            <Td>
+                              <StatusBadge status={r.status} />
+                            </Td>
+                            <Td className="text-slate-400">{r.time}</Td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </Card>
 
-              {/* Workload */}
-              <Card>
-                <div className="flex items-center justify-between">
-                  <h2 className="text-sm font-medium text-slate-300">Workload (placeholder)</h2>
-                  <button className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E]">
-                    Configure
-                  </button>
-                </div>
-                <div className="mt-4 h-56 rounded-md border border-dashed border-slate-700/70 bg-slate-900/30 grid place-content-center text-slate-500 text-sm">
-                  Add a chart here (e.g., area chart of tickets over time)
-                </div>
-              </Card>
-            </div>
-            {/* Right column: Quick Actions, System Status */}
-            <div className="flex flex-col gap-6">
+                {/* Workload */}
+                <Card>
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-sm font-medium text-slate-300">Workload (placeholder)</h2>
+                    <button className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E]">
+                      Configure
+                    </button>
+                  </div>
+                  <div className="mt-4 h-56 rounded-md border border-dashed border-slate-700/70 bg-slate-900/30 grid place-content-center text-slate-500 text-sm">
+                    Add a chart here (e.g., area chart of tickets over time)
+                  </div>
+                </Card>
+              </div>
+            </section>
+            <aside className="space-y-6">
               {/* Quick Actions */}
               <Card>
                 <h2 className="text-sm font-medium text-slate-300">Quick actions</h2>
@@ -278,7 +278,7 @@ export default function DashboardClient() {
                   </li>
                 </ul>
               </Card>
-            </div>
+            </aside>
           </section>
         </div>
       </main>

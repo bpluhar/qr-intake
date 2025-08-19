@@ -52,13 +52,13 @@ export default async function Page({ params,}: { params: Promise<{ slug: string 
     { label: "Status", value: ticket.status },
     { label: "Severity", value: ticket.severity },
     { label: "Priority", value: ticket.priority },
-    { label: "Created", value: ticket._creationTime },
+    { label: "Created", value: new Date(ticket._creationTime).toLocaleDateString("en-US") },
   ];
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-0 lg:py-8 text-slate-200">
       {/* Header */}
-      <div className="mb-6 flex items-start justify-between gap-3">
+      <div className="mb-6 flex items-center justify-between gap-3">
         <Breadcrumbs currentTicket={ticket._id} />
         <Link
           href="#"
@@ -95,7 +95,7 @@ export default async function Page({ params,}: { params: Promise<{ slug: string 
               This area can display the ticket conversation or event timeline.
             </p>
             <ul className="mt-4 space-y-2">
-              <li className="text-xs text-slate-500">• Ticket opened on {ticket._creationTime}</li>
+              <li className="text-xs text-slate-500">• Ticket opened on {new Date(ticket._creationTime).toLocaleDateString("en-US")}</li>
               <li className="text-xs text-slate-500">• Assigned to {ticket.assignees.join(", ") || "—"}</li>
             </ul>
           </Card>

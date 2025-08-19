@@ -107,7 +107,7 @@ export default function TicketsTableClient() {
                         names={r.assignees.map(id => assignedUsers[id]?.fullName ?? id)}
                       />
                     </td>
-                    <td className="px-3 py-2 text-sm hidden md:table-cell text-slate-400 whitespace-nowrap">{r._creationTime}</td>
+                    <td className="px-3 py-2 text-sm hidden md:table-cell text-slate-200 whitespace-nowrap">{new Date(r._creationTime).toLocaleDateString("en-US")}</td>
                     <td className="px-3 py-2 text-sm"><StatusBadge status={r.status} /></td>
                     <td className="px-3 py-2 text-sm"><PriorityBadge priority={r.priority} /></td>
                     <td className="px-3 py-2 text-sm text-right">
