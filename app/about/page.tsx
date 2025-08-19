@@ -5,6 +5,7 @@
 
 import Link from "next/link";
 import Navbar from "../Navbar";
+import { Card } from "@/app/components/Card";
 
 export default function AboutPage() {
   return (
@@ -150,13 +151,7 @@ export default function AboutPage() {
 
 /* ------------------------------ UI Helpers ------------------------------ */
 
-function Card({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 shadow-xl backdrop-blur">
-      {children}
-    </div>
-  );
-}
+// Removed local Card in favor of shared component
 
 function Feature({ title, desc }: { title: string; desc: string }) {
   return (

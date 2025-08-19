@@ -5,6 +5,9 @@ import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 import { Id } from "@/convex/_generated/dataModel";
 import Breadcrumbs from "../helpers/Breadcrumbs";
+import { Card } from "@/app/components/Card";
+import { TableActions, TableTitle, Th } from "@/app/components/Table";
+import { StatCard } from "@/app/components/StatCard";
 
 function NewIntakeModal({ onClose }: { onClose: () => void }) {
   const [title, setTitle] = useState("");
@@ -74,20 +77,20 @@ export default function IntakePage() {
     org ? { organizationId: org._id } : "skip"
   );
 
-  if (org === undefined) {
-    // Still loading org
-    return <div>Loading...</div>;
-  }
+  // if (org === undefined) {
+  //   // Still loading org
+  //   return <div>Loading...</div>;
+  // }
 
-  if (org === null) {
-    // User has no org
-    return <div>No organization found.</div>;
-  }
+  // if (org === null) {
+  //   // User has no org
+  //   return <div>No organization found.</div>;
+  // }
 
-  if (docs === undefined) {
-    // Intake forms still loading
-    return <div>Loading forms...</div>;
-  }
+  // if (docs === undefined) {
+  //   // Intake forms still loading
+  //   return <div>Loading forms...</div>;
+  // }
 
   const rows = docs ?? [];
 
@@ -96,7 +99,7 @@ export default function IntakePage() {
       <main className="flex-1">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-0 lg:py-8">
           {/* Breadcrumbs/title section */}
-          <div className="mb-8">
+          <div className="mb-6">
             <div className="flex items-center justify-between">
               <Breadcrumbs />
               <button
@@ -108,100 +111,54 @@ export default function IntakePage() {
             </div>
           </div>
           {showNewModal && <NewIntakeModal onClose={() => setShowNewModal(false)} />}
-          {!org ? (
-            <div>Loading...</div>
-          ) : (
-            <>
-              <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 mb-8">
-                <KpiCard title="Open intakes" value="12" />
-                <KpiCard title="New this week" value="7" />
-                <KpiCard title="Avg process" value="3d 5h" />
-                <KpiCard title="Completed this month" value="22" />
-              </div>
-              <Card>
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                  <h2 className="text-lg font-semibold text-slate-100">Intake Tickets</h2>
-                  <div className="flex items-center gap-2">
-                    <Link
-                      href="#"
-                      className="rounded-lg border border-slate-700 bg-transparent px-4 py-2 text-sm text-slate-200 font-semibold hover:bg-slate-800/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:ring-offset-2 focus:ring-offset-[#0b1217] transition"
-                    >
-                      Filters
-                    </Link>
-                    <Link
-                      href="#"
-                      className="rounded-lg border border-slate-700 bg-transparent px-4 py-2 text-sm text-slate-200 font-semibold hover:bg-slate-800/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:ring-offset-2 focus:ring-offset-[#0b1217] transition"
-                    >
-                      Columns
-                    </Link>
-                  </div>
-                </div>
-                <div className="mt-4 overflow-x-auto md:overflow-visible rounded-md border border-slate-800">
-                  {!docs ? (
-                    <div>Loading...</div>
-                  ) : (
-                    <table className="w-full text-sm">
-                      <thead className="bg-slate-900/60 text-slate-400">
-                        <tr>
-                          <Th>ID</Th>
-                          <Th>Title</Th>
-                          <Th>Created</Th>
-                          <Th className="text-right">Actions</Th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {rows.map((r: any) => (
-                          <tr key={r._id} className="hover:bg-slate-900/30">
-                            <td className="px-3 py-2 text-sm text-slate-200 whitespace-nowrap font-medium">#{r._id}</td>
-                            <td className="px-3 py-2 text-sm text-slate-200 max-w-[14rem] md:max-w-[28rem] truncate">{r.formLayout.title}</td>
-                            <td className="px-3 py-2 text-sm text-slate-400 whitespace-nowrap">
-                              {new Date(r._creationTime).toLocaleDateString("en-US")}
-                            </td>
-                            <td className="px-3 py-2 text-sm text-right">
-                              <div className="inline-flex items-center gap-2">
-                                <Link
-                                  href={`/intake/${r._id}`}
-                                  target="_blank"
-                                  className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 text-slate-300 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
-                                >
-                                  View
-                                </Link>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  )}
-                </div>
-              </Card>
-            </>
-          )}
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 mb-6">
+            <StatCard label="Open intakes" value="12" delta="12" />
+            <StatCard label="New this week" value="7" delta="7" />
+            <StatCard label="Avg process" value="3d 5h" delta="3d 5h" />
+            <StatCard label="Completed this month" value="22" delta="22" />
+          </div>
+          <Card>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <TableTitle>Intake Tickets</TableTitle>
+              <TableActions />
+            </div>
+            <div className="mt-4 overflow-x-auto md:overflow-visible rounded-md border border-slate-800">
+              <table className="w-full text-sm">
+                <thead className="bg-slate-900/60 text-slate-400">
+                  <tr>
+                    <Th>ID</Th>
+                    <Th>Title</Th>
+                    <Th>Created</Th>
+                    <Th className="text-right">Actions</Th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((r: any) => (
+                    <tr key={r._id} className="hover:bg-slate-900/30">
+                      <td className="px-3 py-2 text-sm text-slate-200 whitespace-nowrap font-medium">#{r._id}</td>
+                      <td className="px-3 py-2 text-sm text-slate-200 max-w-[14rem] md:max-w-[28rem] truncate">{r.formLayout.title}</td>
+                      <td className="px-3 py-2 text-sm text-slate-400 whitespace-nowrap">
+                        {new Date(r._creationTime).toLocaleDateString("en-US")}
+                      </td>
+                      <td className="px-3 py-2 text-sm text-right">
+                        <div className="inline-flex items-center gap-2">
+                          <Link
+                            href={`/intake/${r._id}`}
+                            target="_blank"
+                            className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 text-slate-300 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                          >
+                            View
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
         </div>
       </main>
     </div>
-  );
-}
-
-function KpiCard({ title, value }: { title: string; value: string }) {
-  return (
-    <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-5 shadow-lg backdrop-blur flex flex-col">
-      <dt className="text-xs font-medium text-slate-400 mb-1">{title}</dt>
-      <dd className="text-2xl font-bold text-slate-100">{value}</dd>
-    </div>
-  );
-}
-
-function Card({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-lg backdrop-blur">
-      {children}
-    </div>
-  );
-}
-
-function Th({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return (
-    <th className={`px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide ${className}`}>{children}</th>
   );
 }

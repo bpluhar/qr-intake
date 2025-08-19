@@ -1,3 +1,6 @@
+import { Card } from "@/app/components/Card";
+import { Th } from "@/app/components/Table";
+
 export function TicketsPageSkeleton() {
   return (
     <>
@@ -86,20 +89,6 @@ function RowSkeleton() {
         <div className="ml-auto h-6 w-full max-w-16 rounded bg-slate-700/40" />
       </td>
     </tr>
-  );
-}
-
-function Card({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 shadow-xl backdrop-blur">
-      {children}
-    </div>
-  );
-}
-
-function Th({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return (
-    <th className={`px-3 py-2 text-left text-xs font-medium uppercase tracking-wide ${className}`}>{children}</th>
   );
 }
 

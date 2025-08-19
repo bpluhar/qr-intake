@@ -3,6 +3,8 @@
 
 import Link from "next/link";
 import Breadcrumbs from "../helpers/Breadcrumbs";
+import { Card } from "@/app/components/Card";
+import { Th, Td, TableTitle, TableActions } from "@/app/components/Table";
 
 /* --------------------------------- Data --------------------------------- */
 
@@ -38,12 +40,12 @@ export default async function CompaniesPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-0 lg:py-8 text-slate-200">
       {/* Title & actions */}
-      <div className="mb-6 flex items-start justify-between gap-3">
-        <div>
+      <div className="mb-6 flex items-center justify-between gap-3">
+        
           <Breadcrumbs />
           {/* <h1 className="text-xl font-semibold">Teams</h1> */}
           {/* <p className="mt-1 text-sm text-slate-400">Organize users into functional groups.</p> */}
-        </div>
+        
         <div className="flex items-center gap-2">
           <Link
             href="#"
@@ -79,12 +81,8 @@ export default async function CompaniesPage() {
       <section className="mt-6">
         <Card>
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-medium text-slate-300">All teams</h2>
-            <div className="flex items-center gap-2">
-              <Link href="#" className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E]">
-                Filters
-              </Link>
-            </div>
+            <TableTitle>All companies</TableTitle>
+            <TableActions />
           </div>
 
           <div className="mt-4 overflow-hidden rounded-md border border-slate-800">
@@ -127,27 +125,7 @@ export default async function CompaniesPage() {
 
 /* --------------------------------- UI ----------------------------------- */
 
-function Card({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 shadow-xl backdrop-blur">
-      {children}
-    </div>
-  );
-}
-
-function Th({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return (
-    <th className={`px-3 py-2 text-left text-xs font-medium uppercase tracking-wide ${className}`}>{children}</th>
-  );
-}
-
-function Td({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return (
-    <td className={`px-3 py-3 md:py-2 align-top md:align-middle text-sm ${className}`}>
-      {children}
-    </td>
-  );
-}
+// Removed local Card/Th/Td in favor of shared components
 
 function Avatar({ name }: { name: string }) {
   const i = initials(name);

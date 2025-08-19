@@ -3,6 +3,8 @@
 
 import Link from "next/link";
 import Breadcrumbs from "../helpers/Breadcrumbs";
+import { Card } from "@/app/components/Card";
+import { Th, Td } from "@/app/components/Table";
 
 export default function ReportsPage() {
   const kpis = [
@@ -66,12 +68,12 @@ export default function ReportsPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-0 lg:py-8 text-slate-200">
       {/* Title & actions */}
-      <div className="mb-6 flex items-start justify-between gap-3">
-        <div>
+      <div className="mb-6 flex items-center justify-between gap-3">
+        
           <Breadcrumbs />
           {/* <h1 className="text-xl font-semibold">Reports</h1> */}
           {/* <p className="mt-1 text-sm text-slate-400">Analyze performance with prebuilt and custom reports.</p> */}
-        </div>
+        
         <div className="flex items-center gap-2">
           <Link
             href="#"
@@ -175,26 +177,7 @@ type ReportRow = {
   status: "Ready" | "Scheduled" | "Needs setup" | string;
   lastRun: string;
 };
-
 /* ------------------------------ UI Helpers ------------------------------ */
-
-function Card({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 shadow-xl backdrop-blur">
-      {children}
-    </div>
-  );
-}
-
-function Th({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return (
-    <th className={`px-3 py-2 text-left text-xs font-medium uppercase tracking-wide ${className}`}>{children}</th>
-  );
-}
-
-function Td({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <td className={`px-3 py-2 text-sm ${className}`}>{children}</td>;
-}
 
 function StatusBadge({ status }: { status: ReportRow["status"] }) {
   const map: Record<string, string> = {

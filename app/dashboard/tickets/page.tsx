@@ -12,7 +12,7 @@ export default function TicketsPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-0 lg:py-8 text-slate-200">
       {/* Title & actions */}
-      <div className="mb-6 flex items-start justify-between gap-3">
+      <div className="mb-6 flex items-center justify-between">
         <div>
           <Breadcrumbs />
         </div>

@@ -20,6 +20,10 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
+import { Card } from "@/app/components/Card";
+import { StatCard } from "@/app/components/StatCard";
+import { Th, Td } from "@/app/components/Table";
+import { StatusBadge } from "@/app/components/StatusBadge";
 
 // Register Chart.js components
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend, Title, LineElement, PointElement);
@@ -77,10 +81,10 @@ export default function DashboardClient() {
   }, [showProfileModal, showWhatsNewModal]);
 
 
-  if (result === undefined) return "Loading…";
-  if (result === null) return "Unexpected null"; // shouldn't happen in this query
-  if (!result.user) return <div>Loading user data...</div>;
-  if (!result.user._id) return <div>Loading...</div>;
+  // if (result === undefined) return "Loading…";
+  // if (result === null) return "Unexpected null"; // shouldn't happen in this query
+  // if (!result.user) return <div>Loading user data...</div>;
+  // if (!result.user._id) return <div>Loading...</div>;
 
 
   // if (result === undefined) return "Loading…";
@@ -90,21 +94,21 @@ export default function DashboardClient() {
     <div className="min-h-screen bg-[#0b1217] text-slate-200 flex">
       {showProfileModal && (
         <ProfileModal
-          email={result.user.email ?? ""}
+          email={result!.user!.email!}
           onClose={() => setShowProfileModal(false)}
           onSave={async (data) => {
             // 1. Create organization and get organizationId
             const organizationId = await createOrganization({ name: data.orgName });
             // 2. Create profile with userId, organizationId, firstName, lastName
             const newProfile = await createProfile({
-              userId: result.user._id,
+              userId: result!.user!._id,
               organizationId,
               firstName: data.firstName,
               lastName: data.lastName,
             });
 
             // 2.5. Create user settings for this user
-            await createUserSettings({ userId: result.user._id });
+            await createUserSettings({ userId: result!.user!._id });
 
             // Set profile cookie
             Cookies.set("profile", (newProfile));
@@ -141,9 +145,13 @@ export default function DashboardClient() {
         {/* Page content */}
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-0 lg:py-8">
           {/* Breadcrumb / Page title */}
-          <div className="mb-8">
+          <div className="mb-6">
             {/* <h1 className="text-xl font-semibold">Dashboard</h1> */}
-            <Breadcrumbs />
+            <div className="mb-6 flex items-center justify-between">
+              <Breadcrumbs />
+              {/* Placeholder to match Tickets header height (36px) */}
+              <div className="h-9" />
+            </div>
             {/* <p className="mt-1 text-sm text-slate-400">Quick glance at your product health and recent activity.</p> */}
           </div>
 
@@ -156,7 +164,7 @@ export default function DashboardClient() {
           </section>
 
           {/* Unified main content grid */}
-          <section className="mt-8 grid grid-cols-1 lg:grid-cols-[65%_35%] gap-6">
+          <section className="mt-6 grid grid-cols-1 lg:grid-cols-[65%_35%] gap-6">
             {/* Left column: Tickets chart, Recent Activity, Workload */}
             <div className="flex flex-col gap-6">
               {/* Tickets Bar Chart */}
@@ -484,75 +492,6 @@ function WhatsNewModal({ onDismiss }: { onDismiss: () => void }) {
   );
 }
 
-/* ---------- Small UI helpers (match sign-in rounded + palette) ---------- */
-
-function Card({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 shadow-xl backdrop-blur">
-      {children}
-    </div>
-  );
-}
-
-function StatCard({
-  label,
-  value,
-  delta,
-  positive,
-}: {
-  label: string;
-  value: string;
-  delta: string;
-  positive?: boolean;
-}) {
-  return (
-    <Card>
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-xs uppercase tracking-wide text-slate-400">{label}</p>
-          <p className="mt-2 text-2xl font-semibold text-slate-100">{value}</p>
-        </div>
-        <span
-          className={`mt-1 inline-flex items-center rounded-md px-2 py-1 text-xs ${
-            positive
-              ? 'bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30'
-              : 'bg-sky-500/10 text-sky-400 ring-1 ring-sky-500/30'
-          }`}
-        >
-          {delta}
-        </span>
-      </div>
-    </Card>
-  );
-}
-
-function Th({ children }: { children: React.ReactNode }) {
-  return (
-    <th className="px-3 py-2 text-left text-xs font-medium uppercase tracking-wide">{children}</th>
-  );
-}
-function Td({
-  children,
-  className = '',
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return <td className={`px-3 py-2 text-sm ${className}`}>{children}</td>;
-}
-
-function StatusBadge({ status }: { status: 'Open' | 'Pending' | 'Resolved' | string }) {
-  const map: Record<string, string> = {
-    Open: 'bg-blue-500/10 text-blue-400 ring-1 ring-blue-500/30',
-    Pending: 'bg-yellow-500/10 text-yellow-400 ring-1 ring-yellow-500/30',
-    Resolved: 'bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30',
-  };
-  return (
-    <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs ${map[status] ?? 'bg-slate-700/40 text-slate-300 ring-1 ring-slate-600/40'}`}>
-      {status}
-    </span>
-  );
-}
 // TicketsBarChart component (mock data, dark theme, now as a line chart)
 function TicketsBarChart() {
   // Mock data for 30 days

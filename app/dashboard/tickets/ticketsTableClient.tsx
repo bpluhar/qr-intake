@@ -5,6 +5,8 @@ import { TicketRow } from "../tickets";
 import { useQuery } from "convex/react";
 import { Id } from "@/convex/_generated/dataModel";
 import React from "react";
+import { Card } from "@/app/components/Card";
+import { TableActions, TableTitle, Th } from "@/app/components/Table";
 
 // type Props = { initialData: TicketRow[] };
 
@@ -73,15 +75,8 @@ export default function TicketsTableClient() {
       <section className="mt-6">
         <Card>
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-medium text-slate-300">All tickets</h2>
-            <div className="flex items-center gap-2">
-              <Link href="#" className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E]">
-                Filters
-              </Link>
-              <Link href="#" className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E]">
-                Columns
-              </Link>
-            </div>
+            <TableTitle>All tickets</TableTitle>
+            <TableActions />
           </div>
 
           <div className="mt-4 overflow-x-auto md:overflow-visible rounded-md border border-slate-800">
@@ -131,19 +126,7 @@ export default function TicketsTableClient() {
   );
 }
 
-function Card({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 shadow-xl backdrop-blur">
-      {children}
-    </div>
-  );
-}
-
-function Th({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return (
-    <th className={`px-3 py-2 text-left text-xs font-medium uppercase tracking-wide ${className}`}>{children}</th>
-  );
-}
+// Removed local Card and Th in favor of shared components
 
 /* Lightweight copies for client side */
 function StatusBadge({ status }: { status: TicketRow["status"] }) {

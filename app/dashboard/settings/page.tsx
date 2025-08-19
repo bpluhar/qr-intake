@@ -7,6 +7,7 @@ import Link from "next/link";
 import Breadcrumbs from "../helpers/Breadcrumbs";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { Card } from "@/app/components/Card";
 
 export default function SettingsPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -15,12 +16,12 @@ export default function SettingsPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-0 lg:py-8 text-slate-200">
       {/* Title & actions */}
-      <div className="mb-6 flex items-start justify-between gap-3">
-        <div>
+      <div className="mb-6 flex items-center justify-between gap-3">
+        
           <Breadcrumbs />
           {/* <h1 className="text-xl font-semibold">Settings</h1> */}
           {/* <p className="mt-1 text-sm text-slate-400">These controls are UI-only for now. Hook them up to Convex whenever you’re ready.</p> */}
-        </div>
+        
         <div className="flex items-center gap-2">
           <button
             disabled
@@ -253,13 +254,7 @@ export default function SettingsPage() {
 
 /* ------------------------------ UI Helpers ------------------------------ */
 
-function Card({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 shadow-xl backdrop-blur">
-      {children}
-    </div>
-  );
-}
+// Removed local Card in favor of shared component
 
 function FieldRow({
   label,

@@ -12,6 +12,7 @@ import type { TicketRow } from "../../tickets";
 import { PriorityBadge, SeverityBadge, StatusBadge, NuetralBadge } from "../../badges";
 import type { Id, Doc } from "@/convex/_generated/dataModel";
 import { deleteTicketAction } from "./actions";
+import { Card } from "@/app/components/Card";
 
 /* -------------------------------------------------------------------- */
 export default async function Page({ params,}: { params: Promise<{ slug: string }>; }) {
@@ -207,10 +208,4 @@ export default async function Page({ params,}: { params: Promise<{ slug: string 
 /* -------------------------------------------------------------------- */
 /*  Reusable UI bits                                                    */
 /* -------------------------------------------------------------------- */
-function Card({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 shadow-xl backdrop-blur">
-      {children}
-    </div>
-  );
-}
+// Removed local Card in favor of shared component
