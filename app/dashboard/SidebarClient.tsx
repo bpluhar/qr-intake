@@ -74,6 +74,7 @@ export default function SidebarClient() {
   const nav = [
     { href: "/dashboard", label: "Overview", icon: IconHome },
     { href: "/dashboard/tickets", label: "Tickets", icon: IconTicket },
+    { href: "/dashboard/intake", label: "Intake", icon: IconTicket },
     // { href: "/dashboard/customers", label: "Customers", icon: IconUsers },
     { href: "/dashboard/companies", label: "Companies", icon: IconTeams },
     { href: "/dashboard/reports", label: "Reports", icon: IconChart },

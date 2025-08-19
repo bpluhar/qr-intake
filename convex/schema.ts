@@ -111,34 +111,34 @@ const schema = defineSchema({
 
 
   intakeForms: defineTable({
-  organizationId: v.optional(v.id("organizations")),
-  creatorId: v.optional(v.id("users")),
-  formLayout: v.object({
-    title: v.string(),
-    description: v.optional(v.string()),
-    fields: v.optional(
-      v.array(
-        v.object({
-          type: v.string(),
-          name: v.string(),
-          label: v.string(),
-          placeholder: v.optional(v.string()),
-          required: v.optional(v.boolean()),
-          options: v.optional(
-            v.array(
-              v.object({
-                label: v.string(),
-                value: v.string(),
-              })
-            )
-          ),
-        })
-      )
-    ),
-  }),
-})
-  .index("by_organization", ["organizationId"])
-  .index("by_creator", ["creatorId"]),
+    organizationId: v.optional(v.id("organizations")),
+    creatorId: v.optional(v.id("users")),
+    formLayout: v.object({
+      title: v.string(),
+      description: v.optional(v.string()),
+      fields: v.optional(
+        v.array(
+          v.object({
+            type: v.string(),
+            name: v.string(),
+            label: v.string(),
+            placeholder: v.optional(v.string()),
+            required: v.optional(v.boolean()),
+            options: v.optional(
+              v.array(
+                v.object({
+                  label: v.string(),
+                  value: v.string(),
+                })
+              )
+            ),
+          })
+        )
+      ),
+    }),
+  })
+    .index("by_organization", ["organizationId"])
+    .index("by_creator", ["creatorId"]),
 
 });
 
