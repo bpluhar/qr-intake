@@ -1,11 +1,12 @@
 {
   "name": "triage-saas",
-  "version": "0.5.0b",
+  "version": "0.5.4b",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
+    "deploy": "npx convex deploy -y",
     "lint": "eslint ."
   },
   "dependencies": {
