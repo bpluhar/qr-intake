@@ -25,6 +25,9 @@ export const deleteUserData = mutation({
     ).collect();
 
     for (const profile of profiles) {
+      if (profile.profilePicture) {
+        await ctx.storage.delete(profile.profilePicture);
+      }
       await ctx.db.delete(profile._id);
     }
 

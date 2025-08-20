@@ -185,3 +185,13 @@ export const saveProfilePicture = mutation({
     return updated as Doc<"profiles">;
   },
 });
+
+export const getProfilePictureUrl = query({
+  args: {
+    profileId: v.id("profiles"),
+  },
+  handler: async (ctx, args): Promise<string | null> => {
+    const profile = await ctx.db.get(args.profileId);
+    return profile?.profilePicture ? await ctx.storage.getUrl(profile.profilePicture) : null;
+  },
+});
