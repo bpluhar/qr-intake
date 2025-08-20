@@ -37,6 +37,60 @@ ChartJS.register(
   PointElement,
 );
 
+// Image processing helpers: crop to center square, then scale by provided factor
+async function loadImageFromFile(file: File): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      resolve(img);
+    };
+    img.onerror = (e) => {
+      URL.revokeObjectURL(url);
+      reject(e);
+    };
+    img.src = url;
+  });
+}
+
+async function cropAndResizeCenterSquare(
+  file: File,
+  scaleFactor: number = 0.75,
+): Promise<Blob> {
+  const img = await loadImageFromFile(file);
+  const sourceWidth = img.naturalWidth || (img as any).width || 0;
+  const sourceHeight = img.naturalHeight || (img as any).height || 0;
+  if (!sourceWidth || !sourceHeight) {
+    throw new Error("Unable to read image dimensions");
+  }
+
+  const side = Math.min(sourceWidth, sourceHeight);
+  const sx = Math.floor((sourceWidth - side) / 2);
+  const sy = Math.floor((sourceHeight - side) / 2);
+  const targetSide = Math.max(1, Math.round(side * scaleFactor));
+
+  const canvas = document.createElement("canvas");
+  canvas.width = targetSide;
+  canvas.height = targetSide;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Canvas context not available");
+
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
+  ctx.drawImage(img, sx, sy, side, side, 0, 0, targetSide, targetSide);
+
+  const outputType = file.type && /^image\/(png|jpeg|jpg|webp)$/i.test(file.type)
+    ? file.type
+    : "image/png";
+
+  const blob = await new Promise<Blob | null>((resolve) =>
+    canvas.toBlob(resolve, outputType),
+  );
+  if (!blob) throw new Error("Failed to create image blob");
+  return blob;
+}
+
 export default function DashboardClient() {
   const result = useQuery(api.functions.users.getCurrentWithSource);
   const profile = useQuery(
@@ -126,21 +180,25 @@ export default function DashboardClient() {
             // 2.5. Create user settings for this user
             await createUserSettings({ userId: result!.user!._id });
 
-            // 2.6 Upload Profile Picture to Convex Files
-            const uploadUrl = await generateProfilePictureUploadUrl();
-            
-            const uploadResult = await fetch(uploadUrl, {
-              method: "POST",
-              headers: { "content-type": selectedImage!.type },
-              body: selectedImage,
-            });
+            // 2.6 Upload Profile Picture to Convex Files (crop center square and resize to 75%)
+            if (selectedImage) {
+              const processed = await cropAndResizeCenterSquare(selectedImage, 0.75);
+              const contentType = processed.type || selectedImage.type || "image/png";
 
-            const { storageId } = await uploadResult.json();
-            
-            const profilePicture = await saveProfilePicture({
-              storageId,
-              profileId: newProfile,
-            });
+              const uploadUrl = await generateProfilePictureUploadUrl();
+              const uploadResult = await fetch(uploadUrl, {
+                method: "POST",
+                headers: { "content-type": contentType },
+                body: processed,
+              });
+
+              const { storageId } = await uploadResult.json();
+
+              await saveProfilePicture({
+                storageId,
+                profileId: newProfile,
+              });
+            }
 
             // 3. Close the modal
             setShowProfileModal(false);
