@@ -18,7 +18,7 @@ import { Line } from "react-chartjs-2";
 import Breadcrumbs from "./helpers/Breadcrumbs";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Cookies from "js-cookie";
 import { Card } from "@/app/components/Card";
 import { StatCard } from "@/app/components/StatCard";
@@ -50,6 +50,14 @@ export default function DashboardClient() {
   const createUserSettings = useMutation(
     api.functions.usersettings.createUserSettings,
   );
+
+  const generateProfilePictureUploadUrl = useMutation(
+    api.functions.profiles.generateProfilePictureUploadUrl,
+  );
+  const saveProfilePicture = useMutation(
+    api.functions.profiles.saveProfilePicture,
+  );
+
   const dismissWhatsNew = useMutation(
     api.functions.usersettings.dismissWhatsNew,
   );
@@ -93,19 +101,14 @@ export default function DashboardClient() {
     };
   }, [showProfileModal, showWhatsNewModal]);
 
-  // if (result === undefined) return "Loading…";
-  // if (result === null) return "Unexpected null"; // shouldn't happen in this query
-  // if (!result.user) return <div>Loading user data...</div>;
-  // if (!result.user._id) return <div>Loading...</div>;
-
-  // if (result === undefined) return "Loading…";
-  // if (result === null) return "Unexpected null"; // shouldn't happen in this query
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
   return (
     <div className="min-h-screen bg-[#0b1217] text-slate-200 flex">
       {showProfileModal && (
         <ProfileModal
           email={result!.user!.email!}
+          onImageSelected={(file) => setSelectedImage(file)}
           onClose={() => setShowProfileModal(false)}
           onSave={async (data) => {
             // 1. Create organization and get organizationId
@@ -123,10 +126,21 @@ export default function DashboardClient() {
             // 2.5. Create user settings for this user
             await createUserSettings({ userId: result!.user!._id });
 
-            // Set profile cookie
-            Cookies.set("profile", newProfile);
+            // 2.6 Upload Profile Picture to Convex Files
+            const uploadUrl = await generateProfilePictureUploadUrl();
+            
+            const uploadResult = await fetch(uploadUrl, {
+              method: "POST",
+              headers: { "content-type": selectedImage!.type },
+              body: selectedImage,
+            });
 
-            console.log("Profile created:", newProfile);
+            const { storageId } = await uploadResult.json();
+            
+            const profilePicture = await saveProfilePicture({
+              storageId,
+              profileId: newProfile,
+            });
 
             // 3. Close the modal
             setShowProfileModal(false);
@@ -340,10 +354,12 @@ export default function DashboardClient() {
 function ProfileModal({
   email,
   // onClose,
+  onImageSelected,
   onSave,
 }: {
   email: string;
   onClose: () => void;
+  onImageSelected: (file: File | null) => void;
   onSave: (
     data: {
       firstName: string;
@@ -359,6 +375,8 @@ function ProfileModal({
   const [orgName, setOrgName] = useState("");
   const [phone, setPhone] = useState("");
   const [animate, setAnimate] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     // Trigger scale-in after mount
@@ -465,6 +483,64 @@ function ProfileModal({
               className="w-full rounded-md border border-slate-700 bg-slate-800/60 px-3 py-2 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E] focus:ring-offset-2 focus:ring-offset-[#0b1217]"
               placeholder="(555) 123-4567"
             />
+          </div>
+
+          {/* Profile picture uploader */}
+          <div>
+            <label className="mb-1 block text-xs font-medium text-slate-400">
+              Profile Picture
+            </label>
+            <div className="mt-2 flex items-center gap-3">
+              <div className="h-20 w-20 rounded-md border border-dashed border-slate-700/70 bg-slate-900/30 grid place-content-center overflow-hidden">
+                {previewUrl
+                  ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={previewUrl} alt="Preview" className="h-full w-full object-cover" />
+                  )
+                  : (
+                    <span className="text-slate-500 text-[10px]">No image</span>
+                  )}
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] ?? null;
+                    if (file) {
+                      const url = URL.createObjectURL(file);
+                      setPreviewUrl(url);
+                      onImageSelected(file);
+                    } else {
+                      setPreviewUrl(null);
+                      onImageSelected(null);
+                    }
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E]"
+                >
+                  Upload
+                </button>
+                {previewUrl && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPreviewUrl(null);
+                      if (fileInputRef.current) fileInputRef.current.value = "";
+                      onImageSelected(null);
+                    }}
+                    className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
 
           {/* Actions */}

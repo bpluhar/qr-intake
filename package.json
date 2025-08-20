@@ -1,6 +1,6 @@
 {
   "name": "triage-saas",
-  "version": "0.4.3",
+  "version": "0.5.0b",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",

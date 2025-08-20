@@ -19,6 +19,7 @@ const schema = defineSchema({
     lastName: v.string(),
     email: v.string(),
     phone: v.optional(v.string()),
+    profilePicture: v.optional(v.id("_storage")),
   })
     .index("by_userId", ["userId"])
     .index("by_organization", ["organizationId"]),

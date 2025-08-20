@@ -153,3 +153,35 @@ export const updateProfileById = mutation({
     return await ctx.db.get(args.profileId);
   },
 });
+
+export const generateProfilePictureUploadUrl = mutation({
+  handler: async (ctx) => {
+    return await ctx.storage.generateUploadUrl();
+  },
+});
+
+export const saveProfilePicture = mutation({
+  args: {
+    storageId: v.id("_storage"),
+    profileId: v.id("profiles"),
+  },
+  handler: async (ctx, args): Promise<Doc<"profiles">> => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("User not authenticated");
+
+    const profile = await ctx.db.get(args.profileId);
+    if (!profile) throw new Error("Profile not found");
+
+    if (profile.userId !== userId) {
+      throw new Error("Not authorized to modify this profile");
+    }
+
+    await ctx.db.patch(
+      args.profileId,
+      { profilePicture: args.storageId } as Doc<"profiles">,
+    );
+
+    const updated = await ctx.db.get(args.profileId);
+    return updated as Doc<"profiles">;
+  },
+});
