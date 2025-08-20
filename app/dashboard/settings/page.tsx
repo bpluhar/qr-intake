@@ -403,18 +403,20 @@ function Modal(
 
   return (
     <div
-      className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
       onClick={handleClose}
     >
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-md" />
+
+      {/* Panel */}
       <div
-        className={`modal-panel rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-xl transform transition-transform w-full max-w-lg ${
+        className={`modal-panel relative w-full max-w-lg rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-xl transform transition-transform duration-300 ease-out ${
           closing ? "scale-0" : animate ? "scale-100" : "scale-0"
         }`}
         onClick={(e) => e.stopPropagation()}
-        style={{
-          transitionDuration: "150ms",
-          transitionTimingFunction: "ease",
-        }}
       >
         {children}
       </div>

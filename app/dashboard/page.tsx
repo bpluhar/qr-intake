@@ -690,7 +690,7 @@ function WhatsNewModal({ onDismiss, data }: { onDismiss: () => void; data: Doc<"
       aria-modal="true"
     >
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-md" />
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
 
       {/* Panel */}
       <div
