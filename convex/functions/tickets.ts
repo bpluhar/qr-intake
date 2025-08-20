@@ -5,7 +5,6 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 export const getAll = query({
   args: {},
   handler: async (ctx) => {
-    // Fetch tickets from the database
     return await ctx.db.query("tickets").collect();
   },
 });
