@@ -19,7 +19,6 @@ import Breadcrumbs from "./helpers/Breadcrumbs";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useEffect, useState, useRef } from "react";
-import Cookies from "js-cookie";
 import { Card } from "@/app/components/Card";
 import { StatCard } from "@/app/components/StatCard";
 import { Td, Th } from "@/app/components/Table";
@@ -59,8 +58,8 @@ async function cropAndResizeCenterSquare(
   scaleFactor: number = 0.75,
 ): Promise<Blob> {
   const img = await loadImageFromFile(file);
-  const sourceWidth = img.naturalWidth || (img as any).width || 0;
-  const sourceHeight = img.naturalHeight || (img as any).height || 0;
+  const sourceWidth = img.naturalWidth || (img as HTMLImageElement).width || 0;
+  const sourceHeight = img.naturalHeight || (img as HTMLImageElement).height || 0;
   if (!sourceWidth || !sourceHeight) {
     throw new Error("Unable to read image dimensions");
   }
@@ -597,8 +596,8 @@ function ProfileModal({
                       try {
                         const img = await loadImageFromFile(file);
                         const side = Math.min(
-                          (img.naturalWidth || (img as any).width || 0),
-                          (img.naturalHeight || (img as any).height || 0),
+                          (img.naturalWidth || (img as HTMLImageElement).width || 0),
+                          (img.naturalHeight || (img as HTMLImageElement).height || 0),
                         );
                         const target = 128; // preview size (h-32 / w-32)
                         const factor = side > 0 ? Math.min(1, target / side) : 1;
@@ -607,7 +606,8 @@ function ProfileModal({
                         if (previewUrl) URL.revokeObjectURL(previewUrl);
                         setPreviewUrl(url);
                         onImageSelected(file);
-                      } catch (_err) {
+                      } catch (err) {
+                        console.error(err);
                         const url = URL.createObjectURL(file);
                         if (previewUrl) URL.revokeObjectURL(previewUrl);
                         setPreviewUrl(url);
