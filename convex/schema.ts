@@ -65,6 +65,17 @@ const schema = defineSchema({
     welcomeDismissed: v.optional(v.boolean()),
   }).index("by_userId", ["userId"]),
 
+  whatsNew: defineTable({
+    version: v.string(),
+    title: v.string(),
+    description: v.string(),
+    updates: v.array(v.object({
+      title: v.string(),
+      description: v.string(),
+      emoji: v.string(),
+    })),
+  }),
+
   tickets: defineTable({
     userId: v.id("users"),
     organizationId: (v.id("organizations")),

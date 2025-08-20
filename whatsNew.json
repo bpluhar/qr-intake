@@ -1,0 +1,19 @@
+[
+{
+  "version": "1.0.0",
+  "title": "What's New",
+  "description": "Discover the latest updates and improvements in Triage.",
+  "updates": [
+    {
+      "title": "Profile Picture",
+      "description": "You can now set a profile picture for your account which will be displayed in the sidebar.",
+      "emoji": "👤"
+    },
+    {
+      "title": "Intake Form",
+      "description": "You can now create a new intake form for your company and share it with your customers either through a link or a QR code.",
+      "emoji": "📋"
+    }
+  ]
+}
+]
