@@ -63,7 +63,9 @@ export default function SidebarClient() {
     });
   });
 
-  const fullName = profile ? `${profile.firstName} ${profile.lastName}`.trim() : "";
+  const fullName = profile
+    ? `${profile.firstName} ${profile.lastName}`.trim()
+    : "";
   const email = user?.email ?? undefined;
   const profileImageUrl = profilePictureUrl ?? undefined;
   const initial = initials(fullName);
@@ -181,11 +183,17 @@ export default function SidebarClient() {
           <div className="border-t border-slate-800/80 pt-4">
             <div className="flex items-center gap-3">
               <div className="inline-flex h-10 w-10 items-center justify-center border border-slate-700 bg-slate-800/60 overflow-hidden rounded-lg">
-                {profileImageUrl ? (
-                  <Image src={profileImageUrl} alt="Profile" className="h-full w-full object-cover object-center" width={40} height={40} />
-                ) : (
-                  <span className="text-sm font-medium">{initial}</span>
-                )}
+                {profileImageUrl
+                  ? (
+                    <Image
+                      src={profileImageUrl}
+                      alt="Profile"
+                      className="h-full w-full object-cover object-center"
+                      width={40}
+                      height={40}
+                    />
+                  )
+                  : <span className="text-sm font-medium">{initial}</span>}
               </div>
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-semibold text-slate-200">
@@ -282,12 +290,18 @@ export default function SidebarClient() {
         <div className="p-4 border-t border-slate-800/80">
           <div className="flex items-center gap-3">
             <div className="inline-flex h-10 w-10 items-center justify-center border border-slate-700 bg-slate-800/60 overflow-hidden rounded-lg">
-                {profileImageUrl ? (
-                  <Image src={profileImageUrl} alt="Profile" className="h-full w-full object-cover object-center" width={40} height={40} />
-                ) : (
-                  <span className="text-sm font-medium">{initial}</span>
-                )}
-              </div>
+              {profileImageUrl
+                ? (
+                  <Image
+                    src={profileImageUrl}
+                    alt="Profile"
+                    className="h-full w-full object-cover object-center"
+                    width={40}
+                    height={40}
+                  />
+                )
+                : <span className="text-sm font-medium">{initial}</span>}
+            </div>
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold text-slate-200">
                 {fullName}

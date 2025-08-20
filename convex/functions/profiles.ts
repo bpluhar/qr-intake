@@ -106,7 +106,8 @@ export const createProfile = mutation({
       }
     }
 
-    const phone: string | undefined = (user as { phone: string }).phone ?? undefined;
+    const phone: string | undefined = (user as { phone: string }).phone ??
+      undefined;
 
     const profileId = await ctx.db.insert("profiles", {
       userId: args.userId,
@@ -192,6 +193,8 @@ export const getProfilePictureUrl = query({
   },
   handler: async (ctx, args): Promise<string | null> => {
     const profile = await ctx.db.get(args.profileId);
-    return profile?.profilePicture ? await ctx.storage.getUrl(profile.profilePicture) : null;
+    return profile?.profilePicture
+      ? await ctx.storage.getUrl(profile.profilePicture)
+      : null;
   },
 });

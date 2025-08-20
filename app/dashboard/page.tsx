@@ -18,7 +18,7 @@ import { Line } from "react-chartjs-2";
 import Breadcrumbs from "./helpers/Breadcrumbs";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Card } from "@/app/components/Card";
 import { StatCard } from "@/app/components/StatCard";
 import { Td, Th } from "@/app/components/Table";
@@ -59,7 +59,8 @@ async function cropAndResizeCenterSquare(
 ): Promise<Blob> {
   const img = await loadImageFromFile(file);
   const sourceWidth = img.naturalWidth || (img as HTMLImageElement).width || 0;
-  const sourceHeight = img.naturalHeight || (img as HTMLImageElement).height || 0;
+  const sourceHeight = img.naturalHeight || (img as HTMLImageElement).height ||
+    0;
   if (!sourceWidth || !sourceHeight) {
     throw new Error("Unable to read image dimensions");
   }
@@ -79,12 +80,13 @@ async function cropAndResizeCenterSquare(
   ctx.imageSmoothingQuality = "high";
   ctx.drawImage(img, sx, sy, side, side, 0, 0, targetSide, targetSide);
 
-  const outputType = file.type && /^image\/(png|jpeg|jpg|webp)$/i.test(file.type)
-    ? file.type
-    : "image/png";
+  const outputType =
+    file.type && /^image\/(png|jpeg|jpg|webp)$/i.test(file.type)
+      ? file.type
+      : "image/png";
 
   const blob = await new Promise<Blob | null>((resolve) =>
-    canvas.toBlob(resolve, outputType),
+    canvas.toBlob(resolve, outputType)
   );
   if (!blob) throw new Error("Failed to create image blob");
   return blob;
@@ -185,8 +187,12 @@ export default function DashboardClient() {
 
             // 2.6 Upload Profile Picture to Convex Files (crop center square and resize to 25%)
             if (selectedImage) {
-              const processed = await cropAndResizeCenterSquare(selectedImage, 0.25);
-              const contentType = processed.type || selectedImage.type || "image/png";
+              const processed = await cropAndResizeCenterSquare(
+                selectedImage,
+                0.25,
+              );
+              const contentType = processed.type || selectedImage.type ||
+                "image/png";
 
               const uploadUrl = await generateProfilePictureUploadUrl();
               const uploadResult = await fetch(uploadUrl, {
@@ -203,7 +209,6 @@ export default function DashboardClient() {
               });
             }
 
-            
             // 4. After closing, show What's New if userSettingsQuery is defined and not dismissed
             if (
               userSettingsQuery !== undefined &&
@@ -395,7 +400,7 @@ export default function DashboardClient() {
                   <li className="flex items-center justify-between">
                     <span className="text-slate-400">Database</span>
                     <span className="inline-flex items-center gap-2">
-                    <span className="relative flex size-3">
+                      <span className="relative flex size-3">
                         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                         <span className="relative inline-flex size-3 rounded-full bg-emerald-500" />
                       </span>
@@ -405,7 +410,7 @@ export default function DashboardClient() {
                   <li className="flex items-center justify-between">
                     <span className="text-slate-400">Auth</span>
                     <span className="inline-flex items-center gap-2">
-                    <span className="relative flex size-3">
+                      <span className="relative flex size-3">
                         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-yellow-400 opacity-75" />
                         <span className="relative inline-flex size-3 rounded-full bg-yellow-500" />
                       </span>
@@ -415,7 +420,7 @@ export default function DashboardClient() {
                   <li className="flex items-center justify-between">
                     <span className="text-slate-400">Will to Live</span>
                     <span className="inline-flex items-center gap-2">
-                    <span className="relative flex size-3">
+                      <span className="relative flex size-3">
                         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
                         <span className="relative inline-flex size-3 rounded-full bg-red-500" />
                       </span>
@@ -578,10 +583,16 @@ function ProfileModal({
                 {previewUrl
                   ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={previewUrl} alt="Preview" className="h-full w-full object-cover object-center" />
+                    <img
+                      src={previewUrl}
+                      alt="Preview"
+                      className="h-full w-full object-cover object-center"
+                    />
                   )
                   : (
-                    <span className="text-slate-500 text-[10px]">No image</span>
+                    <span className="text-slate-500 text-[10px]">
+                      No image
+                    </span>
                   )}
               </div>
               <div className="mt-2 w-32">
@@ -596,12 +607,19 @@ function ProfileModal({
                       try {
                         const img = await loadImageFromFile(file);
                         const side = Math.min(
-                          (img.naturalWidth || (img as HTMLImageElement).width || 0),
-                          (img.naturalHeight || (img as HTMLImageElement).height || 0),
+                          img.naturalWidth || (img as HTMLImageElement).width ||
+                            0,
+                          img.naturalHeight ||
+                            (img as HTMLImageElement).height || 0,
                         );
                         const target = 128; // preview size (h-32 / w-32)
-                        const factor = side > 0 ? Math.min(1, target / side) : 1;
-                        const blob = await cropAndResizeCenterSquare(file, factor);
+                        const factor = side > 0
+                          ? Math.min(1, target / side)
+                          : 1;
+                        const blob = await cropAndResizeCenterSquare(
+                          file,
+                          factor,
+                        );
                         const url = URL.createObjectURL(blob);
                         if (previewUrl) URL.revokeObjectURL(previewUrl);
                         setPreviewUrl(url);
