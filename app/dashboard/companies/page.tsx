@@ -15,7 +15,7 @@ type TeamRow = {
 };
 
 // In a real app, replace this with a database query / API call
-async function getTeams(): Promise<TeamRow[]> {
+function getTeams(): TeamRow[] {
   return [
     { name: "Engineering", members: 12, created: "Jan 12, 2025" },
     { name: "Design", members: 7, created: "Feb 03, 2025" },
@@ -25,10 +25,8 @@ async function getTeams(): Promise<TeamRow[]> {
   ];
 }
 
-export const revalidate = 60; // ISR: update at most once per minute
-
-export default async function CompaniesPage() {
-  const rows = await getTeams();
+export default function CompaniesPage() {
+  const rows = getTeams();
   const teamCount = rows.length;
   const usersCount = rows.reduce((sum, t) => sum + t.members, 0);
 
