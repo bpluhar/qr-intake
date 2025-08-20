@@ -204,8 +204,7 @@ export default function DashboardClient() {
               });
             }
 
-            // 3. Close the modal after all async work completes
-            setShowProfileModal(false);
+            
             // 4. After closing, show What's New if userSettingsQuery is defined and not dismissed
             if (
               userSettingsQuery !== undefined &&
@@ -216,6 +215,7 @@ export default function DashboardClient() {
             ) {
               setShowWhatsNewModal(true);
             }
+            setShowProfileModal(false);
             setIsSaving(false);
           }}
         />
