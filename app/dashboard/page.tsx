@@ -98,25 +98,14 @@ export default function DashboardClient() {
     api.functions.profiles.getProfileByUserId,
     result?.user?._id ? { userId: result.user._id } : "skip",
   );
-  const createOrganization = useMutation(
-    api.functions.organizations.createOrganization,
-  );
+  const createOrganization = useMutation(api.functions.organizations.createOrganization);
   const createProfile = useMutation(api.functions.profiles.createProfile);
-  const createUserSettings = useMutation(
-    api.functions.usersettings.createUserSettings,
-  );
-
-  const generateProfilePictureUploadUrl = useMutation(
-    api.functions.profiles.generateProfilePictureUploadUrl,
-  );
-  const saveProfilePicture = useMutation(
-    api.functions.profiles.saveProfilePicture,
-  );
-
-  const dismissWhatsNew = useMutation(
-    api.functions.usersettings.dismissWhatsNew,
-  );
-
+  const createUserSettings = useMutation(api.functions.usersettings.createUserSettings);
+  const generateProfilePictureUploadUrl = useMutation(api.functions.profiles.generateProfilePictureUploadUrl);
+  const saveProfilePicture = useMutation(api.functions.profiles.saveProfilePicture);
+  const dismissWhatsNew = useMutation(api.functions.usersettings.dismissWhatsNew);
+  const whatsNew = useQuery(api.functions.usersettings.getWhatsNew);
+  
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showWhatsNewModal, setShowWhatsNewModal] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -226,6 +215,7 @@ export default function DashboardClient() {
       )}
       {showWhatsNewModal && (
         <WhatsNewModal
+          data={Array.isArray(whatsNew) && whatsNew.length ? whatsNew[0] : null}
           onDismiss={async () => {
             if (userSettingsQuery?._id) {
               await dismissWhatsNew({ id: userSettingsQuery._id });
@@ -687,7 +677,7 @@ function ProfileModal({
 }
 
 // What's New Modal
-function WhatsNewModal({ onDismiss }: { onDismiss: () => void }) {
+function WhatsNewModal({ onDismiss, data }: { onDismiss: () => void; data: any }) {
   const [animate, setAnimate] = useState(false);
   useEffect(() => {
     setTimeout(() => setAnimate(true), 10);
@@ -709,57 +699,30 @@ function WhatsNewModal({ onDismiss }: { onDismiss: () => void }) {
       >
         {/* Tag */}
         <span className="inline-block mb-3 px-3 py-1 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30">
-          New in v0.4.3
+          {data?.version ? `New in v${data.version}` : "What’s New"}
         </span>
 
         {/* Heading */}
         <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-sky-400">
-          What&apos;s New
+          {data?.title ?? "What’s New"}
         </h2>
-        <p className="mt-2 text-sm text-slate-300">
-          Discover the latest updates and improvements in Triage.
-        </p>
+        {data?.description && (
+          <p className="mt-2 text-sm text-slate-300">{data.description}</p>
+        )}
 
         {/* Features */}
-        <div className="mt-6 space-y-4">
-          <div className="flex items-start gap-3 bg-slate-800/40 p-3 rounded-lg">
-            <span className="text-lg">📝</span>
-            <p className="text-sm text-slate-200">
-              <b>Profile creation improved:</b>{" "}
-              New users are prompted to complete their profile for a smoother
-              onboarding experience.
-            </p>
+        {Array.isArray(data?.updates) && data.updates.length > 0 && (
+          <div className="mt-6 space-y-4">
+            {data.updates.map((u: any, idx: number) => (
+              <div key={idx} className="flex items-start gap-3 bg-slate-800/40 p-3 rounded-lg">
+                <span className="text-lg">{u.emoji}</span>
+                <p className="text-sm text-slate-200">
+                  <b>{u.title}:</b> {u.description}
+                </p>
+              </div>
+            ))}
           </div>
-          <div className="flex items-start gap-3 bg-slate-800/40 p-3 rounded-lg">
-            <span className="text-lg">📐</span>
-            <p className="text-sm text-slate-200">
-              <b>Sidebar restructured:</b>{" "}
-              Navigation is now simpler with clearer sections.
-            </p>
-          </div>
-          <div className="flex items-start gap-3 bg-slate-800/40 p-3 rounded-lg">
-            <span className="text-lg">👤</span>
-            <p className="text-sm text-slate-200">
-              <b>Names in sidebar:</b>{" "}
-              Your full name is now displayed for better identification.
-            </p>
-          </div>
-          <div className="flex items-start gap-3 bg-slate-800/40 p-3 rounded-lg">
-            <span className="text-lg">🆕</span>
-            <p className="text-sm text-slate-200">
-              <b>What&apos;s New popup:</b>{" "}
-              Stay informed about the latest features and changes.
-            </p>
-          </div>
-          <div className="flex items-start gap-3 bg-slate-800/40 p-3 rounded-lg">
-            <span className="text-lg">🗑️</span>
-            <p className="text-sm text-slate-200">
-              <b>Delete User Data:</b>{" "}
-              You can now delete your account and all associated data from the
-              settings page.
-            </p>
-          </div>
-        </div>
+        )}
 
         {/* Actions */}
         <div className="mt-6 flex justify-end">
