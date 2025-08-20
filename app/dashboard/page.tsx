@@ -574,30 +574,47 @@ function ProfileModal({
             <label className="mb-1 block text-xs font-medium text-slate-400">
               Profile Picture
             </label>
-            <div className="mt-2 flex items-center gap-3">
-              <div className="h-20 w-20 rounded-md border border-dashed border-slate-700/70 bg-slate-900/30 grid place-content-center overflow-hidden">
+            <div className="mt-2">
+              <div className="h-32 w-32 aspect-square rounded-md border border-dashed border-slate-700/70 bg-slate-900/30 grid place-content-center overflow-hidden">
                 {previewUrl
                   ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={previewUrl} alt="Preview" className="h-full w-full object-cover" />
+                    <img src={previewUrl} alt="Preview" className="h-full w-full object-cover object-center" />
                   )
                   : (
                     <span className="text-slate-500 text-[10px]">No image</span>
                   )}
               </div>
-              <div className="flex items-center gap-2">
+              <div className="mt-2 w-32">
                 <input
                   ref={fileInputRef}
                   type="file"
                   accept="image/*"
                   className="hidden"
-                  onChange={(e) => {
+                  onChange={async (e) => {
                     const file = e.target.files?.[0] ?? null;
                     if (file) {
-                      const url = URL.createObjectURL(file);
-                      setPreviewUrl(url);
-                      onImageSelected(file);
+                      try {
+                        const img = await loadImageFromFile(file);
+                        const side = Math.min(
+                          (img.naturalWidth || (img as any).width || 0),
+                          (img.naturalHeight || (img as any).height || 0),
+                        );
+                        const target = 128; // preview size (h-32 / w-32)
+                        const factor = side > 0 ? Math.min(1, target / side) : 1;
+                        const blob = await cropAndResizeCenterSquare(file, factor);
+                        const url = URL.createObjectURL(blob);
+                        if (previewUrl) URL.revokeObjectURL(previewUrl);
+                        setPreviewUrl(url);
+                        onImageSelected(file);
+                      } catch (_err) {
+                        const url = URL.createObjectURL(file);
+                        if (previewUrl) URL.revokeObjectURL(previewUrl);
+                        setPreviewUrl(url);
+                        onImageSelected(file);
+                      }
                     } else {
+                      if (previewUrl) URL.revokeObjectURL(previewUrl);
                       setPreviewUrl(null);
                       onImageSelected(null);
                     }
@@ -606,7 +623,7 @@ function ProfileModal({
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E]"
+                  className="w-full text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E]"
                 >
                   Upload
                 </button>
@@ -614,11 +631,12 @@ function ProfileModal({
                   <button
                     type="button"
                     onClick={() => {
+                      if (previewUrl) URL.revokeObjectURL(previewUrl);
                       setPreviewUrl(null);
                       if (fileInputRef.current) fileInputRef.current.value = "";
                       onImageSelected(null);
                     }}
-                    className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700"
+                    className="mt-2 w-full text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700"
                   >
                     Remove
                   </button>
