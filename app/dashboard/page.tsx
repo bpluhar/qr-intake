@@ -118,6 +118,7 @@ export default function DashboardClient() {
 
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showWhatsNewModal, setShowWhatsNewModal] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   // const [userSettings, setUserSettings] = useState<any | undefined>(undefined);
 
   const userSettingsQuery = useQuery(
@@ -133,6 +134,8 @@ export default function DashboardClient() {
 
   useEffect(() => {
     if (
+      !showProfileModal &&
+      !isSaving &&
       profile !== null &&
       userSettingsQuery !== undefined &&
       (
@@ -142,7 +145,7 @@ export default function DashboardClient() {
     ) {
       setShowWhatsNewModal(true);
     }
-  }, [userSettingsQuery, profile]);
+  }, [userSettingsQuery, profile, showProfileModal, isSaving]);
 
   useEffect(() => {
     if (showProfileModal || showWhatsNewModal) {
@@ -163,8 +166,10 @@ export default function DashboardClient() {
         <ProfileModal
           email={result!.user!.email!}
           onImageSelected={(file) => setSelectedImage(file)}
+          saving={isSaving}
           onClose={() => setShowProfileModal(false)}
           onSave={async (data) => {
+            setIsSaving(true);
             // 1. Create organization and get organizationId
             const organizationId = await createOrganization({
               name: data.orgName,
@@ -180,9 +185,9 @@ export default function DashboardClient() {
             // 2.5. Create user settings for this user
             await createUserSettings({ userId: result!.user!._id });
 
-            // 2.6 Upload Profile Picture to Convex Files (crop center square and resize to 75%)
+            // 2.6 Upload Profile Picture to Convex Files (crop center square and resize to 50%)
             if (selectedImage) {
-              const processed = await cropAndResizeCenterSquare(selectedImage, 0.75);
+              const processed = await cropAndResizeCenterSquare(selectedImage, 0.50);
               const contentType = processed.type || selectedImage.type || "image/png";
 
               const uploadUrl = await generateProfilePictureUploadUrl();
@@ -200,7 +205,7 @@ export default function DashboardClient() {
               });
             }
 
-            // 3. Close the modal
+            // 3. Close the modal after all async work completes
             setShowProfileModal(false);
             // 4. After closing, show What's New if userSettingsQuery is defined and not dismissed
             if (
@@ -212,6 +217,7 @@ export default function DashboardClient() {
             ) {
               setShowWhatsNewModal(true);
             }
+            setIsSaving(false);
           }}
         />
       )}
