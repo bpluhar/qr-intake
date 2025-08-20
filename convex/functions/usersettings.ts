@@ -22,6 +22,14 @@ export const dismissWhatsNew = mutation({
   },
 });
 
+export const getWhatsNew = query({
+  args: {},
+  handler: async (ctx) => {
+    const whatsNew = await ctx.db.query("whatsNew").collect();
+    return whatsNew;
+  },
+});
+
 export const createUserSettings = mutation({
   args: {
     userId: v.id("users"),
