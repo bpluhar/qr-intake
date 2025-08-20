@@ -1,8 +1,5 @@
-import { mutation } from "../_generated/server";
-
-import { query } from "../_generated/server";
+import { mutation, query } from "../_generated/server";
 import { v } from "convex/values";
-import { Id } from "../_generated/dataModel";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
 export const getIntakeFormById = query({

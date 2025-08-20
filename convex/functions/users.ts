@@ -20,8 +20,8 @@ export const getCurrent = query({
           const user = await ctx.db.get(session.userId as Id<"users">);
           if (user) return user;
         }
-      } catch (_) {
-        // ignore if not a valid Convex Id format
+      } catch (e) {
+        console.log(e);
       }
     }
 
@@ -83,7 +83,9 @@ export const getCurrentWithSource = query({
           const user = await ctx.db.get(session.userId as Id<"users">);
           if (user) return { user, source: "session" as const };
         }
-      } catch (_) {}
+      } catch (e) {
+        console.log(e);
+      }
     }
 
     // 2) account -> user

@@ -89,14 +89,14 @@ export const createProfile = mutation({
     const user = await ctx.db.get(args.userId);
     if (!user) throw new Error("User not found");
 
-    const email = (user as any).email ?? "";
+    const email = (user as { email: string }).email ?? "";
     if (!email) throw new Error("User is missing an email address");
 
     // Derive names
     let firstName = args.firstName ?? "";
     let lastName = args.lastName ?? "";
     if (!firstName && !lastName) {
-      const fullName: string = ((user as any).name ?? "").trim();
+      const fullName: string = ((user as { name: string }).name ?? "").trim();
       if (fullName) {
         const parts = fullName.split(/\s+/);
         firstName = parts[0] ?? "";
@@ -106,7 +106,7 @@ export const createProfile = mutation({
       }
     }
 
-    const phone: string | undefined = (user as any).phone ?? undefined;
+    const phone: string | undefined = (user as { phone: string }).phone ?? undefined;
 
     const profileId = await ctx.db.insert("profiles", {
       userId: args.userId,
