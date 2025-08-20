@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "dynamic-raccoon-209.convex.cloud",
+        hostname: "*.convex.cloud",
       },
     ],
   },
