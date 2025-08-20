@@ -21,7 +21,7 @@ export default function IntakePage() {
   // Wait until org is loaded
   const docs = useQuery(
     api.functions.intakeForms.getIntakeFormByOrgId,
-    org ? { organizationId: org._id } : "skip"
+    org ? { organizationId: org._id } : "skip",
   );
 
   const rows = (docs ?? []) as Doc<"intakeForms">[];
@@ -34,26 +34,29 @@ export default function IntakePage() {
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <Breadcrumbs />
-             
+
               <div className="flex items-center gap-2">
                 <button
-                onClick={() => setShowNewIntakeModal(true)}
-                className="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-white bg-[#249F73] hover:bg-[#1E8761] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3ECF8E] focus:ring-offset-[#0b1217]"
+                  onClick={() => setShowNewIntakeModal(true)}
+                  className="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-white bg-[#249F73] hover:bg-[#1E8761] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3ECF8E] focus:ring-offset-[#0b1217]"
                 >
-                New
+                  New
                 </button>
-                <button
-                className="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-slate-200 bg-slate-800/70 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700"
-                >
-                Export
+                <button className="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-slate-200 bg-slate-800/70 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700">
+                  Export
                 </button>
               </div>
-
-              
             </div>
           </div>
-          {showNewIntakeModal && <NewIntakeModal onClose={() => setShowNewIntakeModal(false)} />}
-          {qrModalId && <ViewQRModal id={qrModalId} onClose={() => setQrModalId(null)} />}
+          {showNewIntakeModal && (
+            <NewIntakeModal onClose={() => setShowNewIntakeModal(false)} />
+          )}
+          {qrModalId && (
+            <ViewQRModal
+              id={qrModalId}
+              onClose={() => setQrModalId(null)}
+            />
+          )}
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 mb-6">
             <StatCard label="Open intakes" value="12" delta="12" />
             <StatCard label="New this week" value="7" delta="7" />
@@ -79,38 +82,55 @@ export default function IntakePage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {docs === undefined ? (
-                    intakeTableSkeleton()
-                  ) : (
-                    rows.map((r: Doc<"intakeForms">) => (
-                      <tr key={r._id} className="hover:bg-slate-900/30">
-                        <td className="px-3 py-2 text-sm text-slate-200 whitespace-nowrap font-medium">#{r._id}</td>
-                        <td className="px-3 py-2 text-sm text-slate-200 max-w-[14rem] md:max-w-[28rem] truncate">{r.formLayout.title}</td>
-                        <td className="px-3 py-2 text-sm text-slate-400 whitespace-nowrap">{r.views}</td>
-                        <td className="px-3 py-2 text-sm text-slate-400 whitespace-nowrap">{r.completions}</td>
-                        <td className="px-3 py-2 text-sm text-slate-400 whitespace-nowrap">{r.visible ? "Yes" : "No"}</td>
-                        <td className="px-3 py-2 text-sm text-slate-400 whitespace-nowrap">{new Date(r._creationTime).toLocaleDateString("en-US")}</td>
-                        <td className="px-3 py-2 text-sm text-right">
-                          <div className="inline-flex items-center gap-2">
-                            <Link
-                              href={`/intake/${r._id}`}
-                              target="_blank"
-                              className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 text-slate-300 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
-                            >
-                              View
-                            </Link>
-                            <button
-                              onClick={() => setQrModalId(r._id)}
-                              className="inline-flex items-center justify-center rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 text-slate-300 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
-                              aria-label="View QR"
-                            >
-                              <IconQr className="h-4 w-4" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  )}
+                  {docs === undefined
+                    ? (
+                      intakeTableSkeleton()
+                    )
+                    : (
+                      rows.map((r: Doc<"intakeForms">) => (
+                        <tr key={r._id} className="hover:bg-slate-900/30">
+                          <td className="px-3 py-2 text-sm text-slate-200 whitespace-nowrap font-medium">
+                            #{r._id}
+                          </td>
+                          <td className="px-3 py-2 text-sm text-slate-200 max-w-[14rem] md:max-w-[28rem] truncate">
+                            {r.formLayout.title}
+                          </td>
+                          <td className="px-3 py-2 text-sm text-slate-400 whitespace-nowrap">
+                            {r.views}
+                          </td>
+                          <td className="px-3 py-2 text-sm text-slate-400 whitespace-nowrap">
+                            {r.completions}
+                          </td>
+                          <td className="px-3 py-2 text-sm text-slate-400 whitespace-nowrap">
+                            {r.visible ? "Yes" : "No"}
+                          </td>
+                          <td className="px-3 py-2 text-sm text-slate-400 whitespace-nowrap">
+                            {new Date(r._creationTime).toLocaleDateString(
+                              "en-US",
+                            )}
+                          </td>
+                          <td className="px-3 py-2 text-sm text-right">
+                            <div className="inline-flex items-center gap-2">
+                              <Link
+                                href={`/intake/${r._id}`}
+                                target="_blank"
+                                className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 text-slate-300 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                              >
+                                View
+                              </Link>
+                              <button
+                                onClick={() =>
+                                  setQrModalId(r._id)}
+                                className="inline-flex items-center justify-center rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 text-slate-300 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                                aria-label="View QR"
+                              >
+                                <IconQr className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
                 </tbody>
               </table>
             </div>
@@ -120,8 +140,6 @@ export default function IntakePage() {
     </div>
   );
 }
-
-
 
 function intakeTableSkeleton() {
   return (
@@ -159,7 +177,9 @@ function NewIntakeModal({ onClose }: { onClose: () => void }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const org = useQuery(api.functions.organizations.getMyOrganization, {});
-  const createIntakeForm = useMutation(api.functions.intakeForms.createIntakeForm);
+  const createIntakeForm = useMutation(
+    api.functions.intakeForms.createIntakeForm,
+  );
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     createIntakeForm({
@@ -167,31 +187,31 @@ function NewIntakeModal({ onClose }: { onClose: () => void }) {
         title: title,
         description: description,
         fields: [
-        {
-          "type": "text",
-          "label": "First Name",
-          "name": "firstName",
-          "required": true
-        },
-        {
-          "type": "text",
-          "label": "Last Name",
-          "name": "lastName",
-          "required": true
-        },
-        {
-          "type": "email",
-          "label": "Email Address",
-          "name": "email",
-          "required": true
-        },
-        {
-          "type": "phone",
-          "label": "Phone Number",
-          "name": "phone",
-          "required": false
-        }
-      ]
+          {
+            "type": "text",
+            "label": "First Name",
+            "name": "firstName",
+            "required": true,
+          },
+          {
+            "type": "text",
+            "label": "Last Name",
+            "name": "lastName",
+            "required": true,
+          },
+          {
+            "type": "email",
+            "label": "Email Address",
+            "name": "email",
+            "required": true,
+          },
+          {
+            "type": "phone",
+            "label": "Phone Number",
+            "name": "phone",
+            "required": false,
+          },
+        ],
       },
       organizationId: org!._id,
     });
@@ -269,7 +289,7 @@ function ViewQRModal({ id, onClose }: { id: string; onClose: () => void }) {
 
   // Create/Update QR code
   useEffect(() => {
-    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    const origin = typeof window !== "undefined" ? window.location.origin : "";
     const url = `${origin}/intake/${id}`;
 
     // Inline SVG logo with brand color
@@ -288,7 +308,7 @@ function ViewQRModal({ id, onClose }: { id: string; onClose: () => void }) {
         type: "svg",
         data: url,
         margin: 0,
-        qrOptions: { errorCorrectionLevel: 'M' },
+        qrOptions: { errorCorrectionLevel: "M" },
         dotsOptions: {
           type: "extra-rounded",
           color: "#249F73",
@@ -328,13 +348,26 @@ function ViewQRModal({ id, onClose }: { id: string; onClose: () => void }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onClose}
+      />
 
       <div className="relative w-full max-w-lg rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-xl">
         <div className="mb-4">
-          <h2 className="text-lg font-semibold text-slate-100">Intake Form QR Code</h2>
-          <p className="mt-1 text-xs text-slate-400">Scan this QR code with your phone to start the intake form. You can also print this QR Code to be posted in your office/common area for your patients.</p>
+          <h2 className="text-lg font-semibold text-slate-100">
+            Intake Form QR Code
+          </h2>
+          <p className="mt-1 text-xs text-slate-400">
+            Scan this QR code with your phone to start the intake form. You can
+            also print this QR Code to be posted in your office/common area for
+            your patients.
+          </p>
         </div>
         <div className="flex items-center justify-center py-4">
           <div ref={qrContainerRef} className="rounded-2xl overflow-hidden" />

@@ -1,5 +1,3 @@
-
-
 // app/about/page.tsx
 // Public About page – follows the same dark theme & components conventions
 
@@ -20,10 +18,13 @@ export default function AboutPage() {
         </div>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
           <div className="mx-auto max-w-3xl text-center">
-            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">We’re building the fastest way to triage support</h1>
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
+              We’re building the fastest way to triage support
+            </h1>
             <p className="mt-4 text-slate-400">
-              Triage helps teams respond to customers, keep SLAs green, and stay focused. Opinionated defaults,
-              clean workflows, and just enough automation.
+              Triage helps teams respond to customers, keep SLAs green, and stay
+              focused. Opinionated defaults, clean workflows, and just enough
+              automation.
             </p>
             <div className="mt-8 flex items-center justify-center gap-3">
               <Link
@@ -54,23 +55,42 @@ export default function AboutPage() {
           ].map((s) => (
             <Card key={s.label}>
               <p className="text-2xl font-semibold text-slate-100">{s.k}</p>
-              <p className="mt-1 text-xs uppercase tracking-wide text-slate-400">{s.label}</p>
+              <p className="mt-1 text-xs uppercase tracking-wide text-slate-400">
+                {s.label}
+              </p>
             </Card>
           ))}
         </div>
       </section>
 
       {/* Values */}
-      <section id="values" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+      <section
+        id="values"
+        className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8"
+      >
         <div className="max-w-2xl">
           <h2 className="text-lg font-semibold">Our values</h2>
-          <p className="mt-2 text-sm text-slate-400">A product philosophy that keeps teams shipping.</p>
+          <p className="mt-2 text-sm text-slate-400">
+            A product philosophy that keeps teams shipping.
+          </p>
         </div>
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Feature title="Fast by default" desc="Snappy UI, instant search, and predictable controls so you can move." />
-          <Feature title="Privacy first" desc="Customer data stays yours. We minimize collection and maximize control." />
-          <Feature title="Pragmatic automation" desc="Automate the work you repeat, surface the work that needs judgment." />
-          <Feature title="Built for teams" desc="Roles, permissions, and collaboration that get out of your way." />
+          <Feature
+            title="Fast by default"
+            desc="Snappy UI, instant search, and predictable controls so you can move."
+          />
+          <Feature
+            title="Privacy first"
+            desc="Customer data stays yours. We minimize collection and maximize control."
+          />
+          <Feature
+            title="Pragmatic automation"
+            desc="Automate the work you repeat, surface the work that needs judgment."
+          />
+          <Feature
+            title="Built for teams"
+            desc="Roles, permissions, and collaboration that get out of your way."
+          />
         </div>
       </section>
 
@@ -79,19 +99,30 @@ export default function AboutPage() {
         <Card>
           <div className="grid gap-6 lg:grid-cols-3">
             <div className="lg:col-span-2">
-              <h3 className="text-sm font-medium text-slate-300">Why we built Triage</h3>
+              <h3 className="text-sm font-medium text-slate-300">
+                Why we built Triage
+              </h3>
               <p className="mt-3 text-slate-300">
-                Modern support tools are either heavyweight and slow or too bare-bones. Triage is a focused middle
-                ground—clean, fast, and built around queues, SLAs and quick actions. We obsess over the 80% of work
-                you do every day and make it frictionless.
+                Modern support tools are either heavyweight and slow or too
+                bare-bones. Triage is a focused middle ground—clean, fast, and
+                built around queues, SLAs and quick actions. We obsess over the
+                80% of work you do every day and make it frictionless.
               </p>
             </div>
             <div>
               <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-4">
-                <p className="text-xs uppercase tracking-wide text-slate-400">In a hurry?</p>
-                <p className="mt-2 text-sm">Jump right in and explore the dashboard.
+                <p className="text-xs uppercase tracking-wide text-slate-400">
+                  In a hurry?
+                </p>
+                <p className="mt-2 text-sm">
+                  Jump right in and explore the dashboard.
                   <br />
-                  <Link href="/dashboard" className="underline decoration-emerald-500/60 underline-offset-4 hover:text-slate-100">Go to dashboard →</Link>
+                  <Link
+                    href="/dashboard"
+                    className="underline decoration-emerald-500/60 underline-offset-4 hover:text-slate-100"
+                  >
+                    Go to dashboard →
+                  </Link>
                 </p>
               </div>
             </div>
@@ -103,7 +134,10 @@ export default function AboutPage() {
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
         <div className="max-w-2xl">
           <h2 className="text-lg font-semibold">Team</h2>
-          <p className="mt-2 text-sm text-slate-400">A small, senior crew building the tool we wanted for our own customers.</p>
+          <p className="mt-2 text-sm text-slate-400">
+            A small, senior crew building the tool we wanted for our own
+            customers.
+          </p>
         </div>
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {team.map((m) => (
@@ -126,7 +160,9 @@ export default function AboutPage() {
           <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
             <div>
               <h3 className="text-lg font-semibold">Ready to triage faster?</h3>
-              <p className="mt-1 text-sm text-slate-400">Start now—no credit card required.</p>
+              <p className="mt-1 text-sm text-slate-400">
+                Start now—no credit card required.
+              </p>
             </div>
             <div className="flex items-center gap-3">
               <Link
@@ -157,7 +193,9 @@ function Feature({ title, desc }: { title: string; desc: string }) {
   return (
     <Card>
       <div className="flex items-start gap-3">
-        <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-emerald-500/10 ring-1 ring-emerald-500/30 text-emerald-400">★</span>
+        <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-emerald-500/10 ring-1 ring-emerald-500/30 text-emerald-400">
+          ★
+        </span>
         <div>
           <p className="font-medium text-slate-100">{title}</p>
           <p className="mt-1 text-sm text-slate-400">{desc}</p>
@@ -177,7 +215,11 @@ function Avatar({ name }: { name: string }) {
 }
 
 const team = [
-  { name: "Brian Pluhar", role: "Founder & Engineer", email: "brian@example.com" },
+  {
+    name: "Brian Pluhar",
+    role: "Founder & Engineer",
+    email: "brian@example.com",
+  },
   { name: "Jane Smith", role: "Design", email: "jane@example.com" },
   { name: "Alex Lee", role: "Frontend", email: "alex@example.com" },
   { name: "Priya Patel", role: "Backend", email: "priya@example.com" },

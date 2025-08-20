@@ -1,5 +1,5 @@
 // convex/functions/profiles.ts
-import { query, mutation } from "../_generated/server";
+import { mutation, query } from "../_generated/server";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { Doc, Id } from "../_generated/dataModel";
@@ -10,7 +10,9 @@ import { Doc, Id } from "../_generated/dataModel";
  */
 export const getProfileOrganization = query({
   args: {},
-  handler: async (ctx): Promise<{ organizationId: Id<"organizations"> | null }> => {
+  handler: async (
+    ctx,
+  ): Promise<{ organizationId: Id<"organizations"> | null }> => {
     const userId = await getAuthUserId(ctx);
     if (!userId) return { organizationId: null };
 
@@ -42,11 +44,14 @@ export const getProfilesByUserIds = query({
   args: { userIds: v.array(v.id("users")) },
   handler: async (ctx, { userIds }) => {
     return await Promise.all(
-      userIds.map(userId =>
-        ctx.db.query("profiles").withIndex("by_userId", q => q.eq("userId", userId)).unique()
-      )
-    ).then(results => results.filter(Boolean));
-  }
+      userIds.map((userId) =>
+        ctx.db.query("profiles").withIndex(
+          "by_userId",
+          (q) => q.eq("userId", userId),
+        ).unique()
+      ),
+    ).then((results) => results.filter(Boolean));
+  },
 });
 
 /**
@@ -137,7 +142,9 @@ export const updateProfileById = mutation({
     if (args.lastName !== undefined) patch.lastName = args.lastName;
     if (args.email !== undefined) patch.email = args.email;
     if (args.phone !== undefined) patch.phone = args.phone;
-    if (args.organizationId !== undefined) patch.organizationId = args.organizationId;
+    if (args.organizationId !== undefined) {
+      patch.organizationId = args.organizationId;
+    }
 
     if (Object.keys(patch).length > 0) {
       await ctx.db.patch(args.profileId, patch as Doc<"profiles">);

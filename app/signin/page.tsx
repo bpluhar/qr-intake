@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import Link from 'next/link';
-import { useAuthActions } from '@convex-dev/auth/react';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useQuery } from 'convex/react';
-import { api } from '@/convex/_generated/api';
+import { useEffect } from "react";
+import Link from "next/link";
+import { useAuthActions } from "@convex-dev/auth/react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
-type Flow = 'signIn' | 'signUp';
+type Flow = "signIn" | "signUp";
 
 export default function SignIn() {
   const { signIn } = useAuthActions();
-  const [step, setStep] = useState<Flow>('signIn');
+  const [step, setStep] = useState<Flow>("signIn");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -21,7 +21,7 @@ export default function SignIn() {
   // Redirect automatically once auth state flips true
   useEffect(() => {
     if (signedIn) {
-      router.replace('/dashboard');
+      router.replace("/dashboard");
     }
   }, [signedIn, router]);
 
@@ -32,7 +32,7 @@ export default function SignIn() {
           href="/"
           className="inline-flex items-center text-sm font-medium text-[#3ECF8E] hover:underline"
         >
-          <span>{'< Back to Home'}</span>
+          <span>{"< Back to Home"}</span>
         </Link>
       </div>
       <div className="w-full max-w-md">
@@ -57,12 +57,12 @@ export default function SignIn() {
               </svg>
             </div>
             <h1 className="text-xl font-semibold">
-              {step === 'signIn' ? 'Welcome back' : 'Create your account'}
+              {step === "signIn" ? "Welcome back" : "Create your account"}
             </h1>
             <p className="mt-1 text-sm text-slate-400">
-              {step === 'signIn'
-                ? 'Sign in with your email and password'
-                : 'Sign up with your email and a password'}
+              {step === "signIn"
+                ? "Sign in with your email and password"
+                : "Sign up with your email and a password"}
             </p>
           </div>
 
@@ -75,13 +75,13 @@ export default function SignIn() {
               setPending(true);
               setError(null);
               try {
-                await signIn('password', formData);
+                await signIn("password", formData);
                 // Navigation handled by the signedIn effect above
               } catch (err: unknown) {
                 if (err instanceof Error) {
                   setError(err.message);
                 } else {
-                  setError('Sign in failed');
+                  setError("Sign in failed");
                 }
               } finally {
                 setPending(false);
@@ -114,7 +114,9 @@ export default function SignIn() {
                 id="password"
                 name="password"
                 type="password"
-                autoComplete={step === 'signIn' ? 'current-password' : 'new-password'}
+                autoComplete={step === "signIn"
+                  ? "current-password"
+                  : "new-password"}
                 required
                 className="block w-full rounded-md bg-slate-800/60 border border-slate-700 px-3 py-2 text-slate-100 placeholder:text-slate-500
                            focus:outline-none focus:ring-2 focus:ring-[#3ECF8E] focus:border-transparent"
@@ -131,22 +133,21 @@ export default function SignIn() {
                            focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3ECF8E] focus:ring-offset-[#0b1217]"
               >
                 {pending
-                  ? step === 'signIn'
-                    ? 'Signing in...'
-                    : 'Creating account...'
-                  : step === 'signIn'
-                    ? 'Sign in'
-                    : 'Sign up'}
+                  ? step === "signIn" ? "Signing in..." : "Creating account..."
+                  : step === "signIn"
+                  ? "Sign in"
+                  : "Sign up"}
               </button>
 
               <button
                 type="button"
-                onClick={() => setStep((s) => (s === 'signIn' ? 'signUp' : 'signIn'))}
+                onClick={() =>
+                  setStep((s) => (s === "signIn" ? "signUp" : "signIn"))}
                 className="inline-flex w-full items-center justify-center rounded-md px-4 py-2.5 text-sm font-medium
                            text-slate-200 bg-slate-800/70 hover:bg-slate-800 border border-slate-700
                            focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-700 focus:ring-offset-[#0b1217]"
               >
-                {step === 'signIn' ? 'Sign up instead' : 'Sign in instead'}
+                {step === "signIn" ? "Sign up instead" : "Sign in instead"}
               </button>
             </div>
             {error && (
@@ -157,7 +158,8 @@ export default function SignIn() {
 
         {/* Footer hint */}
         <p className="mt-6 text-center text-xs text-slate-500">
-          Protected by industry-standard security. By continuing you agree to our terms.
+          Protected by industry-standard security. By continuing you agree to
+          our terms.
         </p>
       </div>
     </main>

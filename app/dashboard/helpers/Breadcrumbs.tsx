@@ -4,7 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { Id } from "@/convex/_generated/dataModel";
 
-export default function Breadcrumbs( { currentTicket }: { currentTicket?: Id<"tickets"> }) {
+export default function Breadcrumbs(
+  { currentTicket }: { currentTicket?: Id<"tickets"> },
+) {
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
 
@@ -30,16 +32,20 @@ export default function Breadcrumbs( { currentTicket }: { currentTicket?: Id<"ti
           const isLast = idx === crumbs.length - 1;
           return (
             <li key={href} className="flex items-center gap-1">
-              {isLast ? (
-                <span className="text-[#249F73] text-xl font-semibold">{label}</span>
-              ) : (
-                <Link
-                  href={href}
-                  className="hover:text-slate-100 text-xl transition-colors"
-                >
-                  {label}
-                </Link>
-              )}
+              {isLast
+                ? (
+                  <span className="text-[#249F73] text-xl font-semibold">
+                    {label}
+                  </span>
+                )
+                : (
+                  <Link
+                    href={href}
+                    className="hover:text-slate-100 text-xl transition-colors"
+                  >
+                    {label}
+                  </Link>
+                )}
               {!isLast && <span className="text-xl mx-1">/</span>}
             </li>
           );

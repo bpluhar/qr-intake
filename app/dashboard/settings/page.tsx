@@ -2,7 +2,7 @@
 // Server Component – Settings UI only (no functionality). Matches dark theme used across /dashboard.
 
 "use client";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Breadcrumbs from "../helpers/Breadcrumbs";
 import { useMutation } from "convex/react";
@@ -11,17 +11,18 @@ import { Card } from "@/app/components/Card";
 
 export default function SettingsPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const deleteUserDataMutation = useMutation(api.functions.helpers.deleteUserData);
+  const deleteUserDataMutation = useMutation(
+    api.functions.helpers.deleteUserData,
+  );
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-0 lg:py-8 text-slate-200">
       {/* Title & actions */}
       <div className="mb-6 flex items-center justify-between gap-3">
-        
-          <Breadcrumbs />
-          {/* <h1 className="text-xl font-semibold">Settings</h1> */}
-          {/* <p className="mt-1 text-sm text-slate-400">These controls are UI-only for now. Hook them up to Convex whenever you’re ready.</p> */}
-        
+        <Breadcrumbs />
+        {/* <h1 className="text-xl font-semibold">Settings</h1> */}
+        {/* <p className="mt-1 text-sm text-slate-400">These controls are UI-only for now. Hook them up to Convex whenever you’re ready.</p> */}
+
         <div className="flex items-center gap-2">
           <button
             disabled
@@ -67,7 +68,9 @@ export default function SettingsPage() {
                   className="w-full rounded-md border border-slate-700 bg-slate-800/60 px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E] disabled:cursor-not-allowed"
                 >
                   <option value="America/New_York">America/New_York</option>
-                  <option value="America/Los_Angeles">America/Los_Angeles</option>
+                  <option value="America/Los_Angeles">
+                    America/Los_Angeles
+                  </option>
                   <option value="Europe/London">Europe/London</option>
                   <option value="Asia/Tokyo">Asia/Tokyo</option>
                 </select>
@@ -91,7 +94,9 @@ export default function SettingsPage() {
           </Card>
 
           <Card>
-            <h2 className="text-sm font-medium text-slate-300">Notifications</h2>
+            <h2 className="text-sm font-medium text-slate-300">
+              Notifications
+            </h2>
             <div className="mt-4 space-y-5">
               <ToggleRow
                 label="Email me when I’m assigned a ticket"
@@ -115,7 +120,9 @@ export default function SettingsPage() {
           </Card>
 
           <Card>
-            <h2 className="text-sm font-medium text-slate-300">Accessibility</h2>
+            <h2 className="text-sm font-medium text-slate-300">
+              Accessibility
+            </h2>
             <div className="mt-4 space-y-5">
               <FieldRow
                 label="Text size"
@@ -150,8 +157,18 @@ export default function SettingsPage() {
                 description="Add an extra layer of security to your account."
                 on
               />
-              <FieldRow label="Session timeout" description="Log out after a period of inactivity.">
-                <Range disabled defaultValue={60} min={15} max={240} step={15} suffix=" min" />
+              <FieldRow
+                label="Session timeout"
+                description="Log out after a period of inactivity."
+              >
+                <Range
+                  disabled
+                  defaultValue={60}
+                  min={15}
+                  max={240}
+                  step={15}
+                  suffix=" min"
+                />
               </FieldRow>
             </div>
           </Card>
@@ -164,9 +181,15 @@ export default function SettingsPage() {
                 { name: "GitHub", connected: false },
                 { name: "Linear", connected: false },
               ].map((i) => (
-                <li key={i.name} className="flex items-center justify-between rounded-md border border-slate-800 bg-slate-900/40 px-3 py-2">
+                <li
+                  key={i.name}
+                  className="flex items-center justify-between rounded-md border border-slate-800 bg-slate-900/40 px-3 py-2"
+                >
                   <div className="flex items-center gap-2">
-                    <span className="inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" aria-hidden />
+                    <span
+                      className="inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500"
+                      aria-hidden
+                    />
                     <span>{i.name}</span>
                   </div>
                   <button
@@ -187,7 +210,9 @@ export default function SettingsPage() {
           <Card>
             <h2 className="text-sm font-medium text-slate-300">Danger zone</h2>
             <div className="mt-4 rounded-md border border-red-900/40 bg-red-900/10 p-4">
-              <p className="text-sm text-slate-300">Delete all associated data linked to your account.</p>
+              <p className="text-sm text-slate-300">
+                Delete all associated data linked to your account.
+              </p>
               <div className="mt-3">
                 <button
                   onClick={() => setShowDeleteModal(true)}
@@ -202,28 +227,34 @@ export default function SettingsPage() {
       </div>
 
       {showDeleteModal && (
-        <Modal onClose={() => {
-                const modalElement = document.querySelector('.modal-panel');
-                if (modalElement) {
-                  modalElement.classList.remove('scale-100');
-                  modalElement.classList.add('scale-0');
-                  setTimeout(() => setShowDeleteModal(false), 25);
-                } else {
-                  setShowDeleteModal(false);
-                }
-              }}>
-          <h3 className="text-lg font-semibold text-slate-200">Confirm Deletion</h3>
+        <Modal
+          onClose={() => {
+            const modalElement = document.querySelector(".modal-panel");
+            if (modalElement) {
+              modalElement.classList.remove("scale-100");
+              modalElement.classList.add("scale-0");
+              setTimeout(() => setShowDeleteModal(false), 25);
+            } else {
+              setShowDeleteModal(false);
+            }
+          }}
+        >
+          <h3 className="text-lg font-semibold text-slate-200">
+            Confirm Deletion
+          </h3>
           <p className="mt-2 text-sm text-slate-300">
-            Delete all associated data linked to your account, including but not limited to your profile, organization, tickets, and user settings. This action cannot be undone.
+            Delete all associated data linked to your account, including but not
+            limited to your profile, organization, tickets, and user settings.
+            This action cannot be undone.
           </p>
           <div className="mt-4 flex justify-end gap-3">
             <button
               type="button"
               onClick={() => {
-                const modalElement = document.querySelector('.modal-panel');
+                const modalElement = document.querySelector(".modal-panel");
                 if (modalElement) {
-                  modalElement.classList.remove('scale-100');
-                  modalElement.classList.add('scale-0');
+                  modalElement.classList.remove("scale-100");
+                  modalElement.classList.add("scale-0");
                   setTimeout(() => setShowDeleteModal(false), 25);
                 } else {
                   setShowDeleteModal(false);
@@ -269,21 +300,29 @@ function FieldRow({
     <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-4">
       <div className="sm:col-span-1">
         <p className="text-sm font-medium text-slate-200">{label}</p>
-        {description ? (
-          <p className="mt-1 text-xs text-slate-400">{description}</p>
-        ) : null}
+        {description
+          ? <p className="mt-1 text-xs text-slate-400">{description}</p>
+          : null}
       </div>
       <div className="sm:col-span-2">{children}</div>
     </div>
   );
 }
 
-function ToggleRow({ label, description, on = false }: { label: string; description?: string; on?: boolean }) {
+function ToggleRow(
+  { label, description, on = false }: {
+    label: string;
+    description?: string;
+    on?: boolean;
+  },
+) {
   return (
     <div className="flex items-start justify-between gap-4">
       <div>
         <p className="text-sm font-medium text-slate-200">{label}</p>
-        {description ? <p className="mt-1 text-xs text-slate-400">{description}</p> : null}
+        {description
+          ? <p className="mt-1 text-xs text-slate-400">{description}</p>
+          : null}
       </div>
       <Toggle on={on} />
     </div>
@@ -299,7 +338,9 @@ function Toggle({ on = false }: { on?: boolean }) {
       aria-checked={on}
       disabled
       className={`relative inline-flex h-6 w-11 items-center rounded-full border transition-colors disabled:cursor-not-allowed ${
-        on ? "bg-emerald-600/70 border-emerald-500/40" : "bg-slate-700/60 border-slate-600/60"
+        on
+          ? "bg-emerald-600/70 border-emerald-500/40"
+          : "bg-slate-700/60 border-slate-600/60"
       }`}
       title="Mock switch"
     >
@@ -331,17 +372,21 @@ function Range({ disabled, defaultValue, min, max, step, suffix }: {
         step={step}
         className="w-full accent-emerald-500 [--tw-range-thumb:theme(colors.emerald.500)]"
       />
-      {typeof defaultValue === "number" ? (
-        <span className="w-12 text-right text-sm text-slate-300 tabular-nums">
-          {defaultValue}
-          {suffix ?? ""}
-        </span>
-      ) : null}
+      {typeof defaultValue === "number"
+        ? (
+          <span className="w-12 text-right text-sm text-slate-300 tabular-nums">
+            {defaultValue}
+            {suffix ?? ""}
+          </span>
+        )
+        : null}
     </div>
   );
 }
 
-function Modal({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
+function Modal(
+  { children, onClose }: { children: React.ReactNode; onClose: () => void },
+) {
   const [animate, setAnimate] = useState(false);
   const [closing, setClosing] = useState(false);
 
@@ -366,7 +411,10 @@ function Modal({ children, onClose }: { children: React.ReactNode; onClose: () =
           closing ? "scale-0" : animate ? "scale-100" : "scale-0"
         }`}
         onClick={(e) => e.stopPropagation()}
-        style={{ transitionDuration: "150ms", transitionTimingFunction: "ease" }}
+        style={{
+          transitionDuration: "150ms",
+          transitionTimingFunction: "ease",
+        }}
       >
         {children}
       </div>

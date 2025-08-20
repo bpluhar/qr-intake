@@ -107,10 +107,15 @@ export default function DashboardSkeleton() {
 
 import { Card } from "@/app/components/Card";
 
-
 function SkeletonLine({ className = "" }: { className?: string }) {
-  return <div className={`animate-pulse rounded bg-slate-700/50 ${className}`} />;
+  return (
+    <div className={`animate-pulse rounded bg-slate-700/50 ${className}`} />
+  );
 }
 function SkeletonCircle({ className = "" }: { className?: string }) {
-  return <div className={`animate-pulse rounded-full bg-slate-700/50 ${className}`} />;
+  return (
+    <div
+      className={`animate-pulse rounded-full bg-slate-700/50 ${className}`}
+    />
+  );
 }

@@ -8,7 +8,6 @@ import { TicketsPageSkeleton } from "./ticketsTableSkeleton"; // Composite skele
 import { NewTicketActions } from "./NewTicketActions";
 
 export default function TicketsPage() {
-
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-0 lg:py-8 text-slate-200">
       {/* Title & actions */}
@@ -22,7 +21,6 @@ export default function TicketsPage() {
       <Suspense fallback={<TicketsPageSkeleton />}>
         <TicketsTableShell />
       </Suspense>
-      
     </div>
   );
 }

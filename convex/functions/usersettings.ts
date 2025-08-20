@@ -1,7 +1,6 @@
-import { query, mutation } from "../_generated/server";
-import type { Id, Doc } from "../_generated/dataModel";
+import { mutation, query } from "../_generated/server";
+import type { Doc, Id } from "../_generated/dataModel";
 import { v } from "convex/values";
-
 
 export const getUserSettingsByUserId = query({
   args: { userId: v.id("users") },

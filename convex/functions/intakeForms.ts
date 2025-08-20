@@ -8,9 +8,12 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 export const getIntakeFormById = query({
   args: { id: v.id("intakeForms") },
   handler: async ({ db }, { id }) => {
-    const intakeForm = await db.query("intakeForms").withIndex("by_id", (q) => q.eq("_id", id)).unique();
+    const intakeForm = await db.query("intakeForms").withIndex(
+      "by_id",
+      (q) => q.eq("_id", id),
+    ).unique();
     return intakeForm ?? null;
-  }
+  },
 });
 
 export const getIntakeFormByOrgId = query({
@@ -18,10 +21,13 @@ export const getIntakeFormByOrgId = query({
   handler: async ({ db }, { organizationId }) => {
     const intakeForms = await db
       .query("intakeForms")
-      .withIndex("by_organization", q => q.eq("organizationId", organizationId))
+      .withIndex(
+        "by_organization",
+        (q) => q.eq("organizationId", organizationId),
+      )
       .collect();
     return intakeForms;
-  }
+  },
 });
 
 export const createIntakeForm = mutation({
@@ -42,11 +48,11 @@ export const createIntakeForm = mutation({
                 v.object({
                   label: v.string(),
                   value: v.string(),
-                })
-              )
+                }),
+              ),
             ),
-          })
-        )
+          }),
+        ),
       ),
     }),
     organizationId: v.id("organizations"),
@@ -82,4 +88,3 @@ export const updateViewCount = mutation({
     return updated;
   },
 });
-

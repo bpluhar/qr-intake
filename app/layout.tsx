@@ -1,11 +1,10 @@
 import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
 
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ConvexClientProvider } from "./ConvexClientProvider";
-
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,9 +17,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  openGraph: { 
-  title: "Triager - Automated Patient Intake for Healthcare Teams",
-  description: "Automated patient intake for healthcare teams and practices 2.",
+  openGraph: {
+    title: "Triager - Automated Patient Intake for Healthcare Teams",
+    description:
+      "Automated patient intake for healthcare teams and practices 2.",
   },
   title: "Triager - Automated Patient Intake",
   description: "Automated patient intake for healthcare teams and practices.",
@@ -28,10 +28,10 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#0b1217' },
-    { media: '(prefers-color-scheme: dark)', color: '#0b1217' },
+    { media: "(prefers-color-scheme: light)", color: "#0b1217" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b1217" },
   ],
-}
+};
 
 export default function RootLayout({
   children,

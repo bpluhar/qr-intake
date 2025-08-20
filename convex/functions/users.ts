@@ -30,8 +30,13 @@ export const getCurrent = query({
       const providerAccountId = parts[1];
       const account = await ctx.db
         .query("authAccounts")
-        .withIndex("providerAndAccountId", (q) =>
-          q.eq("provider", "password").eq("providerAccountId", providerAccountId)
+        .withIndex(
+          "providerAndAccountId",
+          (q) =>
+            q.eq("provider", "password").eq(
+              "providerAccountId",
+              providerAccountId,
+            ),
         )
         .unique();
       if (account) {
@@ -86,8 +91,13 @@ export const getCurrentWithSource = query({
       const providerAccountId = parts[1];
       const account = await ctx.db
         .query("authAccounts")
-        .withIndex("providerAndAccountId", (q) =>
-          q.eq("provider", "password").eq("providerAccountId", providerAccountId)
+        .withIndex(
+          "providerAndAccountId",
+          (q) =>
+            q.eq("provider", "password").eq(
+              "providerAccountId",
+              providerAccountId,
+            ),
         )
         .unique();
       if (account) {

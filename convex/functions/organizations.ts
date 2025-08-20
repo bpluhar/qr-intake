@@ -1,5 +1,5 @@
 // convex/functions/organizations.ts
-import { query, mutation } from "../_generated/server";
+import { mutation, query } from "../_generated/server";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 

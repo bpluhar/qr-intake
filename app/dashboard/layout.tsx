@@ -7,7 +7,9 @@
 import { ReactNode } from "react";
 import SidebarClient from "./SidebarClient"; // client component (see file next to this one)
 
-export default async function DashboardLayout({ children }: { children: ReactNode }) {
+export default async function DashboardLayout(
+  { children }: { children: ReactNode },
+) {
   return (
     <div className="min-h-dvh md:h-screen bg-[#0b1217] text-slate-200 overflow-hidden md:grid md:grid-cols-[16rem_1fr]">
       {/* Left column: Sidebar (fixed column). On mobile this just renders the hamburger; on desktop it's the full sidebar. */}
@@ -16,7 +18,9 @@ export default async function DashboardLayout({ children }: { children: ReactNod
       </div>
 
       {/* Right column: content (the only scroll area on desktop) */}
-      <div className="w-full min-w-0 md:h-screen md:overflow-y-auto">{children}</div>
+      <div className="w-full min-w-0 md:h-screen md:overflow-y-auto">
+        {children}
+      </div>
     </div>
   );
 }

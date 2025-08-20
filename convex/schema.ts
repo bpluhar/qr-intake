@@ -81,7 +81,6 @@ const schema = defineSchema({
     .index("by_customer", ["customerId"])
     .index("by_company", ["companyId"]),
 
-
   intakeForms: defineTable({
     organizationId: v.id("organizations"),
     creatorId: v.id("users"),
@@ -104,19 +103,16 @@ const schema = defineSchema({
                 v.object({
                   label: v.string(),
                   value: v.string(),
-                })
-              )
+                }),
+              ),
             ),
-          })
-        )
+          }),
+        ),
       ),
     }),
   })
     .index("by_organization", ["organizationId"])
     .index("by_creator", ["creatorId"]),
-
 });
-
-
 
 export default schema;

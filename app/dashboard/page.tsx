@@ -2,16 +2,16 @@
 
 // Chart.js and chart component imports
 import {
-  Chart as ChartJS,
   BarElement,
   CategoryScale,
-  LinearScale,
-  Tooltip,
-  Legend,
-  Title,
+  Chart as ChartJS,
   ChartOptions,
+  Legend,
+  LinearScale,
   LineElement,
   PointElement,
+  Title,
+  Tooltip,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 
@@ -22,23 +22,37 @@ import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { Card } from "@/app/components/Card";
 import { StatCard } from "@/app/components/StatCard";
-import { Th, Td } from "@/app/components/Table";
+import { Td, Th } from "@/app/components/Table";
 import { StatusBadge } from "@/app/components/StatusBadge";
 
 // Register Chart.js components
-ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend, Title, LineElement, PointElement);
+ChartJS.register(
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend,
+  Title,
+  LineElement,
+  PointElement,
+);
 
 export default function DashboardClient() {
-
   const result = useQuery(api.functions.users.getCurrentWithSource);
   const profile = useQuery(
     api.functions.profiles.getProfileByUserId,
-    result?.user?._id ? { userId: result.user._id } : 'skip'
+    result?.user?._id ? { userId: result.user._id } : "skip",
   );
-  const createOrganization = useMutation(api.functions.organizations.createOrganization);
+  const createOrganization = useMutation(
+    api.functions.organizations.createOrganization,
+  );
   const createProfile = useMutation(api.functions.profiles.createProfile);
-  const createUserSettings = useMutation(api.functions.usersettings.createUserSettings);
-  const dismissWhatsNew = useMutation(api.functions.usersettings.dismissWhatsNew);
+  const createUserSettings = useMutation(
+    api.functions.usersettings.createUserSettings,
+  );
+  const dismissWhatsNew = useMutation(
+    api.functions.usersettings.dismissWhatsNew,
+  );
 
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showWhatsNewModal, setShowWhatsNewModal] = useState(false);
@@ -46,11 +60,10 @@ export default function DashboardClient() {
 
   const userSettingsQuery = useQuery(
     api.functions.usersettings.getUserSettingsByUserId,
-    result?.user?._id ? { userId: result.user._id } : 'skip'
+    result?.user?._id ? { userId: result.user._id } : "skip",
   );
 
   useEffect(() => {
-    
     if (profile === null && !showWhatsNewModal) {
       setShowProfileModal(true);
     }
@@ -71,21 +84,19 @@ export default function DashboardClient() {
 
   useEffect(() => {
     if (showProfileModal || showWhatsNewModal) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = "auto";
     }
     return () => {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = "auto";
     };
   }, [showProfileModal, showWhatsNewModal]);
-
 
   // if (result === undefined) return "Loading…";
   // if (result === null) return "Unexpected null"; // shouldn't happen in this query
   // if (!result.user) return <div>Loading user data...</div>;
   // if (!result.user._id) return <div>Loading...</div>;
-
 
   // if (result === undefined) return "Loading…";
   // if (result === null) return "Unexpected null"; // shouldn't happen in this query
@@ -98,7 +109,9 @@ export default function DashboardClient() {
           onClose={() => setShowProfileModal(false)}
           onSave={async (data) => {
             // 1. Create organization and get organizationId
-            const organizationId = await createOrganization({ name: data.orgName });
+            const organizationId = await createOrganization({
+              name: data.orgName,
+            });
             // 2. Create profile with userId, organizationId, firstName, lastName
             const newProfile = await createProfile({
               userId: result!.user!._id,
@@ -111,7 +124,7 @@ export default function DashboardClient() {
             await createUserSettings({ userId: result!.user!._id });
 
             // Set profile cookie
-            Cookies.set("profile", (newProfile));
+            Cookies.set("profile", newProfile);
 
             console.log("Profile created:", newProfile);
 
@@ -158,8 +171,18 @@ export default function DashboardClient() {
           {/* KPI cards */}
           <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             <StatCard label="Open tickets" value="128" delta="+6.7%" />
-            <StatCard label="Avg response" value="72h 48m" delta="+512%" positive={false} />
-            <StatCard label="SLA breaches" value="3" delta="-25%" positive={true} />
+            <StatCard
+              label="Avg response"
+              value="72h 48m"
+              delta="+512%"
+              positive={false}
+            />
+            <StatCard
+              label="SLA breaches"
+              value="3"
+              delta="-25%"
+              positive={true}
+            />
             <StatCard label="Active users" value="2,413" delta="+3.1%" />
           </section>
 
@@ -180,7 +203,9 @@ export default function DashboardClient() {
                 {/* Recent Activity */}
                 <Card>
                   <div className="flex items-center justify-between">
-                    <h2 className="text-sm font-medium text-slate-300">Recent Activity</h2>
+                    <h2 className="text-sm font-medium text-slate-300">
+                      Recent Activity
+                    </h2>
                     <button className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E]">
                       View all
                     </button>
@@ -198,13 +223,35 @@ export default function DashboardClient() {
                       </thead>
                       <tbody className="divide-y divide-slate-800">
                         {[
-                          { id: '#4832', cust: 'Acme Inc.', status: 'Open', time: '3m ago' },
-                          { id: '#4831', cust: 'Globex', status: 'Pending', time: '15m ago' },
-                          { id: '#4829', cust: 'Soylent', status: 'Resolved', time: '1h ago' },
-                          { id: '#4828', cust: 'Initech', status: 'Open', time: '2h ago' },
+                          {
+                            id: "#4832",
+                            cust: "Acme Inc.",
+                            status: "Open",
+                            time: "3m ago",
+                          },
+                          {
+                            id: "#4831",
+                            cust: "Globex",
+                            status: "Pending",
+                            time: "15m ago",
+                          },
+                          {
+                            id: "#4829",
+                            cust: "Soylent",
+                            status: "Resolved",
+                            time: "1h ago",
+                          },
+                          {
+                            id: "#4828",
+                            cust: "Initech",
+                            status: "Open",
+                            time: "2h ago",
+                          },
                         ].map((r) => (
                           <tr key={r.id} className="hover:bg-slate-900/30">
-                            <Td className="font-medium text-slate-200">{r.id}</Td>
+                            <Td className="font-medium text-slate-200">
+                              {r.id}
+                            </Td>
                             <Td>{r.cust}</Td>
                             <Td>
                               <StatusBadge status={r.status} />
@@ -220,7 +267,9 @@ export default function DashboardClient() {
                 {/* Workload */}
                 <Card>
                   <div className="flex items-center justify-between">
-                    <h2 className="text-sm font-medium text-slate-300">Workload (placeholder)</h2>
+                    <h2 className="text-sm font-medium text-slate-300">
+                      Workload (placeholder)
+                    </h2>
                     <button className="text-xs rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E]">
                       Configure
                     </button>
@@ -234,13 +283,13 @@ export default function DashboardClient() {
             <aside className="space-y-6">
               {/* Quick Actions */}
               <Card>
-                <h2 className="text-sm font-medium text-slate-300">Quick actions</h2>
+                <h2 className="text-sm font-medium text-slate-300">
+                  Quick actions
+                </h2>
                 <div className="mt-4 grid gap-3">
-                  <button
-                    className="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-white
+                  <button className="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-white
                                bg-[#249F73] hover:bg-[#1E8761] focus:outline-none focus:ring-2 focus:ring-offset-2
-                               focus:ring-[#3ECF8E] focus:ring-offset-[#0b1217]"
-                  >
+                               focus:ring-[#3ECF8E] focus:ring-offset-[#0b1217]">
                     New Ticket
                   </button>
                   <button className="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-slate-200 bg-slate-800/70 hover:bg-slate-800 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-700">
@@ -253,7 +302,9 @@ export default function DashboardClient() {
               </Card>
               {/* System Status */}
               <Card>
-                <h2 className="text-sm font-medium text-slate-300">System status</h2>
+                <h2 className="text-sm font-medium text-slate-300">
+                  System status
+                </h2>
                 <ul className="mt-4 space-y-3 text-sm">
                   <li className="flex items-center justify-between">
                     <span className="text-slate-400">API</span>
@@ -293,7 +344,15 @@ function ProfileModal({
 }: {
   email: string;
   onClose: () => void;
-  onSave: (data: { firstName: string; lastName: string; orgName: string; email: string; phone: string }) => void;
+  onSave: (
+    data: {
+      firstName: string;
+      lastName: string;
+      orgName: string;
+      email: string;
+      phone: string;
+    },
+  ) => void;
 }) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -318,24 +377,30 @@ function ProfileModal({
       aria-modal="true"
     >
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"  />
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
 
       {/* Panel */}
       <div
         className={`relative w-full max-w-lg rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-xl transform transition-transform duration-300 ease-out ${
-          animate ? 'scale-100' : 'scale-0'
+          animate ? "scale-100" : "scale-0"
         }`}
       >
         <div className="mb-4">
-          <h2 className="text-lg font-semibold text-slate-100">Complete your profile</h2>
-          <p className="mt-1 text-sm text-slate-400">Just a few details to get you started.</p>
+          <h2 className="text-lg font-semibold text-slate-100">
+            Complete your profile
+          </h2>
+          <p className="mt-1 text-sm text-slate-400">
+            Just a few details to get you started.
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Name row */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-xs font-medium text-slate-400">First Name</label>
+              <label className="mb-1 block text-xs font-medium text-slate-400">
+                First Name
+              </label>
               <input
                 type="text"
                 value={firstName}
@@ -346,7 +411,9 @@ function ProfileModal({
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium text-slate-400">Last Name</label>
+              <label className="mb-1 block text-xs font-medium text-slate-400">
+                Last Name
+              </label>
               <input
                 type="text"
                 value={lastName}
@@ -360,7 +427,9 @@ function ProfileModal({
 
           {/* Organization */}
           <div>
-            <label className="mb-1 block text-xs font-medium text-slate-400">Organization Name</label>
+            <label className="mb-1 block text-xs font-medium text-slate-400">
+              Organization Name
+            </label>
             <input
               type="text"
               value={orgName}
@@ -372,7 +441,9 @@ function ProfileModal({
 
           {/* Email (disabled) */}
           <div>
-            <label className="mb-1 block text-xs font-medium text-slate-400">Email</label>
+            <label className="mb-1 block text-xs font-medium text-slate-400">
+              Email
+            </label>
             <input
               type="email"
               value={email}
@@ -383,7 +454,9 @@ function ProfileModal({
 
           {/* Phone */}
           <div>
-            <label className="mb-1 block text-xs font-medium text-slate-400">Phone Number</label>
+            <label className="mb-1 block text-xs font-medium text-slate-400">
+              Phone Number
+            </label>
             <input
               type="tel"
               inputMode="tel"
@@ -427,7 +500,7 @@ function WhatsNewModal({ onDismiss }: { onDismiss: () => void }) {
       {/* Panel */}
       <div
         className={`relative w-full max-w-lg rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-900/80 to-slate-800/80 p-8 shadow-xl backdrop-blur-md transform transition-transform duration-300 ease-out ${
-          animate ? 'scale-100' : 'scale-0'
+          animate ? "scale-100" : "scale-0"
         }`}
       >
         {/* Tag */}
@@ -448,31 +521,38 @@ function WhatsNewModal({ onDismiss }: { onDismiss: () => void }) {
           <div className="flex items-start gap-3 bg-slate-800/40 p-3 rounded-lg">
             <span className="text-lg">📝</span>
             <p className="text-sm text-slate-200">
-              <b>Profile creation improved:</b> New users are prompted to complete their profile for a smoother onboarding experience.
+              <b>Profile creation improved:</b>{" "}
+              New users are prompted to complete their profile for a smoother
+              onboarding experience.
             </p>
           </div>
           <div className="flex items-start gap-3 bg-slate-800/40 p-3 rounded-lg">
             <span className="text-lg">📐</span>
             <p className="text-sm text-slate-200">
-              <b>Sidebar restructured:</b> Navigation is now simpler with clearer sections.
+              <b>Sidebar restructured:</b>{" "}
+              Navigation is now simpler with clearer sections.
             </p>
           </div>
           <div className="flex items-start gap-3 bg-slate-800/40 p-3 rounded-lg">
             <span className="text-lg">👤</span>
             <p className="text-sm text-slate-200">
-              <b>Names in sidebar:</b> Your full name is now displayed for better identification.
+              <b>Names in sidebar:</b>{" "}
+              Your full name is now displayed for better identification.
             </p>
           </div>
           <div className="flex items-start gap-3 bg-slate-800/40 p-3 rounded-lg">
             <span className="text-lg">🆕</span>
             <p className="text-sm text-slate-200">
-              <b>What&apos;s New popup:</b> Stay informed about the latest features and changes.
+              <b>What&apos;s New popup:</b>{" "}
+              Stay informed about the latest features and changes.
             </p>
           </div>
           <div className="flex items-start gap-3 bg-slate-800/40 p-3 rounded-lg">
             <span className="text-lg">🗑️</span>
             <p className="text-sm text-slate-200">
-              <b>Delete User Data:</b> You can now delete your account and all associated data from the settings page.
+              <b>Delete User Data:</b>{" "}
+              You can now delete your account and all associated data from the
+              settings page.
             </p>
           </div>
         </div>
@@ -497,11 +577,13 @@ function TicketsBarChart() {
   // Mock data for 30 days
   const days = Array.from({ length: 30 }, (_, i) => (i + 1).toString());
   // Generate mock opened and closed data for 30 days
-  const opened = Array.from({ length: 30 }, (_, i) =>
-    10 + Math.round(Math.sin(i / 3) * 4 + Math.random() * 3)
+  const opened = Array.from(
+    { length: 30 },
+    (_, i) => 10 + Math.round(Math.sin(i / 3) * 4 + Math.random() * 3),
   );
-  const closed = Array.from({ length: 30 }, (_, i) =>
-    8 + Math.round(Math.cos(i / 2.2) * 3 + Math.random() * 2)
+  const closed = Array.from(
+    { length: 30 },
+    (_, i) => 8 + Math.round(Math.cos(i / 2.2) * 3 + Math.random() * 2),
   );
 
   const data = {

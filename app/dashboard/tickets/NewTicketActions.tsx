@@ -5,64 +5,62 @@ import { api } from "@/convex/_generated/api";
 import { refreshTickets } from "./actions";
 import { TicketRow } from "../tickets";
 
-
 export function NewTicketActions() {
-    const [showNewTicketModal, setShowNewTicketModal] = useState(false);
-    const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
-    const [priority, setPriority] = useState("P4");
-    const [severity, setSeverity] = useState("Low");
-    const [status, setStatus] = useState("Open");
+  const [showNewTicketModal, setShowNewTicketModal] = useState(false);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [priority, setPriority] = useState("P4");
+  const [severity, setSeverity] = useState("Low");
+  const [status, setStatus] = useState("Open");
 
-    const createTicket = useMutation(api.functions.tickets.createTicket);
-    
-    async function handleSaveTicket() {
-        await createTicket({
-        title,
-        description,
-        priority: priority || "P1",
-        severity: severity || "Low",
-        status: status || "Open",
-        });
-        setShowNewTicketModal(false);
-        setTitle("");
-        setDescription("");
-        setPriority("P4");
-        setSeverity("Low");
-        setStatus("Open");
-        await refreshTickets(); // server action call
+  const createTicket = useMutation(api.functions.tickets.createTicket);
 
-    }
+  async function handleSaveTicket() {
+    await createTicket({
+      title,
+      description,
+      priority: priority || "P1",
+      severity: severity || "Low",
+      status: status || "Open",
+    });
+    setShowNewTicketModal(false);
+    setTitle("");
+    setDescription("");
+    setPriority("P4");
+    setSeverity("Low");
+    setStatus("Open");
+    await refreshTickets(); // server action call
+  }
 
-    return (
-        <div className="flex items-center gap-2">
-            <button
-            onClick={() => setShowNewTicketModal(true)}
-            className="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-white bg-[#249F73] hover:bg-[#1E8761] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3ECF8E] focus:ring-offset-[#0b1217]"
-            >
-            New
-            </button>
-            <button
-            className="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-slate-200 bg-slate-800/70 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700"
-            >
-            Export
-            </button>
-            {showNewTicketModal && <TicketModal 
-                title={title} 
-                setTitle={setTitle} 
-                description={description}
-                setDescription={setDescription}
-                severity={severity} 
-                setSeverity={setSeverity} 
-                priority={priority} 
-                setPriority={setPriority} 
-                status={status} 
-                setStatus={setStatus} 
-                onClose={() => setShowNewTicketModal(false)} 
-                handleSaveTicket={handleSaveTicket} 
-            />}
-        </div>
-    );
+  return (
+    <div className="flex items-center gap-2">
+      <button
+        onClick={() => setShowNewTicketModal(true)}
+        className="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-white bg-[#249F73] hover:bg-[#1E8761] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3ECF8E] focus:ring-offset-[#0b1217]"
+      >
+        New
+      </button>
+      <button className="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-slate-200 bg-slate-800/70 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700">
+        Export
+      </button>
+      {showNewTicketModal && (
+        <TicketModal
+          title={title}
+          setTitle={setTitle}
+          description={description}
+          setDescription={setDescription}
+          severity={severity}
+          setSeverity={setSeverity}
+          priority={priority}
+          setPriority={setPriority}
+          status={status}
+          setStatus={setStatus}
+          onClose={() => setShowNewTicketModal(false)}
+          handleSaveTicket={handleSaveTicket}
+        />
+      )}
+    </div>
+  );
 }
 
 export function TicketModal({
@@ -75,7 +73,7 @@ export function TicketModal({
   priority,
   setPriority,
   onClose,
-  handleSaveTicket
+  handleSaveTicket,
 }: {
   title: string;
   setTitle: (val: string) => void;
@@ -150,20 +148,26 @@ export function TicketModal({
             <div className="flex gap-2">
               {severityOptions.map((option) => {
                 const isSelected = severity === option;
-                const baseClasses = "inline-flex items-center rounded-md px-2 py-0.5 text-xs cursor-pointer select-none";
+                const baseClasses =
+                  "inline-flex items-center rounded-md px-2 py-0.5 text-xs cursor-pointer select-none";
                 const map: Record<string, string> = {
-                  Low: "bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30",
+                  Low:
+                    "bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30",
                   Medium: "bg-sky-500/10 text-sky-400 ring-1 ring-sky-500/30",
-                  High: "bg-yellow-500/10 text-yellow-400 ring-1 ring-yellow-500/30",
+                  High:
+                    "bg-yellow-500/10 text-yellow-400 ring-1 ring-yellow-500/30",
                   Critical: "bg-red-500/10 text-red-400 ring-1 ring-red-500/30",
                 };
-                const grayStyle = "bg-slate-700/40 text-slate-300 ring-1 ring-slate-600/40";
+                const grayStyle =
+                  "bg-slate-700/40 text-slate-300 ring-1 ring-slate-600/40";
                 return (
                   <button
                     key={option}
                     type="button"
                     onClick={() => setSeverity(option)}
-                    className={`${baseClasses} ${isSelected ? map[option] : grayStyle}`}
+                    className={`${baseClasses} ${
+                      isSelected ? map[option] : grayStyle
+                    }`}
                     aria-pressed={isSelected}
                   >
                     {option}
@@ -179,20 +183,26 @@ export function TicketModal({
             <div className="flex gap-2">
               {priorityOptions.map((option) => {
                 const isSelected = priority === option;
-                const baseClasses = "inline-flex items-center rounded-md px-2 py-0.5 text-xs cursor-pointer select-none";
+                const baseClasses =
+                  "inline-flex items-center rounded-md px-2 py-0.5 text-xs cursor-pointer select-none";
                 const map: Record<string, string> = {
                   P1: "bg-red-500/10 text-red-400 ring-1 ring-red-500/30",
-                  P2: "bg-yellow-500/10 text-yellow-400 ring-1 ring-yellow-500/30",
+                  P2:
+                    "bg-yellow-500/10 text-yellow-400 ring-1 ring-yellow-500/30",
                   P3: "bg-sky-500/10 text-sky-400 ring-1 ring-sky-500/30",
-                  P4: "bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30",
+                  P4:
+                    "bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30",
                 };
-                const grayStyle = "bg-slate-700/40 text-slate-300 ring-1 ring-slate-600/40";
+                const grayStyle =
+                  "bg-slate-700/40 text-slate-300 ring-1 ring-slate-600/40";
                 return (
                   <button
                     key={option}
                     type="button"
                     onClick={() => setPriority(option)}
-                    className={`${baseClasses} ${isSelected ? map[option] : grayStyle}`}
+                    className={`${baseClasses} ${
+                      isSelected ? map[option] : grayStyle
+                    }`}
                     aria-pressed={isSelected}
                   >
                     {option}
@@ -236,5 +246,13 @@ function StatusBadge({ status }: { status: TicketRow["status"] }) {
     Pending: "bg-yellow-500/10 text-yellow-400 ring-1 ring-yellow-500/30",
     Resolved: "bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30",
   };
-  return <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs ${map[status] ?? "bg-slate-700/40 text-slate-300 ring-1 ring-slate-600/40"}`}>{status}</span>;
+  return (
+    <span
+      className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs ${
+        map[status] ?? "bg-slate-700/40 text-slate-300 ring-1 ring-slate-600/40"
+      }`}
+    >
+      {status}
+    </span>
+  );
 }

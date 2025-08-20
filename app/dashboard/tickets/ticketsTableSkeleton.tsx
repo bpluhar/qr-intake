@@ -13,7 +13,9 @@ export function TicketsPageSkeleton() {
                 <div className="h-3 w-24 rounded bg-slate-700/40" />
                 <div className="mt-3 h-6 w-20 rounded bg-slate-700/40" />
               </div>
-              <span className="mt-1 inline-flex items-center rounded-md px-2 py-1 text-xs bg-slate-700/30 text-slate-300 ring-1 ring-slate-600/40">—</span>
+              <span className="mt-1 inline-flex items-center rounded-md px-2 py-1 text-xs bg-slate-700/30 text-slate-300 ring-1 ring-slate-600/40">
+                —
+              </span>
             </div>
           </Card>
         ))}

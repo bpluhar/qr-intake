@@ -1,5 +1,5 @@
 import "server-only";
-import { unstable_cache, revalidateTag } from "next/cache";
+import { revalidateTag, unstable_cache } from "next/cache";
 import { fetchQuery } from "convex/nextjs";
 import { api } from "@/convex/_generated/api";
 import TicketsTableClient from "./ticketsTableClient";
@@ -26,7 +26,7 @@ async function _getTicketsFromConvex(): Promise<TicketRow[]> {
 export const getTicketsFromConvex = unstable_cache(
   _getTicketsFromConvex,
   ["tickets:getAll"],
-  { revalidate: 120, tags: ["tickets"] }
+  { revalidate: 120, tags: ["tickets"] },
 );
 
 // Call this from a Server Action after a Convex mutation to bust the cache

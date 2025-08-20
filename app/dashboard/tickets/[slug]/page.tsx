@@ -9,13 +9,20 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Breadcrumbs from "../../helpers/Breadcrumbs";
 import type { TicketRow } from "../../tickets";
-import { PriorityBadge, SeverityBadge, StatusBadge, NuetralBadge } from "../../badges";
-import type { Id, Doc } from "@/convex/_generated/dataModel";
+import {
+  NuetralBadge,
+  PriorityBadge,
+  SeverityBadge,
+  StatusBadge,
+} from "../../badges";
+import type { Doc, Id } from "@/convex/_generated/dataModel";
 import { deleteTicketAction } from "./actions";
 import { Card } from "@/app/components/Card";
 
 /* -------------------------------------------------------------------- */
-export default async function Page({ params,}: { params: Promise<{ slug: string }>; }) {
+export default async function Page(
+  { params }: { params: Promise<{ slug: string }> },
+) {
   const param = await params;
   const _id = param.slug as Id<"tickets">;
   if (!_id) notFound();
@@ -24,7 +31,10 @@ export default async function Page({ params,}: { params: Promise<{ slug: string 
   const getTicketCached = (ticketId: Id<"tickets">) =>
     unstable_cache(
       async () => {
-        const d: Doc<"tickets"> | null = await fetchQuery(api.functions.tickets.getByDocId, { _id: ticketId });
+        const d: Doc<"tickets"> | null = await fetchQuery(
+          api.functions.tickets.getByDocId,
+          { _id: ticketId },
+        );
         if (!d) return undefined;
         const row: TicketRow = {
           _id: d._id,
@@ -41,7 +51,7 @@ export default async function Page({ params,}: { params: Promise<{ slug: string 
         return row;
       },
       ["ticket:detail", String(ticketId)],
-      { revalidate: 60, tags: ["tickets", `ticket:${ticketId}`] }
+      { revalidate: 60, tags: ["tickets", `ticket:${ticketId}`] },
     )();
 
   const ticket = await getTicketCached(_id);
@@ -52,7 +62,10 @@ export default async function Page({ params,}: { params: Promise<{ slug: string 
     { label: "Status", value: ticket.status },
     { label: "Severity", value: ticket.severity },
     { label: "Priority", value: ticket.priority },
-    { label: "Created", value: new Date(ticket._creationTime).toLocaleDateString("en-US") },
+    {
+      label: "Created",
+      value: new Date(ticket._creationTime).toLocaleDateString("en-US"),
+    },
   ];
 
   return (
@@ -74,8 +87,12 @@ export default async function Page({ params,}: { params: Promise<{ slug: string 
           <Card key={k.label}>
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-xs uppercase tracking-wide text-slate-400">{k.label}</p>
-                <p className="mt-2 text-2xl font-semibold text-slate-100">{k.value}</p>
+                <p className="text-xs uppercase tracking-wide text-slate-400">
+                  {k.label}
+                </p>
+                <p className="mt-2 text-2xl font-semibold text-slate-100">
+                  {k.value}
+                </p>
               </div>
               <span className="mt-1 inline-flex items-center rounded-md px-2 py-1 text-xs bg-slate-700/30 text-slate-300 ring-1 ring-slate-600/40">
                 —
@@ -90,13 +107,20 @@ export default async function Page({ params,}: { params: Promise<{ slug: string 
         {/* --- Ticket Activity / Details (left 2/3) --- */}
         <section className="lg:col-span-2">
           <Card>
-            <h2 className="text-sm font-medium text-slate-300 mb-4">Activity</h2>
+            <h2 className="text-sm font-medium text-slate-300 mb-4">
+              Activity
+            </h2>
             <p className="text-sm text-slate-400">
               This area can display the ticket conversation or event timeline.
             </p>
             <ul className="mt-4 space-y-2">
-              <li className="text-xs text-slate-500">• Ticket opened on {new Date(ticket._creationTime).toLocaleDateString("en-US")}</li>
-              <li className="text-xs text-slate-500">• Assigned to {ticket.assignees.join(", ") || "—"}</li>
+              <li className="text-xs text-slate-500">
+                • Ticket opened on{" "}
+                {new Date(ticket._creationTime).toLocaleDateString("en-US")}
+              </li>
+              <li className="text-xs text-slate-500">
+                • Assigned to {ticket.assignees.join(", ") || "—"}
+              </li>
             </ul>
           </Card>
         </section>
@@ -105,10 +129,15 @@ export default async function Page({ params,}: { params: Promise<{ slug: string 
         <aside className="space-y-6">
           {/* Quick Actions */}
           <Card>
-            <h2 className="text-sm font-medium text-slate-300 mb-3">Quick Actions</h2>
+            <h2 className="text-sm font-medium text-slate-300 mb-3">
+              Quick Actions
+            </h2>
             <div className="flex flex-col gap-2">
               <form action={deleteTicketAction.bind(null, _id)}>
-                <button type="submit" className="mt-2 w-full rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 focus:ring-offset-[#0b1217]">
+                <button
+                  type="submit"
+                  className="mt-2 w-full rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 focus:ring-offset-[#0b1217]"
+                >
                   Delete Ticket
                 </button>
               </form>
@@ -123,10 +152,14 @@ export default async function Page({ params,}: { params: Promise<{ slug: string 
 
           {/* Ticket Information */}
           <Card>
-            <h2 className="text-sm font-medium text-slate-300 mb-3">Ticket Information</h2>
+            <h2 className="text-sm font-medium text-slate-300 mb-3">
+              Ticket Information
+            </h2>
             <form className="space-y-4">
               <div className="space-y-1">
-                <label className="block text-xs font-medium text-slate-400">Title</label>
+                <label className="block text-xs font-medium text-slate-400">
+                  Title
+                </label>
                 <input
                   type="text"
                   defaultValue={ticket.title}
@@ -135,7 +168,9 @@ export default async function Page({ params,}: { params: Promise<{ slug: string 
               </div>
 
               <div className="space-y-1">
-                <label className="block text-xs font-medium text-slate-400">Description</label>
+                <label className="block text-xs font-medium text-slate-400">
+                  Description
+                </label>
                 <textarea
                   defaultValue={ticket.description}
                   rows={4}
@@ -145,15 +180,19 @@ export default async function Page({ params,}: { params: Promise<{ slug: string 
 
               {/* Status */}
               <div className="space-y-1">
-                <label className="block text-xs font-medium text-slate-400">Status</label>
+                <label className="block text-xs font-medium text-slate-400">
+                  Status
+                </label>
                 <div className="flex gap-2">
                   {(["Open", "Pending", "Resolved"] as const).map((s) => (
-                    <button key={s} type="button" className="focus:outline-none">
-                      {s === ticket.status ? (
-                        <StatusBadge status={s} />
-                      ) : (
-                        <NuetralBadge text={s} />
-                      )}
+                    <button
+                      key={s}
+                      type="button"
+                      className="focus:outline-none"
+                    >
+                      {s === ticket.status
+                        ? <StatusBadge status={s} />
+                        : <NuetralBadge text={s} />}
                     </button>
                   ))}
                 </div>
@@ -161,15 +200,19 @@ export default async function Page({ params,}: { params: Promise<{ slug: string 
 
               {/* Priority */}
               <div className="space-y-1">
-                <label className="block text-xs font-medium text-slate-400">Priority</label>
+                <label className="block text-xs font-medium text-slate-400">
+                  Priority
+                </label>
                 <div className="flex gap-2">
                   {(["P1", "P2", "P3", "P4"] as const).map((p) => (
-                    <button key={p} type="button" className="focus:outline-none">
-                      {p === ticket.priority ? (
-                        <PriorityBadge priority={p} />
-                      ) : (
-                        <NuetralBadge text={p} />
-                      )}
+                    <button
+                      key={p}
+                      type="button"
+                      className="focus:outline-none"
+                    >
+                      {p === ticket.priority
+                        ? <PriorityBadge priority={p} />
+                        : <NuetralBadge text={p} />}
                     </button>
                   ))}
                 </div>
@@ -177,15 +220,21 @@ export default async function Page({ params,}: { params: Promise<{ slug: string 
 
               {/* Severity */}
               <div className="space-y-1">
-                <label className="block text-xs font-medium text-slate-400">Severity</label>
+                <label className="block text-xs font-medium text-slate-400">
+                  Severity
+                </label>
                 <div className="flex gap-2">
-                  {(["Low", "Medium", "High", "Critical"] as const).map((sev) => (
-                    <button key={sev} type="button" className="focus:outline-none">
-                      {sev === ticket.severity ? (
-                        <SeverityBadge severity={sev} />
-                      ) : (
-                        <NuetralBadge text={sev} />
-                      )}
+                  {(["Low", "Medium", "High", "Critical"] as const).map((
+                    sev,
+                  ) => (
+                    <button
+                      key={sev}
+                      type="button"
+                      className="focus:outline-none"
+                    >
+                      {sev === ticket.severity
+                        ? <SeverityBadge severity={sev} />
+                        : <NuetralBadge text={sev} />}
                     </button>
                   ))}
                 </div>
