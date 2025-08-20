@@ -23,6 +23,7 @@ import { Card } from "@/app/components/Card";
 import { StatCard } from "@/app/components/StatCard";
 import { Td, Th } from "@/app/components/Table";
 import { StatusBadge } from "@/app/components/StatusBadge";
+import { Doc } from "@/convex/_generated/dataModel";
 
 // Register Chart.js components
 ChartJS.register(
@@ -215,7 +216,7 @@ export default function DashboardClient() {
       )}
       {showWhatsNewModal && (
         <WhatsNewModal
-          data={Array.isArray(whatsNew) && whatsNew.length ? whatsNew[0] : null}
+          data={Array.isArray(whatsNew) && whatsNew.length ? whatsNew[0] as Doc<"whatsNew"> : null}
           onDismiss={async () => {
             if (userSettingsQuery?._id) {
               await dismissWhatsNew({ id: userSettingsQuery._id });
@@ -677,7 +678,7 @@ function ProfileModal({
 }
 
 // What's New Modal
-function WhatsNewModal({ onDismiss, data }: { onDismiss: () => void; data: any }) {
+function WhatsNewModal({ onDismiss, data }: { onDismiss: () => void; data: Doc<"whatsNew"> | null }) {
   const [animate, setAnimate] = useState(false);
   useEffect(() => {
     setTimeout(() => setAnimate(true), 10);
@@ -713,7 +714,7 @@ function WhatsNewModal({ onDismiss, data }: { onDismiss: () => void; data: any }
         {/* Features */}
         {Array.isArray(data?.updates) && data.updates.length > 0 && (
           <div className="mt-6 space-y-4">
-            {data.updates.map((u: any, idx: number) => (
+            {data.updates.map((u: Doc<"whatsNew">["updates"][number], idx: number) => (
               <div key={idx} className="flex items-start gap-3 bg-slate-800/40 p-3 rounded-lg">
                 <span className="text-lg">{u.emoji}</span>
                 <p className="text-sm text-slate-200">
