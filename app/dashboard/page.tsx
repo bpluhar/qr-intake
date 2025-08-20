@@ -694,7 +694,7 @@ function WhatsNewModal({ onDismiss, data }: { onDismiss: () => void; data: Doc<"
 
       {/* Panel */}
       <div
-        className={`relative w-full max-w-lg rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-900/80 to-slate-800/80 p-8 shadow-xl backdrop-blur-md transform transition-transform duration-300 ease-out ${
+        className={`relative w-full max-w-lg rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-xl transform transition-transform duration-300 ease-out ${
           animate ? "scale-100" : "scale-0"
         }`}
       >
