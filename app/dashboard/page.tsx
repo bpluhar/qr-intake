@@ -184,9 +184,9 @@ export default function DashboardClient() {
             // 2.5. Create user settings for this user
             await createUserSettings({ userId: result!.user!._id });
 
-            // 2.6 Upload Profile Picture to Convex Files (crop center square and resize to 50%)
+            // 2.6 Upload Profile Picture to Convex Files (crop center square and resize to 25%)
             if (selectedImage) {
-              const processed = await cropAndResizeCenterSquare(selectedImage, 0.50);
+              const processed = await cropAndResizeCenterSquare(selectedImage, 0.25);
               const contentType = processed.type || selectedImage.type || "image/png";
 
               const uploadUrl = await generateProfilePictureUploadUrl();
@@ -386,22 +386,41 @@ export default function DashboardClient() {
                   <li className="flex items-center justify-between">
                     <span className="text-slate-400">API</span>
                     <span className="inline-flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                      <span className="relative flex size-3">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                        <span className="relative inline-flex size-3 rounded-full bg-emerald-500" />
+                      </span>
                       Operational
                     </span>
                   </li>
                   <li className="flex items-center justify-between">
                     <span className="text-slate-400">Database</span>
                     <span className="inline-flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="relative flex size-3">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                        <span className="relative inline-flex size-3 rounded-full bg-emerald-500" />
+                      </span>
                       Operational
                     </span>
                   </li>
                   <li className="flex items-center justify-between">
                     <span className="text-slate-400">Auth</span>
                     <span className="inline-flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full bg-yellow-500 animate-pulse" />
+                    <span className="relative flex size-3">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-yellow-400 opacity-75" />
+                        <span className="relative inline-flex size-3 rounded-full bg-yellow-500" />
+                      </span>
                       Degraded
+                    </span>
+                  </li>
+                  <li className="flex items-center justify-between">
+                    <span className="text-slate-400">Will to Live</span>
+                    <span className="inline-flex items-center gap-2">
+                    <span className="relative flex size-3">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
+                        <span className="relative inline-flex size-3 rounded-full bg-red-500" />
+                      </span>
+                      Doomed
                     </span>
                   </li>
                 </ul>
@@ -615,7 +634,14 @@ function ProfileModal({
               disabled={saving}
               className="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-white bg-[#249F73] hover:bg-[#1E8761] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3ECF8E] focus:ring-offset-[#0b1217] disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {saving ? "Saving..." : "Save"}
+              {saving
+                ? (
+                  <span className="inline-flex items-center gap-2">
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                    <span>Saving</span>
+                  </span>
+                )
+                : ("Save")}
             </button>
           </div>
         </form>
