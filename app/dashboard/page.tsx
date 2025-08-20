@@ -99,14 +99,24 @@ export default function DashboardClient() {
     api.functions.profiles.getProfileByUserId,
     result?.user?._id ? { userId: result.user._id } : "skip",
   );
-  const createOrganization = useMutation(api.functions.organizations.createOrganization);
+  const createOrganization = useMutation(
+    api.functions.organizations.createOrganization,
+  );
   const createProfile = useMutation(api.functions.profiles.createProfile);
-  const createUserSettings = useMutation(api.functions.usersettings.createUserSettings);
-  const generateProfilePictureUploadUrl = useMutation(api.functions.profiles.generateProfilePictureUploadUrl);
-  const saveProfilePicture = useMutation(api.functions.profiles.saveProfilePicture);
-  const dismissWhatsNew = useMutation(api.functions.usersettings.dismissWhatsNew);
+  const createUserSettings = useMutation(
+    api.functions.usersettings.createUserSettings,
+  );
+  const generateProfilePictureUploadUrl = useMutation(
+    api.functions.profiles.generateProfilePictureUploadUrl,
+  );
+  const saveProfilePicture = useMutation(
+    api.functions.profiles.saveProfilePicture,
+  );
+  const dismissWhatsNew = useMutation(
+    api.functions.usersettings.dismissWhatsNew,
+  );
   const whatsNew = useQuery(api.functions.usersettings.getWhatsNew);
-  
+
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showWhatsNewModal, setShowWhatsNewModal] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -216,7 +226,9 @@ export default function DashboardClient() {
       )}
       {showWhatsNewModal && (
         <WhatsNewModal
-          data={Array.isArray(whatsNew) && whatsNew.length ? whatsNew[0] as Doc<"whatsNew"> : null}
+          data={Array.isArray(whatsNew) && whatsNew.length
+            ? whatsNew[0] as Doc<"whatsNew">
+            : null}
           onDismiss={async () => {
             if (userSettingsQuery?._id) {
               await dismissWhatsNew({ id: userSettingsQuery._id });
@@ -678,7 +690,9 @@ function ProfileModal({
 }
 
 // What's New Modal
-function WhatsNewModal({ onDismiss, data }: { onDismiss: () => void; data: Doc<"whatsNew"> | null }) {
+function WhatsNewModal(
+  { onDismiss, data }: { onDismiss: () => void; data: Doc<"whatsNew"> | null },
+) {
   const [animate, setAnimate] = useState(false);
   useEffect(() => {
     setTimeout(() => setAnimate(true), 10);
@@ -714,8 +728,14 @@ function WhatsNewModal({ onDismiss, data }: { onDismiss: () => void; data: Doc<"
         {/* Features */}
         {Array.isArray(data?.updates) && data.updates.length > 0 && (
           <div className="mt-6 space-y-4">
-            {data.updates.map((u: Doc<"whatsNew">["updates"][number], idx: number) => (
-              <div key={idx} className="flex items-start gap-3 bg-slate-800/40 p-3 rounded-lg">
+            {data.updates.map((
+              u: Doc<"whatsNew">["updates"][number],
+              idx: number,
+            ) => (
+              <div
+                key={idx}
+                className="flex items-start gap-3 bg-slate-800/40 p-3 rounded-lg"
+              >
                 <span className="text-lg">{u.emoji}</span>
                 <p className="text-sm text-slate-200">
                   <b>{u.title}:</b> {u.description}

@@ -64,7 +64,6 @@ export default function SidebarClient() {
     ].forEach((p) => {
       router.prefetch(p);
     });
-    
   });
 
   const fullName = profile
