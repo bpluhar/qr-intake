@@ -76,13 +76,10 @@ export default function SignIn() {
               setError(null);
               try {
                 await signIn("password", formData);
-                // Navigation handled by the signedIn effect above
-              } catch (err: unknown) {
-                if (err instanceof Error) {
-                  setError(err.message);
-                } else {
-                  setError("Sign in failed");
-                }
+              } catch (err) {
+                const code = extractAuthErrorCode(err);
+                const raw = (err as any)?.message ?? String(err);
+                setError(code === "unknown" ? raw : (ERROR_TEXT[code] ?? raw));
               } finally {
                 setPending(false);
               }
@@ -165,3 +162,22 @@ export default function SignIn() {
     </main>
   );
 }
+
+function extractAuthErrorCode(err: unknown) {
+  const msg = (err as any)?.message ?? String(err);
+  if (/InvalidSecret/i.test(msg)) return "invalid_password";
+  if (/CredentialsSignin/i.test(msg)) return "invalid_credentials";
+  if (/already exists/i.test(msg)) return "account_exists";
+  if (/Cannot read properties of null.*_id/i.test(msg)) return "orphan_account";
+  if (/UserNotFound|No such user|UnknownAccount|InvalidAccountId/i.test(msg)) return "user_not_found";
+  return "unknown";
+}
+
+const ERROR_TEXT: Record<string, string> = {
+  invalid_password: "Incorrect password. Please try again.",
+  invalid_credentials: "Invalid email or password.",
+  account_exists: "An account with this email already exists. Please sign in instead.",
+  orphan_account: "Error in account settings. Please contact support.",
+  user_not_found: "No account found for that email.",
+  unknown: "Something went wrong. Please try again.",
+};
