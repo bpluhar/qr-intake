@@ -8,8 +8,6 @@ import React from "react";
 import { Card } from "@/app/components/Card";
 import { TableActions, TableTitle, Th } from "@/app/components/Table";
 
-// type Props = { initialData: TicketRow[] };
-
 export default function TicketsTableClient() {
   const docs = useQuery(api.functions.tickets.getByOrganizationId, {});
 
@@ -93,6 +91,24 @@ export default function TicketsTableClient() {
           </div>
 
           <div className="mt-4 overflow-x-auto md:overflow-visible rounded-md border border-slate-800">
+            {Array.isArray(docs) && rows.length === 0 ? (
+              <div className="w-full rounded-md border border-dashed border-slate-700/70 bg-slate-900/30 p-6 grid place-content-center">
+                <div className="flex flex-col items-center gap-3">
+                  <p className="text-sm text-slate-400">No tickets yet</p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (typeof window !== "undefined") {
+                        window.dispatchEvent(new Event("triage:open-new-ticket"));
+                      }
+                    }}
+                    className="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-white bg-[#249F73] hover:bg-[#1E8761] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3ECF8E] focus:ring-offset-[#0b1217]"
+                  >
+                    Create your first ticket
+                  </button>
+                </div>
+              </div>
+            ) : (
             <table className="w-full text-sm">
               <thead className="bg-slate-900/60 text-slate-400">
                 <tr>
@@ -153,6 +169,7 @@ export default function TicketsTableClient() {
                 ))}
               </tbody>
             </table>
+            )}
           </div>
         </Card>
       </section>

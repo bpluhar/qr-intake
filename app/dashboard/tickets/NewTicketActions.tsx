@@ -1,8 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { refreshTickets } from "./actions";
 import { TicketRow } from "../tickets";
 
 export function NewTicketActions() {
@@ -14,6 +13,15 @@ export function NewTicketActions() {
   const [status, setStatus] = useState("Open");
 
   const createTicket = useMutation(api.functions.tickets.createTicket);
+
+  // Open this modal in response to a global event so other components can trigger it
+  useEffect(() => {
+    const handler = () => setShowNewTicketModal(true);
+    window.addEventListener("triage:open-new-ticket", handler as EventListener);
+    return () => {
+      window.removeEventListener("triage:open-new-ticket", handler as EventListener);
+    };
+  }, []);
 
   async function handleSaveTicket() {
     await createTicket({
@@ -29,7 +37,6 @@ export function NewTicketActions() {
     setPriority("P4");
     setSeverity("Low");
     setStatus("Open");
-    await refreshTickets(); // server action call
   }
 
   return (

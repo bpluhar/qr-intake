@@ -1,11 +1,8 @@
 // app/dashboard/tickets/page.tsx
 import Breadcrumbs from "@/app/dashboard/helpers/Breadcrumbs";
-// import dynamic from "next/dynamic";
-import { Suspense } from "react";
 
-import { TicketsTableShell } from "./ticketsTableServer"; // Server Component
-import { TicketsPageSkeleton } from "./ticketsTableSkeleton"; // Composite skeleton (KPIs + table chrome)
 import { NewTicketActions } from "./NewTicketActions";
+import TicketsTableClient from "./ticketsTableClient";
 
 export default function TicketsPage() {
   return (
@@ -17,10 +14,7 @@ export default function TicketsPage() {
         </div>
         <NewTicketActions />
       </div>
-
-      <Suspense fallback={<TicketsPageSkeleton />}>
-        <TicketsTableShell />
-      </Suspense>
+        <TicketsTableClient />
     </div>
   );
 }
