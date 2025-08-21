@@ -13,9 +13,17 @@ const font = Noto_Sans({
 
 export const metadata: Metadata = {
   openGraph: {
-    title: "Triager - Automated Patient Intake for Healthcare Teams",
-    description:
-      "Automated patient intake for healthcare teams and practices 2.",
+    title: 'Triager - Automated Patient Intake',
+    description: 'Automated patient intake for healthcare teams and practices.',
+    url: 'https://triage-saas.vercel.app',
+    siteName: 'Triager',
+    images: [
+      {
+        url: 'https://triage-saas.vercel.app/og.png',
+        width: 1920,
+        height: 1163,
+      },
+    ],
   },
   title: "Triager - Automated Patient Intake",
   description: "Automated patient intake for healthcare teams and practices.",
