@@ -11,8 +11,15 @@ export function NewTicketActions() {
   const [priority, setPriority] = useState("P4");
   const [severity, setSeverity] = useState("Low");
   const [status, setStatus] = useState("Open");
+  const [isRunning, setIsRunning] = useState(false);
+  const [bulkTotal, setBulkTotal] = useState(0);
+  const [bulkIndex, setBulkIndex] = useState(0);
 
   const createTicket = useMutation(api.functions.tickets.createTicket);
+  // Options used for randomization in bulk creation
+  const severityOptionsAll = ["Low", "Medium", "High", "Critical"] as const;
+  const priorityOptionsAll = ["P4", "P3", "P2", "P1"] as const;
+
 
   // Open this modal in response to a global event so other components can trigger it
   useEffect(() => {
@@ -39,6 +46,40 @@ export function NewTicketActions() {
     setStatus("Open");
   }
 
+  async function handleSaveTicketBulk(count: number) {
+    setIsRunning(true);
+    setBulkTotal(count);
+    setBulkIndex(0);
+    try {
+      for (let i = 0; i < count; i++) {
+        const randomPriority = priorityOptionsAll[Math.floor(Math.random() * priorityOptionsAll.length)];
+        const randomSeverity = severityOptionsAll[Math.floor(Math.random() * severityOptionsAll.length)];
+        setBulkIndex(i + 1);
+        await createTicket({
+          title: `${title} ${i + 1}`,
+          description,
+          priority: (randomPriority as string) || "P1",
+          severity: (randomSeverity as string) || "Low",
+          status: status || "Open",
+        });
+      }
+      setShowNewTicketModal(false);
+      setTitle("");
+      setDescription("");
+      setPriority("P4");
+      setSeverity("Low");
+      setStatus("Open");
+    } finally {
+      setIsRunning(false);
+      setBulkIndex(0);
+      setBulkTotal(0);
+    }
+  }
+
+  const handleSaveTicket10 = () => handleSaveTicketBulk(10);
+  const handleSaveTicket25 = () => handleSaveTicketBulk(25);
+  const handleSaveTicket100 = () => handleSaveTicketBulk(100);
+
   return (
     <div className="flex items-center gap-2">
       <button
@@ -64,6 +105,12 @@ export function NewTicketActions() {
           setStatus={setStatus}
           onClose={() => setShowNewTicketModal(false)}
           handleSaveTicket={handleSaveTicket}
+          handleSaveTicket10={handleSaveTicket10}
+          handleSaveTicket25={handleSaveTicket25}
+          handleSaveTicket100={handleSaveTicket100}
+          isRunning={isRunning}
+          bulkIndex={bulkIndex}
+          bulkTotal={bulkTotal}
         />
       )}
     </div>
@@ -81,6 +128,12 @@ export function TicketModal({
   setPriority,
   onClose,
   handleSaveTicket,
+  handleSaveTicket10,
+  handleSaveTicket25,
+  handleSaveTicket100,
+  isRunning,
+  bulkIndex,
+  bulkTotal,
 }: {
   title: string;
   setTitle: (val: string) => void;
@@ -94,6 +147,12 @@ export function TicketModal({
   setStatus: (val: string) => void;
   onClose: () => void;
   handleSaveTicket: () => Promise<void>;
+  handleSaveTicket10: () => Promise<void>;
+  handleSaveTicket25: () => Promise<void>;
+  handleSaveTicket100: () => Promise<void>;
+  isRunning: boolean;
+  bulkIndex: number;
+  bulkTotal: number;
 }) {
   const severityOptions = ["Low", "Medium", "High", "Critical"];
   const priorityOptions = ["P4", "P3", "P2", "P1"];
@@ -233,6 +292,62 @@ export function TicketModal({
               className="inline-flex items-center justify-center rounded-md border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-medium text-slate-200 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700"
             >
               Cancel
+            </button>
+            <button
+              type="button"
+              onClick={async () => {
+                await handleSaveTicket10();
+                onClose();
+              }}
+              className="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-white bg-[#249F73] hover:bg-[#1E8761] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3ECF8E] focus:ring-offset-[#0b1217]"
+              disabled={isRunning}
+            >
+              {isRunning ? (
+                <span className="inline-flex items-center gap-2">
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                  <span>{bulkIndex}/{bulkTotal}</span>
+                </span>
+              ) : (
+                "Save 10"
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={async () => {
+                await handleSaveTicket25();
+                onClose();
+              }}
+              className="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-white bg-[#249F73] hover:bg-[#1E8761] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3ECF8E] focus:ring-offset-[#0b1217]"
+              disabled={isRunning}
+            >
+              {isRunning ? (
+                <span className="inline-flex items-center gap-2">
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                  <span>{bulkIndex}/{bulkTotal}</span>
+                </span>
+              ) : (
+                "Save 25"
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={async () => {
+                await handleSaveTicket100();
+                onClose();
+              }}
+              className="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-white bg-[#249F73] hover:bg-[#1E8761] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3ECF8E] focus:ring-offset-[#0b1217]"
+              disabled={isRunning}
+            >
+              {isRunning ? (
+                <span className="inline-flex items-center gap-2">
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                  <span>{bulkIndex}/{bulkTotal}</span>
+                </span>
+              ) : (
+                "Save 100"
+              )}
             </button>
             <button
               type="submit"

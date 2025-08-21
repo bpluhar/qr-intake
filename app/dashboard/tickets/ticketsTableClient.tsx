@@ -91,7 +91,26 @@ export default function TicketsTableClient() {
           </div>
 
           <div className="mt-4 overflow-x-auto md:overflow-visible rounded-md border border-slate-800">
-            {Array.isArray(docs) && rows.length === 0 ? (
+            {docs == null ? (
+              <table className="w-full text-sm">
+                <thead className="bg-slate-900/60 text-slate-400">
+                  <tr>
+                    <Th>ID</Th>
+                    <Th>Title</Th>
+                    <Th className="hidden md:table-cell">Customer</Th>
+                    <Th className="hidden md:table-cell">Severity</Th>
+                    <Th className="hidden md:table-cell">Assignees</Th>
+                    <Th className="hidden md:table-cell">Created</Th>
+                    <Th>Status</Th>
+                    <Th>Priority</Th>
+                    <Th className="text-right">Actions</Th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800">
+                  {ticketsTableSkeleton()}
+                </tbody>
+              </table>
+            ) : Array.isArray(docs) && rows.length === 0 ? (
               <div className="w-full rounded-md border border-dashed border-slate-700/70 bg-slate-900/30 p-6 grid place-content-center">
                 <div className="flex flex-col items-center gap-3">
                   <p className="text-sm text-slate-400">No tickets yet</p>
@@ -254,4 +273,36 @@ function initials(name: string) {
   const first = parts[0]?.[0] ?? "";
   const last = parts[1]?.[0] ?? "";
   return (first + last).toUpperCase();
+}
+
+function ticketsTableSkeleton() {
+  return (
+    <>
+      {Array.from({ length: 6 }).map((_, i) => (
+        <tr key={`skeleton-${i}`} className="hover:bg-slate-900/30">
+          <td className="px-3 py-2">
+            <div className="h-4 w-70 rounded bg-emerald-400/40 animate-pulse" />
+          </td>
+          <td className="px-3 py-2">
+            <div className="h-4 w-15 rounded bg-emerald-400/40 animate-pulse" />
+          </td>
+          <td className="px-3 py-2">
+            <div className="h-4 w-12 rounded bg-emerald-400/40 animate-pulse" />
+          </td>
+          <td className="px-3 py-2">
+            <div className="h-4 w-16 rounded bg-emerald-400/40 animate-pulse" />
+          </td>
+          <td className="px-3 py-2">
+            <div className="h-4 w-10 rounded bg-emerald-400/40 animate-pulse" />
+          </td>
+          <td className="px-3 py-2">
+            <div className="h-4 w-24 rounded bg-emerald-400/40 animate-pulse" />
+          </td>
+          <td className="px-3 py-2 text-right">
+            <div className="ml-auto h-6 w-16 rounded bg-emerald-400/40 animate-pulse" />
+          </td>
+        </tr>
+      ))}
+    </>
+  );
 }

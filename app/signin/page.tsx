@@ -8,8 +8,6 @@ import { useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
-type Flow = "signIn" | "signUp";
-
 export default function SignIn() {
   const { signIn } = useAuthActions();
   const [lastAction, setLastAction] = useState<"signIn" | "signUp">("signIn");
@@ -77,7 +75,7 @@ export default function SignIn() {
                 await signIn("password", formData);
               } catch (err) {
                 const code = extractAuthErrorCode(err);
-                const raw = (err as any)?.message ?? String(err);
+                const raw = (err as Error)?.message ?? String(err);
                 setError(code === "unknown" ? raw : (ERROR_TEXT[code] ?? raw));
               } finally {
                 setPending(false);
@@ -143,7 +141,7 @@ export default function SignIn() {
                       await signIn("password", formData);
                     } catch (err) {
                       const code = extractAuthErrorCode(err);
-                      const raw = (err as any)?.message ?? String(err);
+                      const raw = (err as Error)?.message ?? String(err);
                       setError(code === "unknown" ? raw : (ERROR_TEXT[code] ?? raw));
                     } finally {
                       setPending(false);
@@ -174,7 +172,7 @@ export default function SignIn() {
 }
 
 function extractAuthErrorCode(err: unknown) {
-  const msg = (err as any)?.message ?? String(err);
+  const msg = (err as Error)?.message ?? String(err);
   if (/InvalidSecret/i.test(msg)) return "invalid_password";
   if (/CredentialsSignin/i.test(msg)) return "invalid_credentials";
   if (/already exists/i.test(msg)) return "account_exists";
