@@ -27,6 +27,10 @@ export const metadata: Metadata = {
   },
   title: "Triager - Automated Patient Intake",
   description: "Automated patient intake for healthcare teams and practices.",
+  keywords: ['Healthcare', 'SaaS', 'AI', 'Patient Intake', 'Triage', 'QR Code Patient Intake', 'Healthcare Automation', 'Healthcare Software', 'Healthcare Technology', 'Healthcare Solutions', 'Healthcare Services', 'Healthcare Products', 'Healthcare Equipment', 'Healthcare Supplies', 'Healthcare Services', 'Healthcare Products', 'Healthcare Equipment', 'Healthcare Supplies'],
+  authors: [{ name: 'Brian Pluhar', url: 'https://brianpluhar.com' }],
+  creator: 'Brian Pluhar',
+  publisher: 'Brian Pluhar',
 };
 
 export const viewport: Viewport = {
