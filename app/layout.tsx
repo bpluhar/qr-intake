@@ -2,11 +2,14 @@ import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
 
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
-import { Commissioner } from "next/font/google";
+import { Noto_Sans } from "next/font/google";
 import "./globals.css";
 import { ConvexClientProvider } from "./ConvexClientProvider";
 
-const font = Commissioner({ subsets: ["latin"] });
+const font = Noto_Sans({
+  variable: "--font-noto-sans",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   openGraph: {
