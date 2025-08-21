@@ -16,6 +16,7 @@ export function NewTicketActions() {
   const [bulkIndex, setBulkIndex] = useState(0);
 
   const createTicket = useMutation(api.functions.tickets.createTicket);
+  const bulkCreateTickets = useMutation(api.functions.tickets.bulkCreateTickets);
   // Options used for randomization in bulk creation
   const severityOptionsAll = ["Low", "Medium", "High", "Critical"] as const;
   const priorityOptionsAll = ["P4", "P3", "P2", "P1"] as const;
@@ -51,18 +52,20 @@ export function NewTicketActions() {
     setBulkTotal(count);
     setBulkIndex(0);
     try {
+      const tickets: { title: string; description?: string; priority: string; severity: string; status: string }[] = [];
       for (let i = 0; i < count; i++) {
         const randomPriority = priorityOptionsAll[Math.floor(Math.random() * priorityOptionsAll.length)];
         const randomSeverity = severityOptionsAll[Math.floor(Math.random() * severityOptionsAll.length)];
-        setBulkIndex(i + 1);
-        await createTicket({
+        tickets.push({
           title: `${title} ${i + 1}`,
           description,
-          priority: (randomPriority as string) || "P1",
-          severity: (randomSeverity as string) || "Low",
+          priority: randomPriority as string,
+          severity: randomSeverity as string,
           status: status || "Open",
         });
+        setBulkIndex(i + 1);
       }
+      await bulkCreateTickets({ tickets });
       setShowNewTicketModal(false);
       setTitle("");
       setDescription("");

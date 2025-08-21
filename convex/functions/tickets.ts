@@ -50,9 +50,9 @@ export const createTicket = mutation({
   args: {
     title: v.string(),
     description: v.optional(v.string()),
-    priority: v.optional(v.string()),
-    severity: v.optional(v.string()),
-    status: v.optional(v.string()),
+    priority: v.string(),
+    severity: v.string(),
+    status: v.string(),
   },
   handler: async (ctx, { title, description, priority, severity, status }) => {
     const userId = await getAuthUserId(ctx);
@@ -62,19 +62,63 @@ export const createTicket = mutation({
       .query("profiles")
       .withIndex("by_userId", (q) => q.eq("userId", userId))
       .unique();
+      
     if (!profile) throw new Error("Profile not found");
 
     const ticketId = await ctx.db.insert("tickets", {
       userId: userId, // or your own sequence logic
       organizationId: profile.organizationId,
       assignees: [userId], // string[] per schema, so cast if needed
-      priority: priority ?? "P4",
-      severity: severity ?? "Low",
-      status: status ?? "Open",
+      priority: priority,
+      severity: severity,
+      status: status,
       title,
       description: description ?? "",
     });
 
     return ticketId;
+  },
+});
+
+export const bulkCreateTickets = mutation({
+  args: {
+    tickets: v.array(
+      v.object({
+        title: v.string(),
+        description: v.optional(v.string()),
+        priority: v.string(),
+        severity: v.string(),
+        status: v.string(),
+      }),
+    ),
+  },
+  handler: async (ctx, { tickets }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("User not authenticated");
+
+    const profile = await ctx.db
+      .query("profiles")
+      .withIndex("by_userId", (q) => q.eq("userId", userId))
+      .unique();
+    if (!profile) throw new Error("Profile not found");
+
+    const organizationId = profile.organizationId;
+    const inserted: string[] = [];
+
+    for (const t of tickets) {
+      const ticketId = await ctx.db.insert("tickets", {
+        userId,
+        organizationId,
+        assignees: [userId],
+        priority: t.priority,
+        severity: t.severity,
+        status: t.status,
+        title: t.title,
+        description: t.description ?? "",
+      });
+      inserted.push(ticketId);
+    }
+
+    return { inserted } as const;
   },
 });
