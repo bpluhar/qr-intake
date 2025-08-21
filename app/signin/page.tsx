@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useState } from "react";
@@ -12,11 +12,12 @@ type Flow = "signIn" | "signUp";
 
 export default function SignIn() {
   const { signIn } = useAuthActions();
-  const [step, setStep] = useState<Flow>("signIn");
+  const [lastAction, setLastAction] = useState<"signIn" | "signUp">("signIn");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const signedIn = useQuery(api.functions.users.isSignedIn);
+  const formRef = useRef<HTMLFormElement | null>(null);
 
   // Redirect automatically once auth state flips true
   useEffect(() => {
@@ -56,22 +57,20 @@ export default function SignIn() {
                 />
               </svg>
             </div>
-            <h1 className="text-xl font-semibold">
-              {step === "signIn" ? "Welcome back" : "Create your account"}
-            </h1>
-            <p className="mt-1 text-sm text-slate-400">
-              {step === "signIn"
-                ? "Sign in with your email and password"
-                : "Sign up with your email and a password"}
-            </p>
+            <h1 className="text-xl font-semibold">Welcome</h1>
+            <p className="mt-1 text-sm text-slate-400">Sign in or create an account</p>
           </div>
 
           {/* Form */}
           <form
             className="px-8 pb-8 pt-2 space-y-4"
+            ref={formRef}
             onSubmit={async (event) => {
               event.preventDefault();
-              const formData = new FormData(event.currentTarget);
+              if (!formRef.current) return;
+              const formData = new FormData(formRef.current);
+              formData.set("flow", "signIn");
+              setLastAction("signIn");
               setPending(true);
               setError(null);
               try {
@@ -85,7 +84,6 @@ export default function SignIn() {
               }
             }}
           >
-            <input name="flow" type="hidden" value={step} />
 
             <div className="space-y-1.5">
               <label htmlFor="email" className="text-sm text-slate-300">
@@ -111,9 +109,7 @@ export default function SignIn() {
                 id="password"
                 name="password"
                 type="password"
-                autoComplete={step === "signIn"
-                  ? "current-password"
-                  : "new-password"}
+                autoComplete="current-password"
                 required
                 className="block w-full rounded-md bg-slate-800/60 border border-slate-700 px-3 py-2 text-slate-100 placeholder:text-slate-500
                            focus:outline-none focus:ring-2 focus:ring-[#3ECF8E] focus:border-transparent"
@@ -122,30 +118,44 @@ export default function SignIn() {
             </div>
 
             <div className="pt-2 space-y-3">
-              <button
-                type="submit"
-                disabled={pending}
-                className="inline-flex w-full items-center justify-center rounded-md px-4 py-2.5 text-sm font-medium text-white
-                           bg-[#249F73] hover:bg-[#1E8761] disabled:opacity-70 disabled:cursor-not-allowed
-                           focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3ECF8E] focus:ring-offset-[#0b1217]"
-              >
-                {pending
-                  ? step === "signIn" ? "Signing in..." : "Creating account..."
-                  : step === "signIn"
-                  ? "Sign in"
-                  : "Sign up"}
-              </button>
-
-              <button
-                type="button"
-                onClick={() =>
-                  setStep((s) => (s === "signIn" ? "signUp" : "signIn"))}
-                className="inline-flex w-full items-center justify-center rounded-md px-4 py-2.5 text-sm font-medium
-                           text-slate-200 bg-slate-800/70 hover:bg-slate-800 border border-slate-700
-                           focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-700 focus:ring-offset-[#0b1217]"
-              >
-                {step === "signIn" ? "Sign up instead" : "Sign in instead"}
-              </button>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="submit"
+                  disabled={pending}
+                  onClick={() => setLastAction("signIn")}
+                  className="inline-flex items-center justify-center rounded-md px-4 py-2.5 text-sm font-medium text-white
+                             bg-[#249F73] hover:bg-[#1E8761] disabled:opacity-70 disabled:cursor-not-allowed
+                             focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3ECF8E] focus:ring-offset-[#0b1217]"
+                >
+                  {pending && lastAction === "signIn" ? "Signing in..." : "Sign in"}
+                </button>
+                <button
+                  type="button"
+                  disabled={pending}
+                  onClick={async () => {
+                    if (!formRef.current) return;
+                    const formData = new FormData(formRef.current);
+                    formData.set("flow", "signUp");
+                    setLastAction("signUp");
+                    setPending(true);
+                    setError(null);
+                    try {
+                      await signIn("password", formData);
+                    } catch (err) {
+                      const code = extractAuthErrorCode(err);
+                      const raw = (err as any)?.message ?? String(err);
+                      setError(code === "unknown" ? raw : (ERROR_TEXT[code] ?? raw));
+                    } finally {
+                      setPending(false);
+                    }
+                  }}
+                  className="inline-flex items-center justify-center rounded-md px-4 py-2.5 text-sm font-medium
+                             text-slate-200 bg-slate-800/70 hover:bg-slate-800 border border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed
+                             focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-700 focus:ring-offset-[#0b1217]"
+                >
+                  {pending && lastAction === "signUp" ? "Creating account..." : "Sign up"}
+                </button>
+              </div>
             </div>
             {error && (
               <p className="text-xs text-red-400" role="alert">{error}</p>
@@ -176,7 +186,7 @@ function extractAuthErrorCode(err: unknown) {
 const ERROR_TEXT: Record<string, string> = {
   invalid_password: "Incorrect password. Please try again.",
   invalid_credentials: "Invalid email or password.",
-  account_exists: "An account with this email already exists. Please sign in instead.",
+  account_exists: "An account with this email already exists. Please sign in instead or double check your password.",
   orphan_account: "Error in account settings. Please contact support.",
   user_not_found: "No account found for that email.",
   unknown: "Something went wrong. Please try again.",
