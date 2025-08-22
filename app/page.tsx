@@ -15,18 +15,15 @@ export default function HomePage() {
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:pt-16 lg:pb-0 flex flex-col items-center text-center">
           <div className="max-w-3xl">
-            <p className="text-sm text-slate-400">
-              Smart support, faster teams
-            </p>
 
-            <h1 className="mt-3 text-4xl font-bold leading-tight text-slate-100 sm:text-5xl lg:text-6xl">
-              Triage, track, and resolve&nbsp;
-              <span className="relative inline-block">
-                <span className="absolute inset-0 -z-10 opacity-30 blur-lg bg-[#3ECF8E]" />
-                issues
-              </span>{" "}
-              without the busywork.
-            </h1>
+          <h1 className="mt-3 text-4xl font-bold leading-tight text-slate-100 sm:text-5xl lg:text-6xl mb-2">
+            Triage, track, and resolve&nbsp;
+            <span className="relative inline-block text-[#3ECF8E]">
+              <span className="absolute inset-0 -z-10 opacity-30 blur-lg bg-[#3ECF8E]" />
+              issues
+            </span>{" "}
+            without the busywork.
+          </h1>
 
             <p className="mt-5 max-w-2xl mx-auto text-base text-slate-400">
               Triager is a developer-first dashboard for tickets, customers, and
@@ -79,7 +76,7 @@ export default function HomePage() {
               alt="Product Preview"
               width={1920}
               height={1163}
-              quality={20}
+              quality={70}
               className="max-w-[100%] mx-auto h-auto"
             />
             {
