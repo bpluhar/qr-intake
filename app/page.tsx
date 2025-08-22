@@ -79,6 +79,7 @@ export default function HomePage() {
               alt="Product Preview"
               width={1920}
               height={1163}
+              quality={20}
               className="max-w-[100%] mx-auto h-auto"
             />
             {
