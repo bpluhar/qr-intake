@@ -87,51 +87,9 @@ export const createTicket = mutation({
       status: status,
       title,
       description: description ?? "",
+      friendlyId: organization.ticketCount + 1,
     });
 
     return ticketId;
-  },
-});
-
-export const bulkCreateTickets = mutation({
-  args: {
-    tickets: v.array(
-      v.object({
-        title: v.string(),
-        description: v.optional(v.string()),
-        priority: v.string(),
-        severity: v.string(),
-        status: v.string(),
-      }),
-    ),
-  },
-  handler: async (ctx, { tickets }) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Unauthorized");
-
-    const profile = await ctx.db
-      .query("profiles")
-      .withIndex("by_userId", (q) => q.eq("userId", userId))
-      .unique();
-    if (!profile) throw new Error("Profile not found");
-
-    const organizationId = profile.organizationId;
-    const inserted: string[] = [];
-
-    for (const t of tickets) {
-      const ticketId = await ctx.db.insert("tickets", {
-        userId,
-        organizationId,
-        assignees: [userId],
-        priority: t.priority,
-        severity: t.severity,
-        status: t.status,
-        title: t.title,
-        description: t.description ?? "",
-      });
-      inserted.push(ticketId);
-    }
-
-    return { inserted } as const;
   },
 });

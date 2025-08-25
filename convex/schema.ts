@@ -89,6 +89,7 @@ const schema = defineSchema({
     severity: v.string(),
     status: v.string(),
     title: v.string(),
+    friendlyId: v.number(),
   })
     .index("by_userId", ["userId"])
     .index("by_organization", ["organizationId"])
