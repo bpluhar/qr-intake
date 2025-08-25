@@ -72,7 +72,7 @@ export default function HomePage() {
           {/* Right-side illustration / preview moved below CTAs */}
           <div className="mt-2">
             <Image
-              src="/og.png"
+              src="/og.webp"
               alt="Product Preview"
               width={1920}
               height={1163}
