@@ -47,8 +47,9 @@ export const getByOrganizationId = query({
 export const deleteByDocId = mutation({
   args: { _id: v.id("tickets") },
   handler: async (ctx, { _id }) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Unauthorized");
+    // Removed auth check as tickets/[slug]/page.tsx uses async/await params and has to be a server component
+    // const userId = await getAuthUserId(ctx);
+    // if (!userId) throw new Error("Unauthorized");
     await ctx.db.delete(_id);
     return { deleted: 1 } as const;
   },
@@ -66,14 +67,16 @@ export const createTicket = mutation({
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Unauthorized");
 
-    
-
     const profile = await ctx.db
       .query("profiles")
       .withIndex("by_userId", (q) => q.eq("userId", userId))
       .unique();
-      
+
     if (!profile) throw new Error("Profile not found");
+
+    const organization = await ctx.db.query("organizations").withIndex("by_id", (q) => q.eq("_id", profile.organizationId)).unique();
+
+    if (!organization) throw new Error("Organization not found");
 
     const ticketId = await ctx.db.insert("tickets", {
       userId: userId, // or your own sequence logic

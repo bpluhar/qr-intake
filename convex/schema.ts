@@ -8,6 +8,8 @@ const schema = defineSchema({
   organizations: defineTable({
     name: v.string(),
     createdBy: v.id("users"),
+    ticketCount: v.number(),
+
   })
     .index("by_creator", ["createdBy"])
     .index("by_name", ["name"]),
