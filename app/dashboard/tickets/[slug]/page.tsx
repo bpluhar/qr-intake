@@ -35,6 +35,7 @@ export default async function Page(
     _id: d._id,
     _creationTime: d._creationTime,
     userId: d.userId,
+    friendlyId: d.friendlyId,
     customerId: d.customerId,
     organizationId: d.organizationId,
     title: d.title,
