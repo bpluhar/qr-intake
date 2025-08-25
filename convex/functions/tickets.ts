@@ -50,6 +50,13 @@ export const deleteByDocId = mutation({
     // Removed auth check as tickets/[slug]/page.tsx uses async/await params and has to be a server component
     // const userId = await getAuthUserId(ctx);
     // if (!userId) throw new Error("Unauthorized");
+    const ticket = await ctx.db.get(_id);
+    if (!ticket) throw new Error("Ticket not found");
+    const organization = await ctx.db.get(ticket.organizationId);
+    if (!organization) throw new Error("Organization not found");
+    await ctx.db.patch(organization._id, {
+      ticketCount: organization.ticketCount - 1,
+    });
     await ctx.db.delete(_id);
     return { deleted: 1 } as const;
   },
@@ -88,6 +95,10 @@ export const createTicket = mutation({
       title,
       description: description ?? "",
       friendlyId: organization.ticketCount + 1,
+    });
+
+    await ctx.db.patch(organization._id, {
+      ticketCount: organization.ticketCount + 1,
     });
 
     return ticketId;
