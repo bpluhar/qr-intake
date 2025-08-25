@@ -4,8 +4,11 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 
 export const getIntakeFormById = query({
   args: { id: v.id("intakeForms") },
-  handler: async ({ db }, { id }) => {
-    const intakeForm = await db.query("intakeForms").withIndex(
+  handler: async (ctx, { id }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+    
+    const intakeForm = await ctx.db.query("intakeForms").withIndex(
       "by_id",
       (q) => q.eq("_id", id),
     ).unique();
@@ -15,8 +18,11 @@ export const getIntakeFormById = query({
 
 export const getIntakeFormByOrgId = query({
   args: { organizationId: v.id("organizations") },
-  handler: async ({ db }, { organizationId }) => {
-    const intakeForms = await db
+  handler: async (ctx, { organizationId }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+    
+    const intakeForms = await ctx.db
       .query("intakeForms")
       .withIndex(
         "by_organization",
@@ -75,13 +81,16 @@ export const createIntakeForm = mutation({
 
 export const updateViewCount = mutation({
   args: { id: v.id("intakeForms") },
-  handler: async ({ db }, { id }) => {
-    const intakeForm = await db.get(id);
+  handler: async (ctx, { id }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
+    const intakeForm = await ctx.db.get(id);
     if (!intakeForm) {
       return null;
     }
-    await db.patch(id, { views: (intakeForm.views ?? 0) + 1 });
-    const updated = await db.get(id);
+    await ctx.db.patch(id, { views: (intakeForm.views ?? 0) + 1 });
+    const updated = await ctx.db.get(id);
     return updated;
   },
 });
