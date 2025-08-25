@@ -1,7 +1,6 @@
 // app/dashboard/tickets/[slug]/page.tsx
 // Ticket detail page — mirrors the customer detail layout
 import "server-only";
-import { unstable_cache } from "next/cache";
 import { fetchQuery } from "convex/nextjs";
 import { api } from "@/convex/_generated/api";
 import React from "react";
@@ -27,36 +26,23 @@ export default async function Page(
   const _id = param.slug as Id<"tickets">;
   if (!_id) notFound();
 
-  // Fetch a single ticket from Convex (cached)
-  const getTicketCached = (ticketId: Id<"tickets">) =>
-    unstable_cache(
-      async () => {
-        const d: Doc<"tickets"> | null = await fetchQuery(
-          api.functions.tickets.getByDocId,
-          { _id: ticketId },
-        );
-        if (!d) return undefined;
-        const row: TicketRow = {
-          _id: d._id,
-          _creationTime: d._creationTime,
-          userId: d.userId,
-          customerId: d.customerId,
-          organizationId: d.organizationId,
-          title: d.title,
-          severity: d.severity as TicketRow["severity"],
-          priority: d.priority as TicketRow["priority"],
-          status: d.status as TicketRow["status"],
-          assignees: d.assignees,
-        };
-        return row;
-      },
-      ["ticket:detail", String(ticketId)],
-      { revalidate: 60, tags: ["tickets", `ticket:${ticketId}`] },
-    )();
-
-  const ticket = await getTicketCached(_id);
-
-  if (!ticket) notFound();
+  const d: Doc<"tickets"> | null = await fetchQuery(
+    api.functions.tickets.getByDocId,
+    { _id },
+  );
+  if (!d) notFound();
+  const ticket: TicketRow = {
+    _id: d._id,
+    _creationTime: d._creationTime,
+    userId: d.userId,
+    customerId: d.customerId,
+    organizationId: d.organizationId,
+    title: d.title,
+    severity: d.severity as TicketRow["severity"],
+    priority: d.priority as TicketRow["priority"],
+    status: d.status as TicketRow["status"],
+    assignees: d.assignees,
+  };
 
   const kpis = [
     { label: "Status", value: ticket.status },

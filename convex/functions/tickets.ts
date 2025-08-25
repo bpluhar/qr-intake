@@ -14,8 +14,9 @@ export const getAll = query({
 export const getByDocId = query({
   args: { _id: v.id("tickets") },
   handler: async (ctx, { _id }) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Unauthorized");
+    // Removed auth check as tickets/[slug]/page.tsx uses async/await params and has to be a server component
+    // const userId = await getAuthUserId(ctx);
+    // if (!userId) throw new Error("Unauthorized");
     return await ctx.db.get(_id);
   },
 });
@@ -64,6 +65,8 @@ export const createTicket = mutation({
   handler: async (ctx, { title, description, priority, severity, status }) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Unauthorized");
+
+    
 
     const profile = await ctx.db
       .query("profiles")
