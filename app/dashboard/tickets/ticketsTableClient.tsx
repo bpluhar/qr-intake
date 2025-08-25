@@ -41,6 +41,7 @@ export default function TicketsTableClient() {
     _id: d._id,
     _creationTime: d._creationTime,
     userId: d.userId,
+    friendlyId: d.friendlyId,
     customerId: d.customerId,
     organizationId: d.organizationId,
     title: d.title,
@@ -147,7 +148,7 @@ export default function TicketsTableClient() {
                 {rows?.map((r: TicketRow) => (
                   <tr key={r._id} className="hover:bg-slate-900/30">
                     <td className="px-3 py-2 text-sm font-medium text-slate-200 whitespace-nowrap">
-                      #{r._id}
+                      #000{r.friendlyId}
                     </td>
                     <td className="px-3 py-2 text-sm max-w-[14rem] md:max-w-[28rem] truncate text-slate-200">
                       {r.title}

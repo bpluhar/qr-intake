@@ -4,6 +4,7 @@ export type TicketRow = {
   _id: Id<"tickets">;
   _creationTime: number;
   userId: Id<"users">; // Auth user that created the ticket
+  friendlyId: number;
   customerId?: Id<"customers">; // Customer associated with the ticket
   title: string;
   description?: string; // Optional description field
