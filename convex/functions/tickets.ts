@@ -5,6 +5,8 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 export const getAll = query({
   args: {},
   handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
     return await ctx.db.query("tickets").collect();
   },
 });
@@ -12,6 +14,8 @@ export const getAll = query({
 export const getByDocId = query({
   args: { _id: v.id("tickets") },
   handler: async (ctx, { _id }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
     return await ctx.db.get(_id);
   },
 });
@@ -20,7 +24,8 @@ export const getByOrganizationId = query({
   args: {},
   handler: async (ctx) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("User not authenticated");
+    if (!userId) throw new Error("Unauthorized");
+    
     const profile = await ctx.db
       .query("profiles")
       .withIndex("by_userId", (q) => q.eq("userId", userId))
@@ -41,6 +46,8 @@ export const getByOrganizationId = query({
 export const deleteByDocId = mutation({
   args: { _id: v.id("tickets") },
   handler: async (ctx, { _id }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
     await ctx.db.delete(_id);
     return { deleted: 1 } as const;
   },
@@ -56,7 +63,7 @@ export const createTicket = mutation({
   },
   handler: async (ctx, { title, description, priority, severity, status }) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("User not authenticated");
+    if (!userId) throw new Error("Unauthorized");
 
     const profile = await ctx.db
       .query("profiles")
@@ -94,7 +101,7 @@ export const bulkCreateTickets = mutation({
   },
   handler: async (ctx, { tickets }) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("User not authenticated");
+    if (!userId) throw new Error("Unauthorized");
 
     const profile = await ctx.db
       .query("profiles")
