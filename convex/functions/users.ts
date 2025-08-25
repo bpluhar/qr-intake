@@ -1,5 +1,6 @@
 import { query } from "../_generated/server";
 import type { Id } from "../_generated/dataModel";
+import { getAuthUserId } from "@convex-dev/auth/server";
 // import type { Doc } from "../_generated/dataModel";
 
 export const getCurrent = query({
@@ -61,8 +62,9 @@ export const getCurrent = query({
 export const isSignedIn = query({
   args: {},
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    return identity !== null;
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return false;
+    return true;
   },
 });
 

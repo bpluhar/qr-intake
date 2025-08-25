@@ -20,6 +20,7 @@ export default function SignIn() {
   // Redirect automatically once auth state flips true
   useEffect(() => {
     if (signedIn) {
+      console.log("signedIn", signedIn);
       router.replace("/dashboard");
     }
   }, [signedIn, router]);
