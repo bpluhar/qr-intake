@@ -79,7 +79,9 @@ export const createProfile = mutation({
     lastName: v.optional(v.string()),
   },
   handler: async (ctx, args): Promise<Id<"profiles">> => {
-    // Reuse existing profile if present
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+    
     const existing = await ctx.db
       .query("profiles")
       .withIndex("by_userId", (q) => q.eq("userId", args.userId))
@@ -135,6 +137,9 @@ export const updateProfileById = mutation({
     organizationId: v.optional(v.id("organizations")),
   },
   handler: async (ctx, args): Promise<Doc<"profiles"> | null> => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
     const current = await ctx.db.get(args.profileId);
     if (!current) return null;
 
@@ -157,6 +162,8 @@ export const updateProfileById = mutation({
 
 export const generateProfilePictureUploadUrl = mutation({
   handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
     return await ctx.storage.generateUploadUrl();
   },
 });
@@ -168,7 +175,7 @@ export const saveProfilePicture = mutation({
   },
   handler: async (ctx, args): Promise<Doc<"profiles">> => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("User not authenticated");
+    if (!userId) throw new Error("Unauthorized");
 
     const profile = await ctx.db.get(args.profileId);
     if (!profile) throw new Error("Profile not found");
@@ -192,6 +199,9 @@ export const getProfilePictureUrl = query({
     profileId: v.id("profiles"),
   },
   handler: async (ctx, args): Promise<string | null> => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+    
     const profile = await ctx.db.get(args.profileId);
     return profile?.profilePicture
       ? await ctx.storage.getUrl(profile.profilePicture)
