@@ -1,10 +1,13 @@
 import { mutation, query } from "../_generated/server";
 import type { Doc } from "../_generated/dataModel";
 import { v } from "convex/values";
+import { getAuthUserId } from "@convex-dev/auth/server";
 
 export const getUserSettingsByUserId = query({
   args: { userId: v.id("users") },
   handler: async (ctx, { userId }): Promise<Doc<"userSettings"> | null> => {
+    const authUserId = await getAuthUserId(ctx);
+    if (!authUserId) throw new Error("Unauthorized");
     const settings = await ctx.db
       .query("userSettings")
       .withIndex("by_userId", (q) => q.eq("userId", userId))
@@ -16,6 +19,8 @@ export const getUserSettingsByUserId = query({
 export const dismissWhatsNew = mutation({
   args: { id: v.id("userSettings") },
   handler: async (ctx, { id }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
     await ctx.db.patch(id, {
       whatsNewDismissed: true,
     });
@@ -25,6 +30,8 @@ export const dismissWhatsNew = mutation({
 export const getWhatsNew = query({
   args: {},
   handler: async (ctx) => {
+    const authUserId = await getAuthUserId(ctx);
+    if (!authUserId) throw new Error("Unauthorized");
     const whatsNew = await ctx.db.query("whatsNew").collect();
     return whatsNew;
   },
@@ -40,6 +47,8 @@ export const createUserSettings = mutation({
     welcomeDismissed: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
     const existingSettings = await ctx.db
       .query("userSettings")
       .withIndex("by_userId", (q) => q.eq("userId", args.userId))
