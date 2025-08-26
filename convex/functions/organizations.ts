@@ -32,7 +32,7 @@ export const createOrganization = mutation({
     const org = await ctx.db.insert("organizations", {
       name: args.name,
       createdBy: userId,
-      ticketCount: 0,
+      nextTicketId: 1,
     });
 
     return org; // Doc<"organizations">
