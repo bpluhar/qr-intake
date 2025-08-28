@@ -223,7 +223,7 @@ type Props = {
   resolutionScale?: number;
 };
 
-export function DarkVeil({
+function DarkVeil({
   hueShift = 0,
   noiseIntensity = 0,
   scanlineIntensity = 0,
