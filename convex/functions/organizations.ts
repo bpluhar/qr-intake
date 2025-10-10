@@ -3,7 +3,7 @@ import { mutation, query } from "../_generated/server";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
-export const getMyOrganization = query({
+export const getMyCreatedOrganization = query({
   args: {},
   handler: async (ctx) => {
     const userId = await getAuthUserId(ctx);
