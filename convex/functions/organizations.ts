@@ -34,8 +34,18 @@ export const createOrganization = mutation({
       createdBy: userId,
       nextTicketId: 1,
     });
+    
+    const orgSettings = await ctx.db.insert("organizationSettings", {
+      organizationId: org,
+      timezone: "America/New_York",
+      theme: "dark",
+      emailNotifications: true,
+      logo: undefined,
+      defaultIntakeTitle: `${args.name} Intake Form`,
+      defaultIntakeDescription: "Please fill out the following information to help us better serve you. If you have any questions please see the associate at the front desk. Thank you!",
+    });
 
-    return org; // Doc<"organizations">
+    return { org, orgSettings }; // Doc<"organizations">
   },
 });
 

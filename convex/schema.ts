@@ -48,6 +48,9 @@ const schema = defineSchema({
     timezone: v.optional(v.string()),
     theme: v.optional(v.string()),
     emailNotifications: v.optional(v.boolean()),
+    logo: v.optional(v.id("_storage")),
+    defaultIntakeTitle: v.string(),
+    defaultIntakeDescription: v.string(),
   }).index("by_organization", ["organizationId"]),
 
   companySettings: defineTable({

@@ -177,7 +177,7 @@ export default function DashboardClient() {
             // 2. Create profile with userId, organizationId, firstName, lastName
             const newProfile = await createProfile({
               userId: result!.user!._id,
-              organizationId,
+              organizationId: organizationId.org,
               firstName: data.firstName,
               lastName: data.lastName,
             });
