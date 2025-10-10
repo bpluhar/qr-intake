@@ -15,8 +15,14 @@ export default function IntakePage() {
   const [showNewIntakeModal, setShowNewIntakeModal] = useState(false);
   const [qrModalId, setQrModalId] = useState<string | null>(null);
 
-  // Query for organization
-  const org = useQuery(api.functions.organizations.getMyOrganization, {});
+  // Resolve org via profile -> then fetch org doc
+  const profileOrg = useQuery(api.functions.profiles.getProfileOrganization, {});
+  const org = useQuery(
+    api.functions.organizations.getOrganizationById,
+    profileOrg && profileOrg.organizationId ? { organizationId: profileOrg.organizationId } : "skip",
+  );
+
+  
 
   // Wait until org is loaded
   const docs = useQuery(
@@ -176,7 +182,11 @@ function intakeTableSkeleton() {
 function NewIntakeModal({ onClose }: { onClose: () => void }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const org = useQuery(api.functions.organizations.getMyOrganization, {});
+  const profileOrg = useQuery(api.functions.profiles.getProfileOrganization, {});
+  const org = useQuery(
+    api.functions.organizations.getOrganizationById,
+    profileOrg && profileOrg.organizationId ? { organizationId: profileOrg.organizationId } : "skip",
+  );
   const createIntakeForm = useMutation(
     api.functions.intakeForms.createIntakeForm,
   );

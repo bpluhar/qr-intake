@@ -38,3 +38,13 @@ export const createOrganization = mutation({
     return org; // Doc<"organizations">
   },
 });
+
+export const getOrganizationById = query({
+  args: {
+    organizationId: v.id("organizations"),
+  },
+  handler: async (ctx, args) => {
+    const org = await ctx.db.get(args.organizationId);
+    return org; // Doc<"organizations"> | null
+  },
+});
