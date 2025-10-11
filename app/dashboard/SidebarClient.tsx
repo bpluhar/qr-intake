@@ -55,13 +55,9 @@ export default function SidebarClient() {
   useEffect(() => {
     [
       "/dashboard",
-      "/dashboard/reports",
-      "/dashboard/tickets",
       "/dashboard/settings",
       "/dashboard/intake",
-      "/dashboard/companies",
       "/dashboard/organization",
-      "/dashboard/testing",
     ].forEach((p) => {
       router.prefetch(p);
     });
@@ -86,13 +82,13 @@ export default function SidebarClient() {
 
   const nav = [
     { href: "/dashboard", label: "Overview", icon: IconHome },
-    { href: "/dashboard/tickets", label: "Tickets", icon: IconTicket },
+    // { href: "/dashboard/tickets", label: "Tickets", icon: IconTicket },
     { href: "/dashboard/intake", label: "Intake", icon: IconIntake },
-    { href: "/dashboard/companies", label: "Companies", icon: IconTeams },
-    { href: "/dashboard/reports", label: "Reports", icon: IconChart },
+    // { href: "/dashboard/companies", label: "Companies", icon: IconTeams },
+    // { href: "/dashboard/reports", label: "Reports", icon: IconChart },
     { href: "/dashboard/organization", label: "Organization", icon: IconOrganization },
     { href: "/dashboard/settings", label: "Settings", icon: IconSettings },
-    { href: "/dashboard/testing", label: "Testing", icon: IconTesting },
+    // { href: "/dashboard/testing", label: "Testing", icon: IconTesting },
   ];
 
   // Mobile sidebar state
