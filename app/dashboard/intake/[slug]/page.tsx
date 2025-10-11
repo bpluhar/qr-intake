@@ -5,6 +5,7 @@ import { api } from "@/convex/_generated/api";
 import React, { useEffect, useState } from "react";
 import Breadcrumbs from "../../helpers/Breadcrumbs";
 import { Card } from "@/app/components/Card";
+import { Id } from "@/convex/_generated/dataModel";
 
 export default function IntakeEditPage() {
   const params = useParams();
@@ -12,7 +13,7 @@ export default function IntakeEditPage() {
 
   const doc = useQuery(
     api.functions.intakeForms.getIntakeFormById,
-    slug ? { id: slug as any } : "skip",
+    slug ? { id: slug as Id<"intakeForms"> } : "skip",
   );
 
   const updateIntakeForm = useMutation(api.functions.intakeForms.updateIntakeForm);
@@ -33,7 +34,7 @@ export default function IntakeEditPage() {
 
   const handleSave = async () => {
     if (!slug) return;
-    await updateIntakeForm({ id: slug as any, ...(title !== doc?.formLayout?.title ? { title } : {}), ...(description !== doc?.formLayout?.description ? { description } : {}) });
+    await updateIntakeForm({ id: slug as Id<"intakeForms">, ...(title !== doc?.formLayout?.title ? { title } : {}), ...(description !== doc?.formLayout?.description ? { description } : {}) });
     setDirty(false);
   };
 

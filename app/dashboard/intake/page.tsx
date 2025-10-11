@@ -205,7 +205,7 @@ function NewIntakeModal({ onClose }: { onClose: () => void }) {
       if (title === "") setTitle(orgSettings.defaultIntakeTitle ?? "");
       if (description === "") setDescription(orgSettings.defaultIntakeDescription ?? "");
     }
-  }, [orgSettings]);
+  }, [orgSettings, title, description]);
   const createIntakeForm = useMutation(
     api.functions.intakeForms.createIntakeForm,
   );
