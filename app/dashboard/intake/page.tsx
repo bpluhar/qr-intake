@@ -78,7 +78,7 @@ export default function IntakePage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-900/60 text-slate-400">
                   <tr>
-                    <Th>ID</Th>
+                    {/* <Th>ID</Th> */}
                     <Th>Title</Th>
                     <Th>Views</Th>
                     <Th>Completions</Th>
@@ -95,9 +95,9 @@ export default function IntakePage() {
                     : (
                       rows.map((r: Doc<"intakeForms">) => (
                         <tr key={r._id} className="hover:bg-slate-900/30">
-                          <td className="px-3 py-2 text-sm text-slate-200 whitespace-nowrap font-medium">
+                          {/* <td className="px-3 py-2 text-sm text-slate-200 whitespace-nowrap font-medium">
                             #{r._id}
-                          </td>
+                          </td> */}
                           <td className="px-3 py-2 text-sm text-slate-200 max-w-[14rem] md:max-w-[28rem] truncate">
                             {r.formLayout.title}
                           </td>
@@ -132,6 +132,14 @@ export default function IntakePage() {
                               >
                                 <IconQr className="h-4 w-4" />
                               </button>
+                            <Link
+                              href={`/dashboard/intake/${r._id}`}
+                              className="inline-flex items-center justify-center rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 text-slate-300 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                              aria-label="Edit"
+                              title="Edit"
+                            >
+                              <IconEdit className="h-4 w-4" />
+                            </Link>
                             </div>
                           </td>
                         </tr>
@@ -420,6 +428,14 @@ function IconQr(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...props}>
       <path d="M3 3h8v8H3V3zm2 2v4h4V5H5zM3 13h8v8H3v-8zm2 2v4h4v-4H5zM13 3h8v8h-8V3zm2 2v4h4V5h-4zM13 13h2v2h-2v-2zm4 0h4v2h-4v-2zm-4 4h2v4h-2v-4zm4 2h2v2h-2v-2zm4 2h-2v-2h2v2z" />
+    </svg>
+  );
+}
+
+function IconEdit(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...props}>
+      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm18.71-11.04a1.003 1.003 0 0 0 0-1.42l-2.5-2.5a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.99-1.66z" />
     </svg>
   );
 }

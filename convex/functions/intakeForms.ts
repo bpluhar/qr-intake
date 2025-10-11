@@ -8,10 +8,7 @@ export const getIntakeFormById = query({
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Unauthorized");
     
-    const intakeForm = await ctx.db.query("intakeForms").withIndex(
-      "by_id",
-      (q) => q.eq("_id", id),
-    ).unique();
+    const intakeForm = await ctx.db.get(id);
     return intakeForm ?? null;
   },
 });
@@ -92,5 +89,30 @@ export const updateViewCount = mutation({
     await ctx.db.patch(id, { views: (intakeForm.views ?? 0) + 1 });
     const updated = await ctx.db.get(id);
     return updated;
+  },
+});
+
+export const updateIntakeForm = mutation({
+  args: {
+    id: v.id("intakeForms"),
+    title: v.optional(v.string()),
+    description: v.optional(v.string()),
+  },
+  handler: async (ctx, { id, title, description }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
+    const doc = await ctx.db.get(id);
+    if (!doc) return null;
+
+    const currentLayout = doc.formLayout ?? { title: "", description: "", fields: [] };
+    const nextLayout = {
+      ...currentLayout,
+      ...(title !== undefined ? { title } : {}),
+      ...(description !== undefined ? { description } : {}),
+    };
+
+    await ctx.db.patch(id, { formLayout: nextLayout });
+    return await ctx.db.get(id);
   },
 });
