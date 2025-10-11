@@ -187,6 +187,17 @@ function NewIntakeModal({ onClose }: { onClose: () => void }) {
     api.functions.organizations.getOrganizationById,
     profileOrg && profileOrg.organizationId ? { organizationId: profileOrg.organizationId } : "skip",
   );
+  const orgSettings = useQuery(
+    api.functions.organizations.getOrganizationSettingsById,
+    profileOrg && profileOrg.organizationId ? { organizationId: profileOrg.organizationId } : "skip",
+  );
+  
+  useEffect(() => {
+    if (orgSettings) {
+      if (title === "") setTitle(orgSettings.defaultIntakeTitle ?? "");
+      if (description === "") setDescription(orgSettings.defaultIntakeDescription ?? "");
+    }
+  }, [orgSettings]);
   const createIntakeForm = useMutation(
     api.functions.intakeForms.createIntakeForm,
   );
