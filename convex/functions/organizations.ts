@@ -49,6 +49,19 @@ export const createOrganization = mutation({
   },
 });
 
+export const getOrganizationSettingsById = query({
+  args: {
+    organizationId: v.id("organizations"),
+  },
+  handler: async (ctx, args) => {
+    const orgSettings = await ctx.db
+      .query("organizationSettings")
+      .withIndex("by_organization", (q) => q.eq("organizationId", args.organizationId))
+      .first();
+    return orgSettings; // Doc<"organizationSettings"> | null
+  },
+});
+
 export const getOrganizationById = query({
   args: {
     organizationId: v.id("organizations"),
