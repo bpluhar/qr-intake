@@ -7,7 +7,7 @@ const schema = defineSchema({
 
   submissions: defineTable({
     organizationId: v.id("organizations"),
-    userId: v.id("users"),
+    // userId: v.id("users"),
     intakeFormId: v.id("intakeForms"),
     data: v.any(),
     formLayoutSnapshot: v.optional(v.object({
@@ -35,8 +35,8 @@ const schema = defineSchema({
     })),
   })
     .index("by_organization", ["organizationId"]) 
-    .index("by_form", ["intakeFormId"]) 
-    .index("by_user", ["userId"]),
+    .index("by_form", ["intakeFormId"]), 
+    // .index("by_user", ["userId"]),
 
   organizations: defineTable({
     name: v.string(),

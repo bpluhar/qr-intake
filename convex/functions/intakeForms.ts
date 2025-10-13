@@ -7,8 +7,8 @@ const submissionDataValidator = v.any();
 export const getIntakeFormById = query({
   args: { id: v.id("intakeForms") },
   handler: async (ctx, { id }) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Unauthorized");
+    // const userId = await getAuthUserId(ctx);
+    // if (!userId) throw new Error("Unauthorized");
     
     const intakeForm = await ctx.db.get(id);
     return intakeForm ?? null;
@@ -81,8 +81,8 @@ export const createIntakeForm = mutation({
 export const updateViewCount = mutation({
   args: { id: v.id("intakeForms") },
   handler: async (ctx, { id }) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Unauthorized");
+    // const userId = await getAuthUserId(ctx);
+    // if (!userId) throw new Error("Unauthorized");
 
     const intakeForm = await ctx.db.get(id);
     if (!intakeForm) {
@@ -126,8 +126,8 @@ export const submitIntakeForm = mutation({
     data: submissionDataValidator,
   },
   handler: async (ctx, { intakeFormId, organizationId, data }) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Unauthorized");
+    // const userId = await getAuthUserId(ctx);
+    // if (!userId) throw new Error("Unauthorized");
 
     const form = await ctx.db.get(intakeFormId);
     if (!form) throw new Error("Form not found");
@@ -151,7 +151,7 @@ export const submitIntakeForm = mutation({
 
     const submissionId = await ctx.db.insert("submissions", {
       organizationId,
-      userId,
+      // userId,
       intakeFormId,
       data,
       formLayoutSnapshot: form.formLayout,
