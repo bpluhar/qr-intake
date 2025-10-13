@@ -157,6 +157,7 @@ export const submitIntakeForm = mutation({
       data,
       timeTaken,
       uid,
+      status: "Pending",
       formLayoutSnapshot: form.formLayout,
     });
 

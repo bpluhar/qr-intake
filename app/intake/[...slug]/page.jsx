@@ -365,16 +365,52 @@ export default function IntakeFormPage() {
       <div className="min-h-screen bg-[#0b1217] text-slate-200">
         <div className="mx-auto max-w-3xl p-6 pb-6 flex flex-col min-h-screen">
           <h1 className="text-xl font-semibold text-slate-100">
-            {document.formLayout?.title}
+            {document.formLayout?.title} {existingSubmission?.status && (
+          <div className="mt-4 inline-flex items-center gap-2 rounded-md border border-slate-800 bg-slate-900/60 px-3 py-1.5">
+            {existingSubmission.status === "pending" && (
+              <>
+                <span className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-[#249F73] border-t-transparent" />
+                <span className="text-sm text-[#249F73] font-medium">Pending…</span>
+              </>
+            )}
+            {existingSubmission.status === "complete" && (
+              <>
+                <svg className="h-4 w-4 text-[#249F73]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 16.2l-3.5-3.5L4 14.2l5 5 11-11-1.5-1.5z"/></svg>
+                <span className="text-sm text-[#249F73] font-medium">Complete</span>
+              </>
+            )}
+            {existingSubmission.status === "incomplete" && (
+              <>
+                <span className="text-yellow-400">!</span>
+                <span className="text-sm text-yellow-400 font-medium">More Info Requested</span>
+              </>
+            )}
+          </div>
+        )}
           </h1>
           <div className="mt-8 rounded-md border border-slate-800 bg-slate-900/60 p-6">
             <p className="text-slate-200">Your submission has been received.</p>
-            <p className="mt-2 text-sm text-slate-400">This page receives realtime updates, hang tight!</p>
-          </div>
-          <div className="mt-8 rounded-md border border-slate-800 bg-slate-900/60 p-6">
-            <p className="text-slate-200">Name: {existingSubmission.data.firstName} {existingSubmission.data.lastName}</p>
-            <p className="text-slate-200">Email: {existingSubmission.data.email}</p>
-            <p className="text-slate-200">Phone: {existingSubmission.data.phone}</p>
+            <p className="my-2 text-sm text-slate-400">This page receives realtime updates, hang tight!</p>
+          {/* </div>
+          <div className="mt-8 rounded-md border border-slate-800 bg-slate-900/60 p-6 space-y-2"> */}
+            <div>
+              <span className="text-sm font-semibold text-[#249F73] mr-2">Name</span>
+              <span className="text-slate-200 text-sm">
+                {(existingSubmission?.data?.firstName || "").trim()} {(existingSubmission?.data?.lastName || "").trim()}
+              </span>
+            </div>
+            <div>
+              <span className="text-sm font-semibold text-[#249F73] mr-2">Email</span>
+              <span className="text-slate-200 text-sm">{existingSubmission?.data?.email || "—"}</span>
+            </div>
+            <div>
+              <span className="text-sm font-semibold text-[#249F73] mr-2">Phone</span>
+              <span className="text-slate-200 text-sm">{existingSubmission?.data?.phone || "—"}</span>
+            </div>
+            <div>
+              <span className="text-sm font-semibold text-[#249F73] mr-2">Submitted</span>
+              <span className="text-slate-200 text-sm">{new Date(existingSubmission?._creationTime).toLocaleString("en-US")}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -387,6 +423,7 @@ export default function IntakeFormPage() {
         <h1 className="text-xl font-semibold text-slate-100">
           {document.formLayout?.title}
         </h1>
+        
         {document.formLayout?.description && (
           <p className="mt-1 text-sm text-slate-400">
             {document.formLayout.description}

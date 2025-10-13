@@ -12,6 +12,7 @@ const schema = defineSchema({
     data: v.any(),
     timeTaken: v.optional(v.number()),
     uid: v.optional(v.string()),
+    status: v.optional(v.string()),
     formLayoutSnapshot: v.optional(v.object({
       title: v.string(),
       description: v.optional(v.string()),
