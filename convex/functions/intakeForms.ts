@@ -2,6 +2,8 @@ import { mutation, query } from "../_generated/server";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
+const submissionDataValidator = v.any();
+
 export const getIntakeFormById = query({
   args: { id: v.id("intakeForms") },
   handler: async (ctx, { id }) => {
@@ -114,5 +116,65 @@ export const updateIntakeForm = mutation({
 
     await ctx.db.patch(id, { formLayout: nextLayout });
     return await ctx.db.get(id);
+  },
+});
+
+export const submitIntakeForm = mutation({
+  args: {
+    intakeFormId: v.id("intakeForms"),
+    organizationId: v.id("organizations"),
+    data: submissionDataValidator,
+  },
+  handler: async (ctx, { intakeFormId, organizationId, data }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
+    const form = await ctx.db.get(intakeFormId);
+    if (!form) throw new Error("Form not found");
+    if (form.organizationId !== organizationId) throw new Error("Forbidden");
+
+    const fields = form.formLayout?.fields ?? [];
+    const errors: Record<string, string> = {};
+
+    for (const f of fields) {
+      const value = (data as any)?.[f.name];
+      if (f.required) {
+        const missing =
+          value === undefined || value === null || String(value).trim() === "";
+        if (missing) errors[f.name] = "Required";
+      }
+    }
+
+    if (Object.keys(errors).length > 0) {
+      throw new Error("Validation failed");
+    }
+
+    const submissionId = await ctx.db.insert("submissions", {
+      organizationId,
+      userId,
+      intakeFormId,
+      data,
+      formLayoutSnapshot: form.formLayout,
+    });
+
+    await ctx.db.patch(intakeFormId, {
+      completions: (form.completions ?? 0) + 1,
+    });
+
+    return await ctx.db.get(submissionId);
+  },
+});
+
+export const listSubmissionsByForm = query({
+  args: { intakeFormId: v.id("intakeForms") },
+  handler: async (ctx, { intakeFormId }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
+    const submissions = await ctx.db
+      .query("submissions")
+      .withIndex("by_form", (q) => q.eq("intakeFormId", intakeFormId))
+      .collect();
+    return submissions;
   },
 });

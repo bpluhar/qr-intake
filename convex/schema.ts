@@ -5,6 +5,39 @@ import { v } from "convex/values";
 const schema = defineSchema({
   ...authTables,
 
+  submissions: defineTable({
+    organizationId: v.id("organizations"),
+    userId: v.id("users"),
+    intakeFormId: v.id("intakeForms"),
+    data: v.any(),
+    formLayoutSnapshot: v.optional(v.object({
+      title: v.string(),
+      description: v.optional(v.string()),
+      fields: v.optional(
+        v.array(
+          v.object({
+            type: v.string(),
+            name: v.string(),
+            label: v.string(),
+            placeholder: v.optional(v.string()),
+            required: v.optional(v.boolean()),
+            options: v.optional(
+              v.array(
+                v.object({
+                  label: v.string(),
+                  value: v.string(),
+                }),
+              ),
+            ),
+          }),
+        ),
+      ),
+    })),
+  })
+    .index("by_organization", ["organizationId"]) 
+    .index("by_form", ["intakeFormId"]) 
+    .index("by_user", ["userId"]),
+
   organizations: defineTable({
     name: v.string(),
     createdBy: v.id("users"),

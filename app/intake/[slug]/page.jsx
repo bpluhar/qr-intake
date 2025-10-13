@@ -37,6 +37,9 @@ export default function IntakeFormPage() {
     }
   }, [document]);
 
+  // All hooks must be declared before any conditional returns
+  const submit = useMutation(api.functions.intakeForms.submitIntakeForm);
+
   if (!slug) {
     return <div style={{ color: "white", padding: "1rem" }}>Loading…</div>;
   }
@@ -60,11 +63,14 @@ export default function IntakeFormPage() {
   const handleChange = (name, value) => {
     setFormValues((prev) => ({ ...prev, [name]: value }));
   };
-
-  const handleSubmit = (e) => {
+  
+  const onSubmit = async (e) => {
     e.preventDefault();
-    // TODO: submit to backend when ready
-    console.log("Submitted values:", formValues);
+    await submit({
+      intakeFormId: slug,
+      organizationId: document.organizationId,
+      data: formValues,
+    });
   };
 
   const mapType = (t) => {
@@ -253,7 +259,7 @@ export default function IntakeFormPage() {
           </p>
         )}
 
-        <form onSubmit={handleSubmit} className="mt-6 flex-1 flex flex-col">
+        <form onSubmit={onSubmit} className="mt-6 flex-1 flex flex-col">
           <div className="relative overflow-hidden">
             <div
               className="flex transition-transform duration-300 ease-out"
