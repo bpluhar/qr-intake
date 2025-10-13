@@ -10,6 +10,7 @@ const schema = defineSchema({
     // userId: v.id("users"),
     intakeFormId: v.id("intakeForms"),
     data: v.any(),
+    timeTaken: v.optional(v.number()),
     formLayoutSnapshot: v.optional(v.object({
       title: v.string(),
       description: v.optional(v.string()),

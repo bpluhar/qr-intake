@@ -124,8 +124,9 @@ export const submitIntakeForm = mutation({
     intakeFormId: v.id("intakeForms"),
     organizationId: v.id("organizations"),
     data: submissionDataValidator,
+    timeTaken: v.optional(v.number()),
   },
-  handler: async (ctx, { intakeFormId, organizationId, data }) => {
+  handler: async (ctx, { intakeFormId, organizationId, data, timeTaken }) => {
     // const userId = await getAuthUserId(ctx);
     // if (!userId) throw new Error("Unauthorized");
 
@@ -154,6 +155,7 @@ export const submitIntakeForm = mutation({
       // userId,
       intakeFormId,
       data,
+      timeTaken,
       formLayoutSnapshot: form.formLayout,
     });
 
@@ -176,5 +178,45 @@ export const listSubmissionsByForm = query({
       .withIndex("by_form", (q) => q.eq("intakeFormId", intakeFormId))
       .collect();
     return submissions;
+  },
+});
+
+export const getIntakeMetricsByOrg = query({
+  args: { organizationId: v.id("organizations") },
+  handler: async (ctx, { organizationId }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
+    const forms = await ctx.db
+      .query("intakeForms")
+      .withIndex("by_organization", (q) => q.eq("organizationId", organizationId))
+      .collect();
+
+    const formIds = new Set(forms.map((f) => f._id));
+    const totalActiveIntakes = forms.length;
+
+    // submissions for this org
+    const submissions = await ctx.db
+      .query("submissions")
+      .withIndex("by_organization", (q) => q.eq("organizationId", organizationId))
+      .collect();
+
+    // total submissions across org
+    const totalSubmissions = submissions.length;
+
+    const now = Date.now();
+    const weekAgo = now - 7 * 24 * 60 * 60 * 1000;
+    const submissionsThisWeek = submissions.filter((s) => s._creationTime >= weekAgo).length;
+
+    // average completion time in ms, based on timeTaken
+    const times = submissions.map((s) => s.timeTaken).filter((n) => typeof n === "number") as number[];
+    const avgMs = times.length ? Math.round(times.reduce((a, b) => a + b, 0) / times.length) : 0;
+
+    return {
+      totalActiveIntakes,
+      totalSubmissions,
+      avgCompletionMs: avgMs,
+      submissionsThisWeek,
+    };
   },
 });

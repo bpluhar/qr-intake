@@ -26,6 +26,7 @@ export default function IntakeFormPage() {
   const [formValues, setFormValues] = useState({});
   const [step, setStep] = useState(1);
   const [errors, setErrors] = useState({});
+  const [startTs, setStartTs] = useState(0);
 
   useEffect(() => {
     if (document && document.formLayout?.fields) {
@@ -39,6 +40,13 @@ export default function IntakeFormPage() {
 
   // All hooks must be declared before any conditional returns
   const submit = useMutation(api.functions.intakeForms.submitIntakeForm);
+
+  useEffect(() => {
+    // start timing once slug loads (page view)
+    if (slug) {
+      setStartTs(Date.now());
+    }
+  }, [slug]);
 
   if (!slug) {
     return <div style={{ color: "white", padding: "1rem" }}>Loading…</div>;
@@ -66,10 +74,12 @@ export default function IntakeFormPage() {
   
   const onSubmit = async (e) => {
     e.preventDefault();
+    const elapsed = startTs ? Date.now() - startTs : undefined;
     await submit({
       intakeFormId: slug,
       organizationId: document.organizationId,
       data: formValues,
+      timeTaken: elapsed,
     });
   };
 

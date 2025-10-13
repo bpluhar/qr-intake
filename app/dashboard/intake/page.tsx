@@ -32,6 +32,22 @@ export default function IntakePage() {
 
   const rows = (docs ?? []) as Doc<"intakeForms">[];
 
+  const metrics = useQuery(
+    api.functions.intakeForms.getIntakeMetricsByOrg,
+    org ? { organizationId: org._id } : "skip",
+  );
+
+  const formatDuration = (ms: number) => {
+    if (!ms || ms <= 0) return "—";
+    const totalSeconds = Math.floor(ms / 1000);
+    const days = Math.floor(totalSeconds / 86400);
+    const hours = Math.floor((totalSeconds % 86400) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    if (days > 0) return `${days}d ${hours}h`;
+    if (hours > 0) return `${hours}h ${minutes}m`;
+    return `${minutes}m`;
+  };
+
   return (
     <div className="min-h-screen bg-[#0b1217] text-slate-200 flex">
       <main className="flex-1">
@@ -64,10 +80,26 @@ export default function IntakePage() {
             />
           )}
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 mb-6">
-            <StatCard label="Open intakes" value="12" delta="12" />
-            <StatCard label="New this week" value="7" delta="7" />
-            <StatCard label="Avg process" value="3d 5h" delta="3d 5h" />
-            <StatCard label="Completed this month" value="22" delta="22" />
+            <StatCard
+              label="Total Active Intakes"
+              value={metrics ? String(metrics.totalActiveIntakes) : "—"}
+              delta={metrics ? String(metrics.totalActiveIntakes) : "—"}
+            />
+            <StatCard
+              label="Total Submissions"
+              value={metrics ? String(metrics.totalSubmissions) : "—"}
+              delta={metrics ? String(metrics.totalSubmissions) : "—"}
+            />
+            <StatCard
+              label="Avg Completion Time"
+              value={metrics ? formatDuration(metrics.avgCompletionMs) : "—"}
+              delta={metrics ? formatDuration(metrics.avgCompletionMs) : "—"}
+            />
+            <StatCard
+              label="Completed this Week"
+              value={metrics ? String(metrics.submissionsThisWeek) : "—"}
+              delta={metrics ? String(metrics.submissionsThisWeek) : "—"}
+            />
           </div>
           <Card>
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
