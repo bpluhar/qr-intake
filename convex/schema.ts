@@ -80,23 +80,23 @@ const schema = defineSchema({
     })),
   }),
 
-  tickets: defineTable({
-    userId: v.id("users"),
-    organizationId: (v.id("organizations")),
-    customerId: v.optional(v.id("customers")),
-    companyId: v.optional(v.id("companies")),
-    description: v.optional(v.string()),
-    assignees: v.array(v.string()),
-    priority: v.string(),
-    severity: v.string(),
-    status: v.string(),
-    title: v.string(),
-    friendlyId: v.number(),
-  })
-    .index("by_userId", ["userId"])
-    .index("by_organization", ["organizationId"])
-    .index("by_customer", ["customerId"])
-    .index("by_company", ["companyId"]),
+  // tickets: defineTable({
+  //   userId: v.id("users"),
+  //   organizationId: (v.id("organizations")),
+  //   customerId: v.optional(v.id("customers")),
+  //   companyId: v.optional(v.id("companies")),
+  //   description: v.optional(v.string()),
+  //   assignees: v.array(v.string()),
+  //   priority: v.string(),
+  //   severity: v.string(),
+  //   status: v.string(),
+  //   title: v.string(),
+  //   friendlyId: v.number(),
+  // })
+  //   .index("by_userId", ["userId"])
+  //   .index("by_organization", ["organizationId"])
+  //   .index("by_customer", ["customerId"])
+  //   .index("by_company", ["companyId"]),
 
   intakeForms: defineTable({
     organizationId: v.id("organizations"),

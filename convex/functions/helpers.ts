@@ -30,14 +30,14 @@ export const deleteUserData = mutation({
       await ctx.db.delete(profile._id);
     }
 
-    const tickets = await ctx.db.query("tickets").withIndex(
-      "by_userId",
-      (q) => q.eq("userId", userId),
-    ).collect();
+    // const tickets = await ctx.db.query("tickets").withIndex(
+    //   "by_userId",
+    //   (q) => q.eq("userId", userId),
+    // ).collect();
 
-    for (const ticket of tickets) {
-      await ctx.db.delete(ticket._id);
-    }
+    // for (const ticket of tickets) {
+    //   await ctx.db.delete(ticket._id);
+    // }
 
     const userSettings = await ctx.db.query("userSettings").withIndex(
       "by_userId",
@@ -51,7 +51,7 @@ export const deleteUserData = mutation({
     return {
       organizationsDeleted: organizations.length,
       profilesDeleted: profiles.length,
-      ticketsDeleted: tickets.length,
+      // ticketsDeleted: tickets.length,
       userSettingsDeleted: userSettings.length,
     };
   },
