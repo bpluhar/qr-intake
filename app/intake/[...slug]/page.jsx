@@ -55,6 +55,8 @@ export default function IntakeFormPage() {
   const [step, setStep] = useState(1);
   const [errors, setErrors] = useState({});
   const [startTs, setStartTs] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   useEffect(() => {
     if (document && document.formLayout?.fields) {
@@ -86,7 +88,7 @@ export default function IntakeFormPage() {
     return <div style={{ color: "white", padding: "1rem" }}>Preparing…</div>;
   }
   if (document === undefined) {
-    return <div style={{ color: "white", padding: "1rem" }}>Loading form…</div>;
+    return <div style={{ color: "white", padding: "1rem" }}>Loading…</div>  ;
   }
   if (document === null) {
     return (
@@ -102,20 +104,77 @@ export default function IntakeFormPage() {
     fields.slice(3, 4), // Step 3: phone
   ];
 
-  const handleChange = (name, value) => {
-    setFormValues((prev) => ({ ...prev, [name]: value }));
+  const validateField = (f, value) => {
+    const str = String(value ?? "").trim();
+    if (f.required && !str) return "This field is required";
+    if (f.name === "firstName" || f.name === "lastName") {
+      if (!str) return undefined;
+      const lettersOnly = str.replace(/[^A-Za-z]/g, "");
+      if (lettersOnly.length < 2) return "Must be letters only, minimum 2";
+      if (!/^[A-Za-z]+(?:['-][A-Za-z]+)*$/.test(str)) {
+        return "Only letters; single ' or - allowed between parts";
+      }
+    }
+    if (f.type === "email" || f.name === "email") {
+      if (!str) return undefined;
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(str)) return "Invalid email";
+    }
+    if (f.type === "phone" || f.name === "phone") {
+      const digits = str.replace(/\D/g, "");
+      if (digits && digits.length !== 10) return "Must be 10 digits";
+    }
+    return undefined;
+  };
+
+  const formatPhone = (digits) => {
+    if (!digits) return "";
+    const d = digits.slice(0, 10);
+    if (d.length <= 3) return d;
+    if (d.length <= 6) return `${d.slice(0, 3)}-${d.slice(3)}`;
+    return `${d.slice(0, 3)}-${d.slice(3, 6)}-${d.slice(6)}`;
+  };
+
+  const handleChange = (field, rawValue) => {
+    let value = rawValue;
+    if (field.type === "phone" || field.name === "phone") {
+      const digits = String(rawValue ?? "").replace(/\D/g, "");
+      value = formatPhone(digits);
+    }
+    setFormValues((prev) => ({ ...prev, [field.name]: value }));
+    const err = validateField(field, value);
+    setErrors((prev) => ({ ...prev, [field.name]: err }));
   };
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    // final validation across all required fields
+    const allErrors = {};
+    let ok = true;
+    for (const f of fields) {
+      const err = validateField(f, formValues[f.name]);
+      if (err) ok = false;
+      allErrors[f.name] = err;
+    }
+    setErrors(allErrors);
+    if (!ok) return;
+
     const elapsed = startTs ? Date.now() - startTs : undefined;
-    await submit({
-      intakeFormId: formId,
-      organizationId: document.organizationId,
-      data: formValues,
-      timeTaken: elapsed,
-      uid,
-    });
+    try {
+      setIsSubmitting(true);
+      setSubmitError("");
+      await submit({
+        intakeFormId: formId,
+        organizationId: document.organizationId,
+        data: formValues,
+        timeTaken: elapsed,
+        uid,
+      });
+    } catch (err) {
+      console.error(err);
+      setSubmitError("Failed to submit. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const mapType = (t) => {
@@ -144,10 +203,7 @@ export default function IntakeFormPage() {
               type={mapType(f.type)}
               value={formValues[f.name] ?? ""}
               onChange={(e) => {
-                if (hasError && e.target.value) {
-                  setErrors((prev) => ({ ...prev, [f.name]: undefined }));
-                }
-                handleChange(f.name, e.target.value);
+                handleChange(f, e.target.value);
               }}
               placeholder={f.placeholder ?? ""}
               className={`w-full rounded-md border bg-slate-800/60 px-3 py-2 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E] focus:ring-offset-2 focus:ring-offset-[#0b1217] ${
@@ -188,12 +244,9 @@ export default function IntakeFormPage() {
     const nextErrors = { ...errors };
     let ok = true;
     for (const f of group) {
-      if (f.required && !String(formValues[f.name] ?? "").trim()) {
-        nextErrors[f.name] = "This field is required";
-        ok = false;
-      } else {
-        nextErrors[f.name] = undefined;
-      }
+      const err = validateField(f, formValues[f.name]);
+      nextErrors[f.name] = err;
+      if (err) ok = false;
     }
     setErrors(nextErrors);
     return ok;
@@ -206,6 +259,11 @@ export default function IntakeFormPage() {
   };
 
   const renderControls = () => {
+    const currentGroup = step >= 1 && step <= 3 ? (stepFieldGroups[step - 1] || []) : [];
+    const canProceed =
+      step >= 1 && step <= 3
+        ? currentGroup.every((f) => !validateField(f, formValues[f.name]))
+        : true;
     return (
       <div className="mt-auto pt-4 pb-2">
         {/* Dots */}
@@ -226,7 +284,10 @@ export default function IntakeFormPage() {
             <button
               type="button"
               onClick={tryNext}
-              className="w-full inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-white bg-[#249F73] hover:bg-[#1E8761] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3ECF8E] focus:ring-offset-[#0b1217]"
+              disabled={!canProceed}
+              className={`w-full inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3ECF8E] focus:ring-offset-[#0b1217] ${
+                canProceed ? "bg-[#249F73] hover:bg-[#1E8761]" : "bg-slate-700 cursor-not-allowed opacity-60"
+              }`}
             >
               Next
             </button>
@@ -245,7 +306,10 @@ export default function IntakeFormPage() {
             <button
               type="button"
               onClick={tryNext}
-              className="w-1/2 inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-white bg-[#249F73] hover:bg-[#1E8761] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3ECF8E] focus:ring-offset-[#0b1217]"
+              disabled={!canProceed}
+              className={`w-1/2 inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3ECF8E] focus:ring-offset-[#0b1217] ${
+                canProceed ? "bg-[#249F73] hover:bg-[#1E8761]" : "bg-slate-700 cursor-not-allowed opacity-60"
+              }`}
             >
               Next
             </button>
@@ -264,7 +328,10 @@ export default function IntakeFormPage() {
             <button
               type="button"
               onClick={tryNext}
-              className="w-1/2 inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-white bg-[#249F73] hover:bg-[#1E8761] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3ECF8E] focus:ring-offset-[#0b1217]"
+              disabled={!canProceed}
+              className={`w-1/2 inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3ECF8E] focus:ring-offset-[#0b1217] ${
+                canProceed ? "bg-[#249F73] hover:bg-[#1E8761]" : "bg-slate-700 cursor-not-allowed opacity-60"
+              }`}
             >
               Next
             </button>
@@ -284,7 +351,7 @@ export default function IntakeFormPage() {
               type="submit"
               className="w-1/2 inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-white bg-[#249F73] hover:bg-[#1E8761] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3ECF8E] focus:ring-offset-[#0b1217]"
             >
-              Submit
+              {isSubmitting ? "Submitting…" : "Submit"}
             </button>
           </div>
         )}
@@ -301,8 +368,13 @@ export default function IntakeFormPage() {
             {document.formLayout?.title}
           </h1>
           <div className="mt-8 rounded-md border border-slate-800 bg-slate-900/60 p-6">
-            <p className="text-slate-200">Thank you! Your submission has been received.</p>
-            <p className="mt-2 text-sm text-slate-400">You can revisit this page to see updates related to your intake.</p>
+            <p className="text-slate-200">Your submission has been received.</p>
+            <p className="mt-2 text-sm text-slate-400">This page receives realtime updates, hang tight!</p>
+          </div>
+          <div className="mt-8 rounded-md border border-slate-800 bg-slate-900/60 p-6">
+            <p className="text-slate-200">Name: {existingSubmission.data.firstName} {existingSubmission.data.lastName}</p>
+            <p className="text-slate-200">Email: {existingSubmission.data.email}</p>
+            <p className="text-slate-200">Phone: {existingSubmission.data.phone}</p>
           </div>
         </div>
       </div>
@@ -322,6 +394,11 @@ export default function IntakeFormPage() {
         )}
 
         <form onSubmit={onSubmit} className="mt-6 flex-1 flex flex-col">
+          {submitError && (
+            <div className="mb-3 rounded-md border border-red-900 bg-red-950/40 px-3 py-2 text-sm text-red-300">
+              {submitError}
+            </div>
+          )}
           <div className="relative overflow-hidden">
             <div
               className="flex transition-transform duration-300 ease-out"

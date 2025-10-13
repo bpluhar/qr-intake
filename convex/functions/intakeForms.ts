@@ -148,7 +148,7 @@ export const submitIntakeForm = mutation({
     }
 
     if (Object.keys(errors).length > 0) {
-      throw new Error("Validation failed");
+      throw new Error("Validation failed: " + JSON.stringify(errors));
     }
 
     const submissionId = await ctx.db.insert("submissions", {
