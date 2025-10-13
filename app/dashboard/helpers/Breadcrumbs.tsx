@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { Id } from "@/convex/_generated/dataModel";
+// import type { Id } from "@/convex/_generated/dataModel";
 
 export default function Breadcrumbs(
-  { currentTicket }: { currentTicket?: Id<"tickets"> },
+  // { currentTicket }: { currentTicket?: Id<"tickets"> },
 ) {
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
@@ -17,25 +17,25 @@ export default function Breadcrumbs(
   // Build cumulative hrefs so each link points upward one level
   const crumbs = segments.map((seg, idx) => {
     const href = "/" + segments.slice(0, idx + 1).join("/");
-    const isLast = idx === segments.length - 1;
-    const label = isLast && Number.isFinite(currentTicket)
-      ? String(currentTicket)
-      : labelFrom(seg);
-    return { label, href, idx };
+    // const isLast = idx === segments.length - 1;
+    // const label = isLast && Number.isFinite(currentTicket)
+    //   ? String(currentTicket)
+    //   : labelFrom(seg);
+    return { href, idx, seg };
   });
 
   return (
     <nav aria-label="Breadcrumb">
       <ol className="flex items-center gap-1 text-sm text-slate-400">
         <span className="text-xl mr-1">/</span>
-        {crumbs.map(({ label, href, idx }) => {
+        {crumbs.map(({ href, idx, seg }) => {
           const isLast = idx === crumbs.length - 1;
           return (
             <li key={href} className="flex items-center gap-1">
               {isLast
                 ? (
                   <span className="text-[#249F73] text-xl font-semibold">
-                    {label}
+                    {labelFrom(seg)}
                   </span>
                 )
                 : (
@@ -43,7 +43,7 @@ export default function Breadcrumbs(
                     href={href}
                     className="hover:text-slate-100 text-xl transition-colors"
                   >
-                    {label}
+                    {labelFrom(seg)}
                   </Link>
                 )}
               {!isLast && <span className="text-xl mx-1">/</span>}
