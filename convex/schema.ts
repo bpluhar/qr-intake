@@ -11,6 +11,7 @@ const schema = defineSchema({
     intakeFormId: v.id("intakeForms"),
     data: v.any(),
     timeTaken: v.optional(v.number()),
+    uid: v.optional(v.string()),
     formLayoutSnapshot: v.optional(v.object({
       title: v.string(),
       description: v.optional(v.string()),
@@ -36,7 +37,8 @@ const schema = defineSchema({
     })),
   })
     .index("by_organization", ["organizationId"]) 
-    .index("by_form", ["intakeFormId"]), 
+    .index("by_form", ["intakeFormId"]) 
+    .index("by_form_uid", ["intakeFormId", "uid"]), 
     // .index("by_user", ["userId"]),
 
   organizations: defineTable({

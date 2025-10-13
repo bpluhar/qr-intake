@@ -125,8 +125,9 @@ export const submitIntakeForm = mutation({
     organizationId: v.id("organizations"),
     data: submissionDataValidator,
     timeTaken: v.optional(v.number()),
+    uid: v.optional(v.string()),
   },
-  handler: async (ctx, { intakeFormId, organizationId, data, timeTaken }) => {
+  handler: async (ctx, { intakeFormId, organizationId, data, timeTaken, uid }) => {
     // const userId = await getAuthUserId(ctx);
     // if (!userId) throw new Error("Unauthorized");
 
@@ -152,10 +153,10 @@ export const submitIntakeForm = mutation({
 
     const submissionId = await ctx.db.insert("submissions", {
       organizationId,
-      // userId,
       intakeFormId,
       data,
       timeTaken,
+      uid,
       formLayoutSnapshot: form.formLayout,
     });
 
@@ -178,6 +179,19 @@ export const listSubmissionsByForm = query({
       .withIndex("by_form", (q) => q.eq("intakeFormId", intakeFormId))
       .collect();
     return submissions;
+  },
+});
+
+export const getSubmissionByFormAndUid = query({
+  args: { intakeFormId: v.id("intakeForms"), uid: v.string() },
+  handler: async (ctx, { intakeFormId, uid }) => {
+    // Anonymous lookup allowed for public intake status by uid
+
+    const s = await ctx.db
+      .query("submissions")
+      .withIndex("by_form_uid", (q) => q.eq("intakeFormId", intakeFormId).eq("uid", uid))
+      .unique();
+    return s ?? null;
   },
 });
 

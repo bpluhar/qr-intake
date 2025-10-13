@@ -1,27 +1,55 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+function generateUid(len = 8) {
+  const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let out = "";
+  for (let i = 0; i < len; i++) out += chars[Math.floor(Math.random() * chars.length)];
+  return out;
+}
 
 export default function IntakeFormPage() {
   const params = useParams();
-  const slug = params.slug;
+  const router = useRouter();
+  const slugParam = params.slug;
 
-  const document = useQuery(api.functions.intakeForms.getIntakeFormById, {
-    id: slug,
-  });
+  const { formId, initialUid } = useMemo(() => {
+    if (Array.isArray(slugParam)) {
+      return { formId: slugParam[0], initialUid: slugParam[1] };
+    }
+    return { formId: slugParam, initialUid: undefined };
+  }, [slugParam]);
+
+  const [uid, setUid] = useState(initialUid ?? undefined);
+
+  // Ensure UID exists in URL without reload
+  useEffect(() => {
+    if (!formId) return;
+    if (!uid) {
+      const newUid = generateUid(8);
+      setUid(newUid);
+      const newPathWithUid = `/intake/${formId}/${newUid}`;
+      window.history.replaceState(null, '', newPathWithUid);
+    }
+  }, [formId, uid]);
+
+  const document = useQuery(api.functions.intakeForms.getIntakeFormById, formId ? {
+    id: formId,
+  } : "skip");
 
   const updateViewCount = useMutation(
     api.functions.intakeForms.updateViewCount,
   );
 
   useEffect(() => {
-    if (slug) {
-      updateViewCount({ id: slug });
+    if (formId) {
+      updateViewCount({ id: formId });
     }
-  }, [slug, updateViewCount]);
+  }, [formId, updateViewCount]);
 
   const [formValues, setFormValues] = useState({});
   const [step, setStep] = useState(1);
@@ -38,18 +66,24 @@ export default function IntakeFormPage() {
     }
   }, [document]);
 
-  // All hooks must be declared before any conditional returns
   const submit = useMutation(api.functions.intakeForms.submitIntakeForm);
 
+  // start timing once form id is available
   useEffect(() => {
-    // start timing once slug loads (page view)
-    if (slug) {
-      setStartTs(Date.now());
-    }
-  }, [slug]);
+    if (formId) setStartTs(Date.now());
+  }, [formId]);
 
-  if (!slug) {
+  // Check if this UID has already submitted
+  const existingSubmission = useQuery(
+    api.functions.intakeForms.getSubmissionByFormAndUid,
+    formId && uid ? { intakeFormId: formId, uid } : "skip",
+  );
+
+  if (!formId) {
     return <div style={{ color: "white", padding: "1rem" }}>Loading…</div>;
+  }
+  if (!uid) {
+    return <div style={{ color: "white", padding: "1rem" }}>Preparing…</div>;
   }
   if (document === undefined) {
     return <div style={{ color: "white", padding: "1rem" }}>Loading form…</div>;
@@ -71,15 +105,16 @@ export default function IntakeFormPage() {
   const handleChange = (name, value) => {
     setFormValues((prev) => ({ ...prev, [name]: value }));
   };
-  
+
   const onSubmit = async (e) => {
     e.preventDefault();
     const elapsed = startTs ? Date.now() - startTs : undefined;
     await submit({
-      intakeFormId: slug,
+      intakeFormId: formId,
       organizationId: document.organizationId,
       data: formValues,
       timeTaken: elapsed,
+      uid,
     });
   };
 
@@ -257,6 +292,23 @@ export default function IntakeFormPage() {
     );
   };
 
+  // If already submitted, show a thank you screen
+  if (existingSubmission) {
+    return (
+      <div className="min-h-screen bg-[#0b1217] text-slate-200">
+        <div className="mx-auto max-w-3xl p-6 pb-6 flex flex-col min-h-screen">
+          <h1 className="text-xl font-semibold text-slate-100">
+            {document.formLayout?.title}
+          </h1>
+          <div className="mt-8 rounded-md border border-slate-800 bg-slate-900/60 p-6">
+            <p className="text-slate-200">Thank you! Your submission has been received.</p>
+            <p className="mt-2 text-sm text-slate-400">You can revisit this page to see updates related to your intake.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#0b1217] text-slate-200">
       <div className="mx-auto max-w-3xl p-6 pb-6 flex flex-col min-h-screen">
@@ -296,3 +348,5 @@ export default function IntakeFormPage() {
     </div>
   );
 }
+
+
