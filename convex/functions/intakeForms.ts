@@ -235,3 +235,55 @@ export const getIntakeMetricsByOrg = query({
     };
   },
 });
+
+export const listSubmissionsByOrg = query({
+  args: { organizationId: v.id("organizations") },
+  handler: async (ctx, { organizationId }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
+    const submissions = await ctx.db
+      .query("submissions")
+      .withIndex("by_organization", (q) => q.eq("organizationId", organizationId))
+      .collect();
+
+    const formIdSet = new Set(submissions.map((s) => s.intakeFormId));
+    const formIdToTitle = new Map<string, string>();
+    await Promise.all(
+      Array.from(formIdSet).map(async (fid) => {
+        const f = await ctx.db.get(fid);
+        if (f) formIdToTitle.set(fid, f.formLayout?.title ?? "");
+      }),
+    );
+
+    return submissions.map((s) => ({
+      _id: s._id,
+      _creationTime: s._creationTime,
+      intakeFormId: s.intakeFormId,
+      formTitle: formIdToTitle.get(s.intakeFormId) ?? "",
+      status: s.status ?? "",
+      data: s.data,
+      formLayoutSnapshot: s.formLayoutSnapshot,
+    }));
+  },
+});
+
+export const updateSubmissionById = mutation({
+  args: {
+    id: v.id("submissions"),
+    data: v.any(),
+    status: v.optional(v.string()),
+  },
+  handler: async (ctx, { id, data, status }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
+    const s = await ctx.db.get(id);
+    if (!s) throw new Error("Submission not found");
+
+    const patch: any = { data };
+    if (status !== undefined) patch.status = status;
+    await ctx.db.patch(id, patch);
+    return await ctx.db.get(id);
+  },
+});
