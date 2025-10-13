@@ -35,13 +35,13 @@ const schema = defineSchema({
     .index("by_organization", ["organizationId"])
     .index("by_email", ["email"]),
 
-  companies: defineTable({
-    organizationId: v.id("organizations"),
-    name: v.string(),
-    contactCustomerId: v.id("customers"),
-  })
-    .index("by_organization", ["organizationId"])
-    .index("by_name", ["name"]),
+  // companies: defineTable({
+  //   organizationId: v.id("organizations"),
+  //   name: v.string(),
+  //   contactCustomerId: v.id("customers"),
+  // })
+  //   .index("by_organization", ["organizationId"])
+  //   .index("by_name", ["name"]),
 
   organizationSettings: defineTable({
     organizationId: v.id("organizations"),
@@ -53,12 +53,12 @@ const schema = defineSchema({
     defaultIntakeDescription: v.string(),
   }).index("by_organization", ["organizationId"]),
 
-  companySettings: defineTable({
-    companyId: v.id("companies"),
-    slaHours: v.optional(v.number()),
-    autoAssign: v.optional(v.boolean()),
-    note: v.optional(v.string()),
-  }).index("by_company", ["companyId"]),
+  // companySettings: defineTable({
+  //   companyId: v.id("companies"),
+  //   slaHours: v.optional(v.number()),
+  //   autoAssign: v.optional(v.boolean()),
+  //   note: v.optional(v.string()),
+  // }).index("by_company", ["companyId"]),
 
   userSettings: defineTable({
     userId: v.id("users"),
