@@ -57,6 +57,7 @@ export default function SidebarClient() {
       "/dashboard",
       "/dashboard/settings",
       "/dashboard/intake",
+      "/dashboard/intake/submissions",
       "/dashboard/organization",
     ].forEach((p) => {
       router.prefetch(p);
@@ -84,6 +85,7 @@ export default function SidebarClient() {
     { href: "/dashboard", label: "Overview", icon: IconHome },
     // { href: "/dashboard/tickets", label: "Tickets", icon: IconTicket },
     { href: "/dashboard/intake", label: "Intake", icon: IconIntake },
+    { href: "/dashboard/submissions", label: "Submissions", icon: IconIntake },
     // { href: "/dashboard/companies", label: "Companies", icon: IconTeams },
     // { href: "/dashboard/reports", label: "Reports", icon: IconChart },
     { href: "/dashboard/organization", label: "Organization", icon: IconOrganization },
