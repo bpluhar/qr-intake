@@ -48,12 +48,12 @@ export default function RootLayout({
   return (
     <ConvexAuthNextjsServerProvider>
       <html lang="en">
-        <SpeedInsights />
+        
         <Analytics />
         <body
           className={`${font.className} antialiased bg-[#0b1217]`}
         >
-          <ConvexClientProvider>{children}</ConvexClientProvider>
+          <ConvexClientProvider>{children}<SpeedInsights /></ConvexClientProvider>
         </body>
       </html>
     </ConvexAuthNextjsServerProvider>
