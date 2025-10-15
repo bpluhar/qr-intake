@@ -40,9 +40,9 @@ export default function SidebarClient() {
     profile?._id ? { profileId: profile._id } : "skip",
   );
 
-  if (profile) {
-    console.log("profilePictureUrl", profilePictureUrl);
-  }
+  // if (profile) {
+  //   console.log("profilePictureUrl", profilePictureUrl);
+  // }
 
   // Avoid hydration mismatch: only compute "active" after mount
   const [mounted, setMounted] = useState(false);
