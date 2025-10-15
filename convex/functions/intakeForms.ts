@@ -81,9 +81,6 @@ export const createIntakeForm = mutation({
 export const updateViewCount = mutation({
   args: { id: v.id("intakeForms") },
   handler: async (ctx, { id }) => {
-    // const userId = await getAuthUserId(ctx);
-    // if (!userId) throw new Error("Unauthorized");
-
     const intakeForm = await ctx.db.get(id);
     if (!intakeForm) {
       return null;

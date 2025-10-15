@@ -1,5 +1,5 @@
 import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
-
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
 import { Noto_Sans } from "next/font/google";
@@ -13,10 +13,10 @@ const font = Noto_Sans({
 
 export const metadata: Metadata = {
   openGraph: {
-    title: 'Triager - Automated Patient Intake',
-    description: 'Automated patient intake for healthcare teams and practices.',
+    title: 'Intakely - Easy Digital Intake Forms',
+    description: 'No more clipboards. Create and share digital intake forms in minutes.',
     url: 'https://triage-saas.vercel.app',
-    siteName: 'Triager',
+    siteName: 'Intakely',
     images: [
       {
         url: 'https://triage-saas.vercel.app/og.png',
@@ -25,8 +25,8 @@ export const metadata: Metadata = {
       },
     ],
   },
-  title: "Triager - Automated Patient Intake",
-  description: "Automated patient intake for healthcare teams and practices.",
+  title: "Intakely - Easy Digital Intake Forms",
+  description: "No more clipboards. Create and share digital intake forms in minutes.",
   keywords: ['Healthcare', 'SaaS', 'AI', 'Patient Intake', 'Triage', 'QR Code Patient Intake', 'Healthcare Automation', 'Healthcare Software', 'Healthcare Technology', 'Healthcare Solutions', 'Healthcare Services', 'Healthcare Products', 'Healthcare Equipment', 'Healthcare Supplies', 'Healthcare Services', 'Healthcare Products', 'Healthcare Equipment', 'Healthcare Supplies'],
   authors: [{ name: 'Brian Pluhar', url: 'https://brianpluhar.com' }],
   creator: 'Brian Pluhar',
@@ -48,6 +48,7 @@ export default function RootLayout({
   return (
     <ConvexAuthNextjsServerProvider>
       <html lang="en">
+        <SpeedInsights />
         <Analytics />
         <body
           className={`${font.className} antialiased bg-[#0b1217]`}

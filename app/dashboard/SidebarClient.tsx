@@ -131,7 +131,7 @@ export default function SidebarClient() {
           <div>
             <div className="flex items-center justify-between mb-4">
               <span className="font-semibold tracking-tight text-white">
-                Triage
+                Intakely
               </span>
               <button
                 onClick={() => setIsMobileOpen(false)}
@@ -214,9 +214,9 @@ export default function SidebarClient() {
                     await signOut();
                     if (typeof document !== "undefined") {
                       document.cookie =
-                        "triage_user=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax";
+                        "intakely_user=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax";
                       document.cookie =
-                        "triage_email=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax";
+                        "intakely_email=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax";
                     }
                   } finally {
                     setPending(false);
@@ -258,7 +258,7 @@ export default function SidebarClient() {
                 />
               </svg>
             </span>
-            <span className="font-semibold tracking-tight">Triage</span>
+            <span className="font-semibold tracking-tight">Intakely</span>
           </div>
 
           <nav className="mt-4 space-y-1">
@@ -322,9 +322,9 @@ export default function SidebarClient() {
                   // Clean up cookies
                   if (typeof document !== "undefined") {
                     document.cookie =
-                      "triage_user=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax";
+                      "intakely_user=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax";
                     document.cookie =
-                      "triage_email=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax";
+                      "intakely_email=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax";
                   }
                 } finally {
                   setPending(false);

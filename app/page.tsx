@@ -24,18 +24,18 @@ export default function HomePage() {
           <div className="max-w-3xl">
 
           <h1 className="mt-3 text-4xl font-bold leading-tight text-slate-100 sm:text-5xl lg:text-6xl mb-2">
-            Triage, track, and resolve&nbsp;
+            Easy to use smart digital&nbsp;
             <span className="relative inline-block text-[#3ECF8E]">
               <span className="absolute inset-0 -z-10 opacity-30 blur-lg bg-[#3ECF8E]" />
-              issues
+              intake forms
             </span>{" "}
             without the busywork.
           </h1>
 
-            <p className="mt-5 max-w-2xl mx-auto text-base text-slate-400">
+            {/* <p className="mt-5 max-w-2xl mx-auto text-base text-slate-400">
               Triager is a developer-first dashboard for tickets, customers, and
               reports—built with Next.js 15, Tailwind, and a clean dark theme.
-            </p>
+            </p> */}
 
             <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
               <Link
@@ -118,7 +118,7 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="border-t border-slate-800/80">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between text-sm text-slate-500">
-          <span>© {new Date().getFullYear()} Triager</span>
+          <span>© {new Date().getFullYear()} Intakely</span>
           <Link href="/dashboard" className="hover:text-slate-300">
             Get started
           </Link>

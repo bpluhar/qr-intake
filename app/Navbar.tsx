@@ -22,7 +22,7 @@ export default function Navbar() {
             </svg>
           </span>
           <Link href="/">
-            <span className="font-semibold tracking-tight">Triager</span>
+            <span className="font-semibold tracking-tight">Intakely</span>
           </Link>
         </div>
 
