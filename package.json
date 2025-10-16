@@ -1,6 +1,6 @@
 {
-  "name": "triage-saas",
-  "version": "0.5.4b",
+  "name": "qr-intake",
+  "version": "0.6.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",

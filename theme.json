@@ -1,5 +1,5 @@
 {
-  "theme": "triage-dark",
+  "theme": "qr-intake-dark",
   "meta": {
     "description": "Design tokens extracted from the dashboard/sign-in styling (Next.js 15 + Tailwind dark, Supabase-like palette).",
     "version": "1.0.0"
