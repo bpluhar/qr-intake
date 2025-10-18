@@ -19,7 +19,7 @@ export default function WelcomeEmail() {
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
           <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
         </Head>
-        <div className="bg-[#0b1217] py-8" style={{ fontFamily: "'Noto Sans', -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji'" }}>
+        <div className="py-8" style={{ fontFamily: "'Noto Sans', -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji'" }}>
           <Container className="mx-auto w-full max-w-[560px] rounded-2xl border border-[#1e293b] bg-[#111827] px-6 py-6">
             <Section>
               <Heading as="h2" className="m-0 text-[24px] font-semibold leading-7 text-[#e2e8f0]">
