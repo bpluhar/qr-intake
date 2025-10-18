@@ -18,6 +18,7 @@ import type * as functions_helpers from "../functions/helpers.js";
 import type * as functions_intakeForms from "../functions/intakeForms.js";
 import type * as functions_organizations from "../functions/organizations.js";
 import type * as functions_profiles from "../functions/profiles.js";
+import type * as functions_submissions from "../functions/submissions.js";
 import type * as functions_users from "../functions/users.js";
 import type * as functions_usersettings from "../functions/usersettings.js";
 import type * as http from "../http.js";
@@ -36,6 +37,7 @@ declare const fullApi: ApiFromModules<{
   "functions/intakeForms": typeof functions_intakeForms;
   "functions/organizations": typeof functions_organizations;
   "functions/profiles": typeof functions_profiles;
+  "functions/submissions": typeof functions_submissions;
   "functions/users": typeof functions_users;
   "functions/usersettings": typeof functions_usersettings;
   http: typeof http;

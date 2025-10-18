@@ -37,11 +37,11 @@ export default function SubmissionsPage() {
     profileOrg && profileOrg.organizationId ? { organizationId: profileOrg.organizationId } : "skip",
   );
   const subs = useQuery(
-    api.functions.intakeForms.listSubmissionsByOrg,
+    api.functions.submissions.listSubmissionsByOrg,
     org ? { organizationId: org._id } : "skip",
   ) as SubmissionListItem[] | undefined;
 
-  const updateSubmission = useMutation(api.functions.intakeForms.updateSubmissionById);
+  const updateSubmission = useMutation(api.functions.submissions.updateSubmissionById);
   const [editing, setEditing] = React.useState<SubmissionListItem | null>(null);
   const [editValues, setEditValues] = React.useState<Record<string, string>>({});
   const [editStatus, setEditStatus] = React.useState<string | undefined>(undefined);
