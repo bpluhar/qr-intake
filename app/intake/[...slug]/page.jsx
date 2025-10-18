@@ -68,7 +68,7 @@ export default function IntakeFormPage() {
     }
   }, [document]);
 
-  const submit = useMutation(api.functions.intakeForms.submitIntakeForm);
+  const submit = useMutation(api.functions.submissions.submitIntakeForm);
 
   // start timing once form id is available
   useEffect(() => {
@@ -77,7 +77,7 @@ export default function IntakeFormPage() {
 
   // Check if this UID has already submitted
   const existingSubmission = useQuery(
-    api.functions.intakeForms.getSubmissionByFormAndUid,
+    api.functions.submissions.getSubmissionByFormAndUid,
     formId && uid ? { intakeFormId: formId, uid } : "skip",
   );
 
