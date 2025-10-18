@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import NavBar from "./Navbar";
-import SidebarClient from "./dashboard/SidebarClient";
+import NavBar from "./Navbar"
 
 interface FuzzyTextProps {
   children: React.ReactNode;

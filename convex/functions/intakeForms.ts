@@ -126,7 +126,7 @@ export const getIntakeMetricsByOrg = query({
       .withIndex("by_organization", (q) => q.eq("organizationId", organizationId))
       .collect();
 
-    const formIds = new Set(forms.map((f) => f._id));
+    // const formIds = new Set(forms.map((f) => f._id));
     const totalActiveIntakes = forms.length;
 
     // submissions for this org
