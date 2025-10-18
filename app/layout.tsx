@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     siteName: 'Intakely',
     images: [
       {
-        url: 'https://triage-saas.vercel.app/og.png',
+        url: 'https://triage-saas.vercel.app/og.webp',
         width: 1920,
         height: 1163,
       },
