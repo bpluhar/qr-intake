@@ -15,11 +15,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Intakely - Easy Digital Intake Forms',
     description: 'No more clipboards. Create and share digital intake forms in minutes.',
-    url: 'https://triage-saas.vercel.app',
+    url: 'https://qr-intake.vercel.app',
     siteName: 'Intakely',
     images: [
       {
-        url: 'https://triage-saas.vercel.app/og.webp',
+        url: 'https://qr-intake.vercel.app/og.webp',
         width: 1920,
         height: 1163,
       },
