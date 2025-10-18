@@ -107,6 +107,7 @@ export const listSubmissionsByOrg = query({
       intakeFormId: s.intakeFormId,
       formTitle: formIdToTitle.get(s.intakeFormId) ?? "",
       status: s.status ?? "",
+      uid: s.uid,
       data: s.data,
       formLayoutSnapshot: s.formLayoutSnapshot,
     }));

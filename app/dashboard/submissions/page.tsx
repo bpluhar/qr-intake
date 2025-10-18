@@ -24,6 +24,7 @@ type SubmissionListItem = {
   intakeFormId: string;
   formTitle: string;
   status?: string;
+  uid?: string;
   data: Record<string, unknown>;
   formLayoutSnapshot?: {
     fields?: FieldSpec[];
@@ -118,13 +119,25 @@ export default function SubmissionsPage() {
                           {renderStatusBadge(s.status)}
                         </td>
                         <td className="px-3 py-2 text-sm text-right">
-                          <button
-                            onClick={() => startEdit(s)}
-                            className="inline-flex items-center justify-center rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 text-slate-300 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
-                            aria-label="Edit Submission"
-                          >
-                            <IconEdit className="h-4 w-4" />
-                          </button>
+                          <div className="inline-flex items-center gap-2">
+                            {s.uid && (
+                              <a
+                                href={`/intake/${s.intakeFormId}/${s.uid}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center justify-center rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 text-slate-300 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                              >
+                                View
+                              </a>
+                            )}
+                            <button
+                              onClick={() => startEdit(s)}
+                              className="inline-flex items-center justify-center rounded-md px-2.5 py-1 border border-slate-700 bg-slate-800/60 text-slate-300 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                              aria-label="Edit Submission"
+                            >
+                              <IconEdit className="h-4 w-4" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))
@@ -218,6 +231,8 @@ function EditSubmissionModal({
   onClose: () => void;
   onSave: () => void;
 }) {
+  const deleteSubmission = useMutation(api.functions.submissions.deleteSubmissionById);
+  const [deleting, setDeleting] = React.useState(false);
   const fields: FieldSpec[] = row.formLayoutSnapshot?.fields ?? [];
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
@@ -257,6 +272,22 @@ function EditSubmissionModal({
           </div>
         </div>
         <div className="mt-4 flex items-center justify-end gap-3">
+          <button
+            type="button"
+            onClick={async () => {
+              if (deleting) return;
+              setDeleting(true);
+              try {
+                await deleteSubmission({ id: row._id });
+                onClose();
+              } finally {
+                setDeleting(false);
+              }
+            }}
+            className="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 focus:ring-offset-[#0b1217]"
+          >
+            {deleting ? "Deleting…" : "Delete"}
+          </button>
           <button
             type="button"
             onClick={onClose}
