@@ -154,3 +154,11 @@ export const getIntakeMetricsByOrg = query({
     };
   },
 });
+
+export const deleteIntakeFormById = mutation({
+  args: { id: v.id("intakeForms") },
+  handler: async (ctx, { id }) => {
+    await ctx.db.delete(id);
+    return true;
+  },
+});

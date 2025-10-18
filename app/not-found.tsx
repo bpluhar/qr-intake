@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef } from "react";
 import NavBar from "./Navbar";
+import SidebarClient from "./dashboard/SidebarClient";
 
 interface FuzzyTextProps {
   children: React.ReactNode;
