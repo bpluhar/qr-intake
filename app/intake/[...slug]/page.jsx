@@ -62,7 +62,7 @@ export default function IntakeFormPage() {
     if (document && document.formLayout?.fields) {
       const init = {};
       for (const field of document.formLayout.fields) {
-        init[field.name] = "";
+        init[field.name] = field.type === "checkbox" ? false : "";
       }
       setFormValues(init);
     }
@@ -97,12 +97,11 @@ export default function IntakeFormPage() {
   }
 
   const fields = document.formLayout?.fields ?? [];
-  const totalSteps = 4;
-  const stepFieldGroups = [
-    fields.slice(0, 2), // Step 1: first + last
-    fields.slice(2, 3), // Step 2: email
-    fields.slice(3, 4), // Step 3: phone
-  ];
+  const personalNames = new Set(["firstName", "lastName", "email", "phone"]);
+  const personalGroup = fields.filter((f) => personalNames.has(f.name));
+  const otherFields = fields.filter((f) => !personalNames.has(f.name));
+  const stepFieldGroups = [personalGroup, ...otherFields.map((f) => [f])];
+  const totalSteps = stepFieldGroups.length + 1; // final review step
 
   const validateField = (f, value) => {
     const str = String(value ?? "").trim();
@@ -122,6 +121,17 @@ export default function IntakeFormPage() {
     if (f.type === "phone" || f.name === "phone") {
       const digits = str.replace(/\D/g, "");
       if (digits && digits.length !== 10) return "Must be 10 digits";
+    }
+    if (f.type === "number") {
+      if (!str) return f.required ? "This field is required" : undefined;
+      if (!/^[-+]?[0-9]*\.?[0-9]+$/.test(str)) return "Must be a number";
+    }
+    if (f.type === "dropdown") {
+      if (f.required && !str) return "Please select an option";
+    }
+    if (f.type === "checkbox") {
+      if (f.required && value !== true) return "This field is required";
+      return undefined;
     }
     return undefined;
   };
@@ -179,67 +189,122 @@ export default function IntakeFormPage() {
 
   const mapType = (t) => {
     if (t === "phone") return "tel";
+    if (t === "dropdown") return "select";
     return t || "text";
   };
 
   // Render helpers
   const renderFields = (whichStep) => {
-    if (whichStep >= 1 && whichStep <= 3) {
-      const group = stepFieldGroups[whichStep - 1] || [];
-      return group.map((f) => {
-        const hasError = !!errors[f.name];
+    // Final review step
+    if (whichStep === totalSteps) {
+      return (
+        <div className="space-y-3">
+          {fields.map((f) => {
+            const rawVal = formValues[f.name];
+            let displayVal = rawVal;
+            if (f.type === "checkbox") displayVal = rawVal ? "Yes" : "No";
+            if (f.type === "dropdown") {
+              const match = (f.options ?? []).find((o) => o.value === rawVal);
+              displayVal = match ? match.label : rawVal || "—";
+            }
+            return (
+              <div key={f.name} className="rounded-md border border-slate-700 bg-slate-900/40 p-3">
+                <div className="text-xs font-semibold text-[#249F73]">{f.label}</div>
+                <div className="mt-1 text-sm text-slate-200 break-words">{displayVal || "—"}</div>
+              </div>
+            );
+          })}
+        </div>
+      );
+    }
+
+    const group = stepFieldGroups[whichStep - 1] || [];
+    return group.map((f) => {
+      const hasError = !!errors[f.name];
+      if (f.type === "checkbox") {
         return (
           <div key={f.name}>
-            <label
-              className="mb-1 block text-xs font-medium text-[#249F73]"
-              htmlFor={f.name}
-            >
-              {f.label}
-              {f.required ? " *" : ""}
+            <label className="mb-1 block text-xs font-medium text-[#249F73]" htmlFor={f.name}>
+              {f.label}{f.required ? " *" : ""}
             </label>
-            <input
-              id={f.name}
-              name={f.name}
-              type={mapType(f.type)}
-              value={formValues[f.name] ?? ""}
-              onChange={(e) => {
-                handleChange(f, e.target.value);
-              }}
-              placeholder={f.placeholder ?? ""}
-              className={`w-full rounded-md border bg-slate-800/60 px-3 py-2 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E] focus:ring-offset-2 focus:ring-offset-[#0b1217] ${
-                hasError ? "border-red-500" : "border-slate-700"
-              }`}
-            />
+            <div className="flex items-center gap-2">
+              <div className="relative inline-flex items-center">
+                <input
+                  id={f.name}
+                  name={f.name}
+                  type="checkbox"
+                  checked={!!formValues[f.name]}
+                  onChange={(e) => handleChange(f, e.target.checked)}
+                  className="h-5 w-5 appearance-none rounded border border-slate-700 bg-slate-800/60 checked:border-[#249F73] focus:outline-none focus:ring-2 focus:ring-[#3ECF8E] focus:ring-offset-2 focus:ring-offset-[#0b1217]"
+                />
+                <span className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                  <span className={`block rounded-sm ${formValues[f.name] ? 'h-3 w-3 bg-[#249F73]' : ''}`}></span>
+                </span>
+              </div>
+            </div>
             {hasError && (
               <p className="mt-1 text-xs text-red-400">{errors[f.name]}</p>
             )}
           </div>
         );
-      });
-    }
-
-    // Step 4: Overview
-    return (
-      <div className="space-y-3">
-        {fields.map((f) => (
-          <div
-            key={f.name}
-            className="rounded-md border border-slate-700 bg-slate-900/40 p-3"
-          >
-            <div className="text-xs font-semibold text-[#249F73]">
-              {f.label}
-            </div>
-            <div className="mt-1 text-sm text-slate-200 break-words">
-              {formValues[f.name] || "—"}
-            </div>
+      }
+      if (f.type === "dropdown") {
+        return (
+          <div key={f.name}>
+            <label className="mb-1 block text-xs font-medium text-[#249F73]" htmlFor={f.name}>
+              {f.label}{f.required ? " *" : ""}
+            </label>
+            <select
+              id={f.name}
+              name={f.name}
+              value={formValues[f.name] ?? ""}
+              onChange={(e) => handleChange(f, e.target.value)}
+              className={`w-full rounded-md border bg-slate-800/60 px-3 py-2 text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E] ${hasError ? "border-red-500" : "border-slate-700"}`}
+            >
+              <option value="">Select…</option>
+              {(f.options ?? []).map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+            {hasError && (
+              <p className="mt-1 text-xs text-red-400">{errors[f.name]}</p>
+            )}
           </div>
-        ))}
-      </div>
-    );
+        );
+      }
+      return (
+        <div key={f.name}>
+          <label
+            className="mb-1 block text-xs font-medium text-[#249F73]"
+            htmlFor={f.name}
+          >
+            {f.label}
+            {f.required ? " *" : ""}
+          </label>
+          <input
+            id={f.name}
+            name={f.name}
+            type={mapType(f.type)}
+            value={formValues[f.name] ?? ""}
+            onChange={(e) => {
+              handleChange(f, e.target.value);
+            }}
+            placeholder={f.placeholder ?? ""}
+            className={`w-full rounded-md border bg-slate-800/60 px-3 py-2 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#3ECF8E] focus:ring-offset-2 focus:ring-offset-[#0b1217] ${
+              hasError ? "border-red-500" : "border-slate-700"
+            }`}
+          />
+          {hasError && (
+            <p className="mt-1 text-xs text-red-400">{errors[f.name]}</p>
+          )}
+        </div>
+      );
+    });
   };
 
   const validateCurrentStep = () => {
-    if (step < 1 || step > 3) return true;
+    if (step < 1 || step > totalSteps) return true;
+    if (step === totalSteps) return true; // no validation on review step
     const group = stepFieldGroups[step - 1] || [];
     const nextErrors = { ...errors };
     let ok = true;
@@ -259,102 +324,52 @@ export default function IntakeFormPage() {
   };
 
   const renderControls = () => {
-    const currentGroup = step >= 1 && step <= 3 ? (stepFieldGroups[step - 1] || []) : [];
-    const canProceed =
-      step >= 1 && step <= 3
-        ? currentGroup.every((f) => !validateField(f, formValues[f.name]))
-        : true;
+    const currentGroup = step >= 1 && step <= totalSteps ? (stepFieldGroups[step - 1] || []) : [];
+    const canProceed = currentGroup.every((f) => !validateField(f, formValues[f.name]));
+    const isFirst = step === 1;
+    const isLast = step === totalSteps;
     return (
       <div className="mt-auto pt-4 pb-2">
-        {/* Dots */}
         <div className="mb-3 flex items-center justify-center gap-2">
           {Array.from({ length: totalSteps }).map((_, i) => (
             <span
               key={i}
-              className={`h-2 w-2 rounded-full ${
-                i + 1 === step ? "bg-[#249F73]" : "bg-slate-700"
-              }`}
+              className={`h-2 w-2 rounded-full ${i + 1 === step ? "bg-[#249F73]" : "bg-slate-700"}`}
             />
           ))}
         </div>
 
-        {/* Buttons */}
-        {step === 1 && (
-          <div className="flex">
+        <div className="flex gap-3">
+          {!isFirst && (
+            <button
+              type="button"
+              onClick={() => setStep(Math.max(1, step - 1))}
+              className="w-1/2 inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-slate-200 bg-[rgba(30,41,59,0.7)] hover:bg-[#1f2937] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-700"
+            >
+              Back
+            </button>
+          )}
+          {!isLast && (
             <button
               type="button"
               onClick={tryNext}
               disabled={!canProceed}
-              className={`w-full inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3ECF8E] focus:ring-offset-[#0b1217] ${
+              className={`${isFirst ? "w-full" : "w-1/2"} inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3ECF8E] focus:ring-offset-[#0b1217] ${
                 canProceed ? "bg-[#249F73] hover:bg-[#1E8761]" : "bg-slate-700 cursor-not-allowed opacity-60"
               }`}
             >
               Next
             </button>
-          </div>
-        )}
-
-        {step === 2 && (
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={() => setStep(1)}
-              className="w-1/2 inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-slate-200 bg-[rgba(30,41,59,0.7)] hover:bg-[#1f2937] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-700"
-            >
-              Back
-            </button>
-            <button
-              type="button"
-              onClick={tryNext}
-              disabled={!canProceed}
-              className={`w-1/2 inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3ECF8E] focus:ring-offset-[#0b1217] ${
-                canProceed ? "bg-[#249F73] hover:bg-[#1E8761]" : "bg-slate-700 cursor-not-allowed opacity-60"
-              }`}
-            >
-              Next
-            </button>
-          </div>
-        )}
-
-        {step === 3 && (
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={() => setStep(2)}
-              className="w-1/2 inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-slate-200 bg-[rgba(30,41,59,0.7)] hover:bg-[#1f2937] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-700"
-            >
-              Back
-            </button>
-            <button
-              type="button"
-              onClick={tryNext}
-              disabled={!canProceed}
-              className={`w-1/2 inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3ECF8E] focus:ring-offset-[#0b1217] ${
-                canProceed ? "bg-[#249F73] hover:bg-[#1E8761]" : "bg-slate-700 cursor-not-allowed opacity-60"
-              }`}
-            >
-              Next
-            </button>
-          </div>
-        )}
-
-        {step === 4 && (
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={() => setStep(3)}
-              className="w-1/2 inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-slate-200 bg-[rgba(30,41,59,0.7)] hover:bg-[#1f2937] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-700"
-            >
-              Back
-            </button>
+          )}
+          {isLast && (
             <button
               type="submit"
               className="w-1/2 inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-white bg-[#249F73] hover:bg-[#1E8761] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3ECF8E] focus:ring-offset-[#0b1217]"
             >
               {isSubmitting ? "Submitting…" : "Submit"}
             </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     );
   };
@@ -411,6 +426,25 @@ export default function IntakeFormPage() {
               <span className="text-sm font-semibold text-[#249F73] mr-2">Submitted</span>
               <span className="text-slate-200 text-sm">{new Date(existingSubmission?._creationTime).toLocaleString("en-US")}</span>
             </div>
+            {/* All submitted fields */}
+            <div>
+              {(document.formLayout?.fields ?? []).filter((f) => !personalNames.has(f.name)).map((f) => {
+                const rawVal = existingSubmission?.data?.[f.name];
+                let displayVal = rawVal;
+                if (f.type === "checkbox") displayVal = rawVal ? "Yes" : "No";
+                if (f.type === "dropdown") {
+                  const match = (f.options ?? []).find((o) => o.value === rawVal);
+                  displayVal = match ? match.label : (rawVal ?? "—");
+                }
+                const valueStr = displayVal === undefined || displayVal === null || String(displayVal).trim() === "" ? "—" : String(displayVal);
+                return (
+                  <div key={f.name}>
+                    <span className="text-sm font-semibold text-[#249F73] mr-2">{f.label}</span>
+                    <span className="text-slate-200 text-sm break-words">{valueStr}</span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
@@ -441,17 +475,13 @@ export default function IntakeFormPage() {
               className="flex transition-transform duration-300 ease-out"
               style={{ transform: `translateX(-${(step - 1) * 100}%)` }}
             >
-              <div className="w-full flex-shrink-0 space-y-4">
-                {renderFields(1)}
-              </div>
-              <div className="w-full flex-shrink-0 space-y-4">
-                {renderFields(2)}
-              </div>
-              <div className="w-full flex-shrink-0 space-y-4">
-                {renderFields(3)}
-              </div>
-              <div className="w-full flex-shrink-0 space-y-4">
-                {renderFields(4)}
+              {stepFieldGroups.map((_, idx) => (
+                <div key={idx} className="w-full flex-shrink-0 space-y-4">
+                  {renderFields(idx + 1)}
+                </div>
+              ))}
+              <div key="review" className="w-full flex-shrink-0 space-y-4">
+                {renderFields(totalSteps)}
               </div>
             </div>
           </div>
