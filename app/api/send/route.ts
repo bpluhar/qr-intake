@@ -8,7 +8,7 @@ const resend = new Resend(RESEND_API_KEY);
 export async function POST() {
   const { data, error } = await resend.emails.send({
     from: 'QR Intake <hi@brianpluhar.com>',
-    to: ['pluharbrian@gmail.com'],
+    to: ['pluharbrian@gmail.com', 'tflores00616@icloud.com'],
     subject: 'QR Intake - Onboarding',
     react: WelcomeEmail(),
   });

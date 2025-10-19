@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "email:dev": "email dev --dir app/emails",
+    "email": "email dev --dir app/emails",
     "build": "next build",
     "start": "next start",
     "deploy": "npx convex deploy -y",
