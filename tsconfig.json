@@ -34,7 +34,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "app/intake/[slug]/page.jsx",
-    "app/dashboard/intake/page.tsx"
+    "app/dashboard/intake/page.tsx",
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

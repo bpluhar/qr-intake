@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
         hostname: "*.convex.cloud",
       },
     ],
+    qualities: [70, 75],
   },
 };
 
