@@ -1,9 +1,7 @@
 import { Resend } from 'resend';
 import WelcomeEmail from '@/app/emails/Welcome';
 
-const RESEND_API_KEY = 're_dFvw1SoT_2roytZFMtQvhW26TsJ13h8kM';
-
-const resend = new Resend(RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST() {
   const { data, error } = await resend.emails.send({
