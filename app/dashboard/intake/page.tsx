@@ -14,7 +14,6 @@ import QRCodeStyling from "qr-code-styling";
 export default function IntakePage() {
   const [showNewIntakeModal, setShowNewIntakeModal] = useState(false);
   const [qrModalId, setQrModalId] = useState<string | null>(null);
-  const [exporting, setExporting] = useState(false);
 
   // Resolve org via profile -> then fetch org doc
   const profileOrg = useQuery(api.functions.profiles.getProfileOrganization, {});
@@ -65,7 +64,7 @@ export default function IntakePage() {
                 >
                   New
                 </button>
-                <button
+                <button className="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-slate-200 bg-slate-800/70 hover:bg-slate-800 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-700">
                   Export
                 </button>
               </div>
