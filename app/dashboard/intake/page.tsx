@@ -66,19 +66,7 @@ export default function IntakePage() {
                   New
                 </button>
                 <button
-                  onClick={async () => {
-                    if (exporting) return;
-                    setExporting(true);
-                    try {
-                      await fetch("/api/send", { method: "POST" });
-                    } finally {
-                      setExporting(false);
-                    }
-                  }}
-                  disabled={exporting}
-                  className="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-slate-200 bg-slate-800/70 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700 disabled:opacity-60"
-                >
-                  {exporting ? "Exporting…" : "Export"}
+                  Export
                 </button>
               </div>
             </div>
